@@ -1,7 +1,8 @@
-﻿using Terraria;
+﻿using Revive.System;
+using Terraria;
 using Terraria.ModLoader;
 
-namespace Revive.System
+namespace Revive.Player
 {
     public class RevivePlayer : ModPlayer
     {
@@ -11,10 +12,18 @@ namespace Revive.System
 
         public override void OnRespawn() => deadTimer = 0;
 
+        public override void PreUpdate()
+        {
+            if (!Player.dead)
+                ModContent.GetInstance<ReviveSystem>().alivePlayerCount++;
+        }
+
+        private bool ActiveBossAndAlivePlayer() => Main.CurrentFrameFlags.AnyActiveBossNPC && ModContent.GetInstance<ReviveSystem>().alivePlayerCount > 0 && deadTimer > 0;
+
         public override void UpdateDead()
         {
-            if (Main.CurrentFrameFlags.AnyActiveBossNPC && deadTimer > 0)
-                Player.respawnTimer++;
+            if (ActiveBossAndAlivePlayer())
+                Player.respawnTimer++; // Undoes regular respawn timer tickdown
 
             deadTimer++;
         }
