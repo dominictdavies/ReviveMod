@@ -17,9 +17,9 @@ namespace Revive.Systems
 
         private void UpdateAnyAlivePlayer()
         {
-            for (int i = 0; i < Main.PlayerList.Count; i++) {
+            for (int i = 0; i < Main.maxPlayers; i++) {
                 Player player = Main.player[i];
-                if (!player.dead) {
+                if (player.active && !player.dead) {
                     anyAlivePlayer = true;
                     return;
                 }
