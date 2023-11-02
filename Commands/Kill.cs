@@ -57,6 +57,7 @@ namespace Revive.Commands
 				}
 			}
 
+			// Kill the players
 			foreach (Player player in playersToKill) {
 				PlayerDeathReason damageSource = PlayerDeathReason.ByCustomReason($"{player.name} was killed.");
 				int damage = player.statLife;

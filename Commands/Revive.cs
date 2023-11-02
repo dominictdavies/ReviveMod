@@ -34,16 +34,16 @@ namespace Revive.Commands
 
 		public override void Action(CommandCaller caller, string input, string[] args)
 		{
-			Player[] playersToKill;
+			Player[] playersToRevive;
 
 			if (args.Length == 0) {
-				playersToKill = new Player[1];
+				playersToRevive = new Player[1];
 
 				// Fill array with yourself
-				playersToKill[0] = GetExistingPlayer(caller.Player.name);
+				playersToRevive[0] = GetExistingPlayer(caller.Player.name);
 
 			} else {
-				playersToKill = new Player[args.Length];
+				playersToRevive = new Player[args.Length];
 				int count = 0;
 
 				// Fill array with args
@@ -53,19 +53,15 @@ namespace Revive.Commands
 					if (player == null)
 						throw new UsageException(args[0] + " is not a player.");
 
-					playersToKill[count++] = player;
+					playersToRevive[count++] = player;
 				}
 			}
 
-			foreach (Player player in playersToKill) {
-				PlayerDeathReason damageSource = PlayerDeathReason.ByCustomReason($"{player.name} was killed.");
-				int damage = player.statLife;
-				int direction = 0;
-				bool pvp = false;
-
-				player.KillMe(damageSource, damage, direction, pvp);
+			// Revive the players
+			foreach (Player player in playersToRevive) {
+				player.Spawn(PlayerSpawnContext.ReviveFromDeath);
 				if (Main.netMode == NetmodeID.Server)
-					NetMessage.SendPlayerDeath(player.whoAmI, damageSource, damage, direction, pvp);
+					NetMessage.SendData(MessageID.PlayerSpawn);
 			}
 		}
 	}
