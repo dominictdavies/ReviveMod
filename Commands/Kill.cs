@@ -37,9 +37,14 @@ namespace Revive.Commands
 				// Fill array with args
 				foreach (string playerName in args) {
 					Player player = Revive.GetExistingPlayer(playerName);
-					playersToKill[count++] = player ?? throw new UsageException(args[0] + " is not a player.");
+					playersToKill[count++] = player ?? throw new UsageException($"{args[0]} is not a player.");
 				}
 			}
+
+			// Check if any players are already alive
+			foreach (Player player in playersToKill)
+				if (player.dead)
+					throw new UsageException($"{player.name} is already dead.");
 
 			// Kill the players
 			foreach (Player player in playersToKill) {
