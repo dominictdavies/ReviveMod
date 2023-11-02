@@ -1,6 +1,9 @@
-﻿using Revive.ID;
+﻿using Microsoft.Xna.Framework;
+using Revive.ID;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace Revive.Commands
@@ -56,6 +59,12 @@ namespace Revive.Commands
 					packet.Write((byte)player.whoAmI);
 					packet.Send();
 				}
+
+				// Announce in chat
+				if (Main.netMode == NetmodeID.Server)
+					ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"{player.name} was revived!"), new Color(52, 235, 73));
+				else
+					Main.NewText($"{player.name} was revived!", new Color(52, 235, 73));
 			}
 		}
 	}
