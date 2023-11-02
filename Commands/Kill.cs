@@ -2,25 +2,22 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ExampleMod.Common.Commands
+namespace Revive.Commands
 {
 	public class KillCommand : ModCommand
 	{
 		public override CommandType Type
 			=> CommandType.World;
 
-		// The desired text to trigger this command
 		public override string Command
-			=> "addTime";
+			=> "kill";
 
-		// A short usage explanation for this command
 		public override string Usage
-			=> "/addTime numTicks" +
-			"\n numTicks — positive or negative number in ticks (1 second = 60 ticks).";
+			=> "/kill [player1 ...]" +
+			"\n Providing no args will kill yourself.";
 
-		// A short description of this command
 		public override string Description
-			=> "Adds numTicks to fast forward or rewind world time";
+			=> "Kills players for debug purposes";
 
 		public override void Action(CommandCaller caller, string input, string[] args)
 		{
