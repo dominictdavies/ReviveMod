@@ -1,14 +1,9 @@
+using Revive.ID;
 using Revive.Systems;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.ModLoader;
-
-public enum PacketID
-{
-	AlivePlayerCheck,
-	RevivePlayer
-}
 
 namespace Revive
 {
