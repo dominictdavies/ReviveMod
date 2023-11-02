@@ -14,23 +14,11 @@ namespace Revive.Commands
 			=> "revive";
 
 		public override string Usage
-			=> "/revive [player1 ...]" +
+			=> "/revive [deadPlayer1 ...]" +
 			"\n Providing no args will revive yourself.";
 
 		public override string Description
 			=> "Revives players for debug purposes";
-
-		// Returns null if the player does not exist
-		private Player GetExistingPlayer(string playerName)
-		{
-			for (int i = 0; i < Main.maxNetPlayers; i++) {
-				Player player = Main.player[i];
-				if (player.active && player.name == playerName)
-					return player;
-			}
-
-			return null;
-		}
 
 		public override void Action(CommandCaller caller, string input, string[] args)
 		{
@@ -40,7 +28,7 @@ namespace Revive.Commands
 				playersToRevive = new Player[1];
 
 				// Fill array with yourself
-				playersToRevive[0] = GetExistingPlayer(caller.Player.name);
+				playersToRevive[0] = Revive.GetExistingPlayer(caller.Player.name);
 
 			} else {
 				playersToRevive = new Player[args.Length];
@@ -48,7 +36,7 @@ namespace Revive.Commands
 
 				// Fill array with args
 				foreach (string playerName in args) {
-					Player player = GetExistingPlayer(playerName);
+					Player player = Revive.GetExistingPlayer(playerName);
 					playersToRevive[count++] = player ?? throw new UsageException(args[0] + " is not a player.");
 				}
 			}
