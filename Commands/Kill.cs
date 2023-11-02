@@ -1,6 +1,5 @@
-﻿using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
+﻿using Revive.Players;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace Revive.Commands
@@ -47,16 +46,8 @@ namespace Revive.Commands
 					throw new UsageException($"{player.name} is already dead.");
 
 			// Kill the players
-			foreach (Player player in playersToKill) {
-				PlayerDeathReason damageSource = PlayerDeathReason.ByCustomReason($"{player.name} was killed.");
-				int damage = player.statLife;
-				int direction = 0;
-				bool pvp = false;
-
-				player.KillMe(damageSource, damage, direction, pvp);
-				if (Main.netMode == NetmodeID.Server)
-					NetMessage.SendPlayerDeath(player.whoAmI, damageSource, damage, direction, pvp);
-			}
+			foreach (Player player in playersToKill)
+				player.GetModPlayer<RevivePlayer>().Kill();
 		}
 	}
 }

@@ -1,9 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Revive.ID;
+﻿using Revive.Players;
 using Terraria;
-using Terraria.Chat;
-using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace Revive.Commands
@@ -50,22 +46,8 @@ namespace Revive.Commands
 					throw new UsageException($"{player.name} is already alive.");
 
 			// Revive the players
-			foreach (Player player in playersToRevive) {
-				player.respawnTimer = 0;
-
-				if (Main.netMode == NetmodeID.Server) {
-					ModPacket packet = Mod.GetPacket();
-					packet.Write((byte)PacketID.RevivePlayer);
-					packet.Write((byte)player.whoAmI);
-					packet.Send();
-				}
-
-				// Announce in chat
-				if (Main.netMode == NetmodeID.Server)
-					ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"{player.name} was revived!"), new Color(52, 235, 73));
-				else
-					Main.NewText($"{player.name} was revived!", new Color(52, 235, 73));
-			}
+			foreach (Player player in playersToRevive)
+				player.GetModPlayer<RevivePlayer>().Revive();
 		}
 	}
 }
