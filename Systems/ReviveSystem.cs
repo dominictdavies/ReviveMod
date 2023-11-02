@@ -35,7 +35,7 @@ namespace Revive.Systems
 
 			if (anyAlivePlayer != oldAnyAlivePlayer) {
 				ModPacket packet = Mod.GetPacket();
-				packet.Write(0);
+				packet.Write((byte)PacketID.AlivePlayerCheck);
 				packet.Write(anyAlivePlayer);
 				packet.Send();
 			}

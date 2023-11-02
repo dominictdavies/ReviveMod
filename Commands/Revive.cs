@@ -1,5 +1,4 @@
 ﻿using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -59,8 +58,8 @@ namespace Revive.Commands
 
 				if (Main.netMode == NetmodeID.Server) {
 					ModPacket packet = Mod.GetPacket();
-					packet.Write(1);
-					packet.Write(player.whoAmI);
+					packet.Write((byte)PacketID.RevivePlayer);
+					packet.Write((byte)player.whoAmI);
 					packet.Send();
 				}
 			}

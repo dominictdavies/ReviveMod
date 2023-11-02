@@ -4,21 +4,27 @@ using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
+public enum PacketID
+{
+	AlivePlayerCheck,
+	RevivePlayer
+}
+
 namespace Revive
 {
 	public class Revive : Mod
 	{
 		public override void HandlePacket(BinaryReader reader, int whoAmI)
 		{
-			int id = reader.ReadInt32();
+			PacketID id = (PacketID)reader.ReadByte();
 			switch (id) {
-				case 0:
+				case PacketID.AlivePlayerCheck:
 					bool anyAlivePlayer = reader.ReadBoolean();
 					ModContent.GetInstance<ReviveSystem>().anyAlivePlayer = anyAlivePlayer;
 					break;
-				case 1:
-					int playerWhoAmI = reader.ReadInt32();
-					Main.player[playerWhoAmI].respawnTimer = 0;
+				case PacketID.RevivePlayer:
+					byte reviveWhoAmI = reader.ReadByte();
+					Main.player[reviveWhoAmI].respawnTimer = 0;
 					break;
 				default:
 					throw new Exception("Invalid packet ID.");
