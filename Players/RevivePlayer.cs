@@ -52,7 +52,7 @@ namespace Revive.Players
 				Main.NewText(playerWasRevived, lifeGreen);
 		}
 
-		private bool ActiveBossAndAlivePlayer()
+		private bool ActiveBossAlivePlayer()
 			=> Main.CurrentFrameFlags.AnyActiveBossNPC && ModContent.GetInstance<ReviveSystem>().anyAlivePlayer && timeSpentDead > 0;
 
 		public override void OnEnterWorld()
@@ -63,7 +63,7 @@ namespace Revive.Players
 
 		public override void UpdateDead()
 		{
-			if (ActiveBossAndAlivePlayer())
+			if (ActiveBossAlivePlayer())
 				Player.respawnTimer++; // Undoes regular respawn timer tickdown
 
 			timeSpentDead++;

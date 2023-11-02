@@ -1,4 +1,5 @@
 ﻿using Revive.Players;
+using Revive.Utils;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -21,24 +22,7 @@ namespace Revive.Commands
 
 		public override void Action(CommandCaller caller, string input, string[] args)
 		{
-			Player[] playersToRevive;
-
-			if (args.Length == 0) {
-				playersToRevive = new Player[1];
-
-				// Fill array with yourself
-				playersToRevive[0] = Revive.GetExistingPlayer(caller.Player.name);
-
-			} else {
-				playersToRevive = new Player[args.Length];
-				int count = 0;
-
-				// Fill array with args
-				foreach (string playerName in args) {
-					Player player = Revive.GetExistingPlayer(playerName);
-					playersToRevive[count++] = player ?? throw new UsageException($"{args[0]} is not a player.");
-				}
-			}
+			Player[] playersToRevive = UtilCommand.GetPlayersFromArgs(args, caller.Player);
 
 			// Check if any players are already alive
 			foreach (Player player in playersToRevive)

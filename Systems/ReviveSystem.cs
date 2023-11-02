@@ -10,12 +10,6 @@ namespace Revive.Systems
 		public bool oldAnyAlivePlayer;
 		public bool anyAlivePlayer;
 
-		public override void OnWorldLoad()
-		{
-			oldAnyAlivePlayer = true;
-			anyAlivePlayer = true;
-		}
-
 		private void UpdateAnyAlivePlayer()
 		{
 			for (int i = 0; i < Main.maxPlayers; i++) {
@@ -29,11 +23,19 @@ namespace Revive.Systems
 			anyAlivePlayer = false;
 		}
 
+		public override void OnWorldLoad()
+		{
+			oldAnyAlivePlayer = true;
+			anyAlivePlayer = true;
+		}
+
 		public override void PostUpdateWorld()
 		{
+			// Server has final say on anyAlivePlayer
 			if (Main.netMode != NetmodeID.Server)
 				return;
 
+			// Send only when anyAlivePlayer changes
 			if (anyAlivePlayer != oldAnyAlivePlayer) {
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketID.AlivePlayerCheck);
