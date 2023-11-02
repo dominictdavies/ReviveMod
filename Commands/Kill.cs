@@ -1,5 +1,5 @@
 ﻿using Terraria;
-using Terraria.ID;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace Revive.Commands
@@ -17,45 +17,46 @@ namespace Revive.Commands
 			"\n Providing no args will kill yourself.";
 
 		public override string Description
-			=> "Kills players for debug purposes";
+			=> "Kills players for debug purposes.";
+
+		// Returns null if the player does not exist
+		private Player GetExistingPlayer(string playerName)
+		{
+			for (int i = 0; i < Main.maxNetPlayers; i++) {
+				Player player = Main.player[i];
+				if (player.active && player.name == playerName)
+					return player;
+			}
+
+			return null;
+		}
 
 		public override void Action(CommandCaller caller, string input, string[] args)
 		{
-			// Time in ticks for complete full day+night cycle (86600)
-			const double cycleLength = Main.dayLength + Main.nightLength;
-			// Checking input Arguments
+			Player[] playersToKill;
+
 			if (args.Length == 0) {
-				throw new UsageException("At least one argument was expected.");
-			}
-			if (!int.TryParse(args[0], out int extraTime)) {
-				throw new UsageException(args[0] + " is not a correct integer value.");
+				playersToKill = new Player[1];
+
+				// Fill array with yourself
+				playersToKill[0] = GetExistingPlayer(caller.Player.name);
+
+			} else {
+				playersToKill = new Player[args.Length];
+
+				// Fill array with args
+				foreach (string playerName in args) {
+					Player player = GetExistingPlayer(playerName);
+
+					if (player == null)
+						throw new UsageException(args[0] + " is not a player.");
+
+					playersToKill[playersToKill.Length] = player;
+				}
 			}
 
-			// Convert current time (0-54000 for day and 0-32400 for night) to cycle time (0-86600)
-			double fullTime = Main.time;
-			if (!Main.dayTime) {
-				fullTime += Main.dayLength;
-			}
-
-			// Add time from argument
-			fullTime += extraTime;
-			// Cap the time when the cycle time range is exceeded (fullTime < 0 || fullTime > 86600)
-			fullTime %= cycleLength;
-			if (fullTime < 0) {
-				fullTime += cycleLength;
-			}
-
-			// If fullTime (0-86600) < dayLength (54000) its a day, otherwise night
-			Main.dayTime = fullTime < Main.dayLength;
-			// Convert cycle time to default day/night time
-			if (!Main.dayTime) {
-				fullTime -= Main.dayLength;
-			}
-			Main.time = fullTime;
-
-			// Sync of world data on the server in MP
-			if (Main.netMode == NetmodeID.Server) {
-				NetMessage.SendData(MessageID.WorldData);
+			foreach (Player player in playersToKill) {
+				player.KillMe(PlayerDeathReason.ByCustomReason($"{player.name} was killed."), player.statLife, 0);
 			}
 		}
 	}
