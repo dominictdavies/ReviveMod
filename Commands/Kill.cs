@@ -49,11 +49,7 @@ namespace Revive.Commands
 				// Fill array with args
 				foreach (string playerName in args) {
 					Player player = GetExistingPlayer(playerName);
-
-					if (player == null)
-						throw new UsageException(args[0] + " is not a player.");
-
-					playersToKill[count++] = player;
+					playersToKill[count++] = player ?? throw new UsageException(args[0] + " is not a player.");
 				}
 			}
 

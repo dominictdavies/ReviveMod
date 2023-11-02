@@ -49,19 +49,20 @@ namespace Revive.Commands
 				// Fill array with args
 				foreach (string playerName in args) {
 					Player player = GetExistingPlayer(playerName);
-
-					if (player == null)
-						throw new UsageException(args[0] + " is not a player.");
-
-					playersToRevive[count++] = player;
+					playersToRevive[count++] = player ?? throw new UsageException(args[0] + " is not a player.");
 				}
 			}
 
 			// Revive the players
 			foreach (Player player in playersToRevive) {
-				player.Spawn(PlayerSpawnContext.ReviveFromDeath);
-				if (Main.netMode == NetmodeID.Server)
-					NetMessage.SendData(MessageID.PlayerSpawn);
+				player.respawnTimer = 0;
+
+				if (Main.netMode == NetmodeID.Server) {
+					ModPacket packet = Mod.GetPacket();
+					packet.Write(1);
+					packet.Write(player.whoAmI);
+					packet.Send();
+				}
 			}
 		}
 	}
