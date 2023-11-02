@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace Revive.Commands
@@ -43,6 +44,7 @@ namespace Revive.Commands
 
 			} else {
 				playersToKill = new Player[args.Length];
+				int count = 0;
 
 				// Fill array with args
 				foreach (string playerName in args) {
@@ -51,12 +53,19 @@ namespace Revive.Commands
 					if (player == null)
 						throw new UsageException(args[0] + " is not a player.");
 
-					playersToKill[playersToKill.Length] = player;
+					playersToKill[count++] = player;
 				}
 			}
 
 			foreach (Player player in playersToKill) {
-				player.KillMe(PlayerDeathReason.ByCustomReason($"{player.name} was killed."), player.statLife, 0);
+				PlayerDeathReason damageSource = PlayerDeathReason.ByCustomReason($"{player.name} was killed.");
+				int damage = player.statLife;
+				int direction = 0;
+				bool pvp = false;
+
+				player.KillMe(damageSource, damage, direction, pvp);
+				if (Main.netMode == NetmodeID.Server)
+					NetMessage.SendPlayerDeath(player.whoAmI, damageSource, damage, direction, pvp);
 			}
 		}
 	}
