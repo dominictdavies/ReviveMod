@@ -11,19 +11,15 @@ namespace Revive
 {
 	public class Revive : Mod
 	{
-		private void SetAnyAlivePlayer(bool anyAlivePlayer)
-			=> ModContent.GetInstance<ReviveSystem>().anyAlivePlayer = anyAlivePlayer;
-
 		public override void HandlePacket(BinaryReader reader, int whoAmI)
 		{
 			PacketID id = (PacketID)reader.ReadByte();
 
-			// TODO turn all cases into functions
 			switch (id) {
 				case PacketID.AlivePlayerCheck:
 					bool anyAlivePlayer = reader.ReadBoolean();
 
-					SetAnyAlivePlayer(anyAlivePlayer);
+					ModContent.GetInstance<ReviveSystem>().anyAlivePlayer = anyAlivePlayer;
 
 					break;
 
