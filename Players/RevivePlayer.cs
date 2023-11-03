@@ -30,7 +30,7 @@ namespace Revive.Players
 				NetMessage.SendPlayerDeath(Player.whoAmI, playerWasKilled, playerLife, noDirection, noPvp);
 		}
 
-		private void LocalRevive()
+		public void LocalRevive()
 		{
 			// Player will respawn next tick
 			Player.respawnTimer = 0;
@@ -39,7 +39,7 @@ namespace Revive.Players
 			revived = true;
 		}
 
-		private void LocalTeleport()
+		public void LocalTeleport()
 		{
 			// Move player to death position
 			Player.Center = Player.lastDeathPostion;
@@ -56,11 +56,17 @@ namespace Revive.Players
 			packet.Send();
 		}
 
-		private void SendReviveTeleport()
+		public void SendReviveTeleport()
 		{
 			ModPacket packet = Mod.GetPacket();
 			packet.Write((byte)PacketID.ReviveTeleport);
-			packet.Send();
+
+			if (Main.netMode == NetmodeID.Server) {
+				packet.Write((byte)Player.whoAmI);
+				packet.Send(ignoreClient: Player.whoAmI);
+			} else {
+				packet.Send();
+			}
 		}
 
 		public void Revive()

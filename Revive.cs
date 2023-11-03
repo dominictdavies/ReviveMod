@@ -11,6 +11,9 @@ namespace Revive
 {
 	public class Revive : Mod
 	{
+		private void SetAnyAlivePlayer(bool anyAlivePlayer)
+			=> ModContent.GetInstance<ReviveSystem>().anyAlivePlayer = anyAlivePlayer;
+
 		public override void HandlePacket(BinaryReader reader, int whoAmI)
 		{
 			PacketID id = (PacketID)reader.ReadByte();
@@ -20,17 +23,15 @@ namespace Revive
 				case PacketID.AlivePlayerCheck:
 					bool anyAlivePlayer = reader.ReadBoolean();
 
-					ModContent.GetInstance<ReviveSystem>().anyAlivePlayer = anyAlivePlayer;
+					SetAnyAlivePlayer(anyAlivePlayer);
 
 					break;
 
 				case PacketID.RevivePlayer:
 					byte reviveWhoAmI = reader.ReadByte();
 
-					// TODO turn into function
-					Player respawningPlayer = Main.player[reviveWhoAmI];
-					respawningPlayer.respawnTimer = 0;
-					respawningPlayer.GetModPlayer<RevivePlayer>().revived = true;
+					Player revivedPlayer = Main.player[reviveWhoAmI];
+					revivedPlayer.GetModPlayer<RevivePlayer>().LocalRevive();
 
 					break;
 
@@ -38,18 +39,12 @@ namespace Revive
 					if (Main.netMode == NetmodeID.MultiplayerClient)
 						whoAmI = reader.ReadByte();
 
-					// TODO turn into function
 					Player teleportingPlayer = Main.player[whoAmI];
-					teleportingPlayer.Center = teleportingPlayer.lastDeathPostion;
-					teleportingPlayer.GetModPlayer<RevivePlayer>().revived = false;
+					RevivePlayer modTeleportingPlayer = teleportingPlayer.GetModPlayer<RevivePlayer>();
+					modTeleportingPlayer.LocalTeleport();
 
-					if (Main.netMode == NetmodeID.Server) {
-						// TODO turn into function
-						ModPacket packet = GetPacket();
-						packet.Write((byte)PacketID.ReviveTeleport);
-						packet.Write((byte)whoAmI);
-						packet.Send(ignoreClient: whoAmI);
-					}
+					if (Main.netMode == NetmodeID.Server)
+						modTeleportingPlayer.SendReviveTeleport();
 
 					break;
 
