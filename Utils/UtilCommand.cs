@@ -5,6 +5,17 @@ namespace Revive.Utils
 {
 	class UtilCommand
 	{
+		public static Player GetExistingPlayer(string playerName)
+		{
+			for (int i = 0; i < Main.maxNetPlayers; i++) {
+				Player player = Main.player[i];
+				if (player.active && player.name == playerName)
+					return player;
+			}
+
+			return null;
+		}
+
 		public static Player[] GetPlayersFromArgs(string[] args, Player caller)
 		{
 			Player[] playersFromArgs;
@@ -13,7 +24,7 @@ namespace Revive.Utils
 				playersFromArgs = new Player[1];
 
 				// Fill array with yourself
-				playersFromArgs[0] = Revive.GetExistingPlayer(caller.name);
+				playersFromArgs[0] = GetExistingPlayer(caller.name);
 
 			} else {
 				playersFromArgs = new Player[args.Length];
@@ -21,7 +32,7 @@ namespace Revive.Utils
 
 				// Fill array with args
 				foreach (string playerName in args) {
-					Player player = Revive.GetExistingPlayer(playerName);
+					Player player = GetExistingPlayer(playerName);
 					playersFromArgs[count++] = player ?? throw new UsageException($"{args[0]} is not a player.");
 				}
 			}

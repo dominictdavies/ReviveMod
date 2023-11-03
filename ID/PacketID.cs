@@ -3,6 +3,7 @@
 	public enum PacketID
 	{
 		AlivePlayerCheck,
-		RevivePlayer
+		RevivePlayer,
+		ReviveTeleport
 	}
 }

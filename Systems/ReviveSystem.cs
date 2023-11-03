@@ -7,8 +7,8 @@ namespace Revive.Systems
 {
 	public class ReviveSystem : ModSystem
 	{
-		public bool oldAnyAlivePlayer;
-		public bool anyAlivePlayer;
+		public bool oldAnyAlivePlayer = true;
+		public bool anyAlivePlayer = true;
 
 		private void UpdateAnyAlivePlayer()
 		{
@@ -37,6 +37,7 @@ namespace Revive.Systems
 
 			// Send only when anyAlivePlayer changes
 			if (anyAlivePlayer != oldAnyAlivePlayer) {
+				// TODO turn into function
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketID.AlivePlayerCheck);
 				packet.Write(anyAlivePlayer);

@@ -12,7 +12,8 @@ namespace Revive.Players
 {
 	public class RevivePlayer : ModPlayer
 	{
-		public int timeSpentDead; // Needed to fix visual issue on respawn timer
+		public int timeSpentDead = 0; // Needed to fix a visual issue on respawn timer
+		public bool revived = false;
 
 		public void Kill()
 		{
@@ -34,29 +35,32 @@ namespace Revive.Players
 			string playerWasRevived = $"{Player.name} was revived!";
 			Color lifeGreen = new(52, 235, 73);
 
-			// Revive the player
+			// Revive the player TODO turn into function
 			Player.respawnTimer = 0;
+			revived = true;
 
-			// Server sends packets to sync clients
+			// Sync and announce in chat
 			if (Main.netMode == NetmodeID.Server) {
+				// TODO turn into function
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)PacketID.RevivePlayer);
 				packet.Write((byte)Player.whoAmI);
 				packet.Send();
-			}
 
-			// Announce in chat
-			if (Main.netMode == NetmodeID.Server)
 				ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(playerWasRevived), lifeGreen);
-			else
+			} else {
 				Main.NewText(playerWasRevived, lifeGreen);
+			}
 		}
 
 		private bool ActiveBossAlivePlayer()
 			=> Main.CurrentFrameFlags.AnyActiveBossNPC && ModContent.GetInstance<ReviveSystem>().anyAlivePlayer && timeSpentDead > 0;
 
 		public override void OnEnterWorld()
-			=> timeSpentDead = 0;
+		{
+			timeSpentDead = 0;
+			revived = false;
+		}
 
 		public override void OnRespawn()
 			=> timeSpentDead = 0;
@@ -67,6 +71,23 @@ namespace Revive.Players
 				Player.respawnTimer++; // Undoes regular respawn timer tickdown
 
 			timeSpentDead++;
+		}
+
+		public override void PreUpdate()
+		{
+			// Teleport revived player to death location
+			if (revived && !Player.dead && Player.position != Player.lastDeathPostion) {
+				// TODO turn into function
+				Player.Center = Player.lastDeathPostion;
+				revived = false;
+
+				if (Main.netMode == NetmodeID.MultiplayerClient) {
+					// TODO turn into function
+					ModPacket packet = Mod.GetPacket();
+					packet.Write((byte)PacketID.ReviveTeleport);
+					packet.Send();
+				}
+			}
 		}
 	}
 }
