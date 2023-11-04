@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace ReviveMod.Source.Common.Commands
 {
-    internal class ModCommandUtils
+    public class ModCommandUtils
     {
-        internal static bool TryGetPlayer(string playerName, out Player player)
+		public static bool TryGetPlayer(string playerName, out Player player)
         {
             player = null;
 
@@ -24,7 +23,7 @@ namespace ReviveMod.Source.Common.Commands
             return false;
         }
 
-        internal static IEnumerable<Player> GetPlayers(ICollection<string> playerNames, CommandCaller caller)
+		public static IEnumerable<Player> GetPlayers(ICollection<string> playerNames, CommandCaller caller)
         {
             List<Player> players = new();
             List<string> invalidPlayerNames = new();
