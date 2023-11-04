@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace ReviveMod.Common.Players
 {
-    public class RevivePlayer : ModPlayer
+    public class ReviveModPlayer : ModPlayer
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;

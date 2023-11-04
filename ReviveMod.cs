@@ -32,7 +32,7 @@ namespace ReviveMod
 					byte reviveWhoAmI = reader.ReadByte();
 
 					Player revivedPlayer = Main.player[reviveWhoAmI];
-					revivedPlayer.GetModPlayer<RevivePlayer>().LocalRevive();
+					revivedPlayer.GetModPlayer<ReviveModPlayer>().LocalRevive();
 
 					break;
 
@@ -41,7 +41,7 @@ namespace ReviveMod
 						whoAmI = reader.ReadByte();
 
 					Player teleportingPlayer = Main.player[whoAmI];
-					RevivePlayer modTeleportingPlayer = teleportingPlayer.GetModPlayer<RevivePlayer>();
+					ReviveModPlayer modTeleportingPlayer = teleportingPlayer.GetModPlayer<ReviveModPlayer>();
 					modTeleportingPlayer.LocalTeleport();
 
 					if (Main.netMode == NetmodeID.Server)
