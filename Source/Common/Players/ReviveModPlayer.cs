@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using ReviveMod.Common.Systems;
+using ReviveMod.Source.Common.Systems;
 using Terraria;
 using Terraria.Chat;
 using Terraria.DataStructures;
@@ -7,7 +7,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace ReviveMod.Common.Players
+namespace ReviveMod.Source.Common.Players
 {
     public class ReviveModPlayer : ModPlayer
     {

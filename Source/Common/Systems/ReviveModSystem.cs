@@ -2,7 +2,7 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ReviveMod.Common.Systems
+namespace ReviveMod.Source.Common.Systems
 {
     public class ReviveModSystem : ModSystem
     {
