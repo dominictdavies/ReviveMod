@@ -24,7 +24,7 @@ namespace ReviveMod
 				case MessageType.AlivePlayerCheck:
 					bool anyAlivePlayer = reader.ReadBoolean();
 
-					ModContent.GetInstance<ReviveSystem>().anyAlivePlayer = anyAlivePlayer;
+					ModContent.GetInstance<ReviveModSystem>().anyAlivePlayer = anyAlivePlayer;
 
 					break;
 

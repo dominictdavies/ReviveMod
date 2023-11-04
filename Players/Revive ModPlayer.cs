@@ -87,7 +87,7 @@ namespace ReviveMod.Players
 
 		private bool ActiveBossAlivePlayer()
 			=> Main.CurrentFrameFlags.AnyActiveBossNPC
-			&& ModContent.GetInstance<ReviveSystem>().anyAlivePlayer
+			&& ModContent.GetInstance<ReviveModSystem>().anyAlivePlayer
 			&& timeSpentDead > 0; // Prevents respawn timer showing incorrect number
 
 		public override void OnEnterWorld()

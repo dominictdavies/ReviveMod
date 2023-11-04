@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace ReviveMod.Systems
 {
-	public class ReviveSystem : ModSystem
+	public class ReviveModSystem : ModSystem
 	{
 		public bool oldAnyAlivePlayer = true;
 		public bool anyAlivePlayer = true;
