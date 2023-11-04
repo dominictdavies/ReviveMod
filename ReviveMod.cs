@@ -1,29 +1,34 @@
-using Revive.ID;
-using Revive.Players;
-using Revive.Systems;
-using System;
+using ReviveMod.Players;
+using ReviveMod.Systems;
 using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace Revive
+namespace ReviveMod
 {
-	public class Revive : Mod
+	public class ReviveMod : Mod
 	{
+		internal enum MessageType : byte
+		{
+			AlivePlayerCheck,
+			RevivePlayer,
+			ReviveTeleport
+		}
+
 		public override void HandlePacket(BinaryReader reader, int whoAmI)
 		{
-			PacketID id = (PacketID)reader.ReadByte();
+			MessageType type = (MessageType)reader.ReadByte();
 
-			switch (id) {
-				case PacketID.AlivePlayerCheck:
+			switch (type) {
+				case MessageType.AlivePlayerCheck:
 					bool anyAlivePlayer = reader.ReadBoolean();
 
 					ModContent.GetInstance<ReviveSystem>().anyAlivePlayer = anyAlivePlayer;
 
 					break;
 
-				case PacketID.RevivePlayer:
+				case MessageType.RevivePlayer:
 					byte reviveWhoAmI = reader.ReadByte();
 
 					Player revivedPlayer = Main.player[reviveWhoAmI];
@@ -31,7 +36,7 @@ namespace Revive
 
 					break;
 
-				case PacketID.ReviveTeleport:
+				case MessageType.ReviveTeleport:
 					if (Main.netMode == NetmodeID.MultiplayerClient)
 						whoAmI = reader.ReadByte();
 
@@ -45,7 +50,8 @@ namespace Revive
 					break;
 
 				default:
-					throw new Exception("Invalid packet ID.");
+					Logger.WarnFormat("ReviveMod: Unknown message type: {0}", type);
+					break;
 			}
 		}
 	}

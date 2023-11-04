@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Revive.ID;
-using Revive.Systems;
+using ReviveMod.Systems;
 using Terraria;
 using Terraria.Chat;
 using Terraria.DataStructures;
@@ -8,7 +7,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace Revive.Players
+namespace ReviveMod.Players
 {
 	public class RevivePlayer : ModPlayer
 	{
@@ -51,7 +50,7 @@ namespace Revive.Players
 		private void SendRevivePlayer()
 		{
 			ModPacket packet = Mod.GetPacket();
-			packet.Write((byte)PacketID.RevivePlayer);
+			packet.Write((byte)ReviveMod.MessageType.RevivePlayer);
 			packet.Write((byte)Player.whoAmI);
 			packet.Send();
 		}
@@ -59,7 +58,7 @@ namespace Revive.Players
 		public void SendReviveTeleport()
 		{
 			ModPacket packet = Mod.GetPacket();
-			packet.Write((byte)PacketID.ReviveTeleport);
+			packet.Write((byte)ReviveMod.MessageType.ReviveTeleport);
 
 			if (Main.netMode == NetmodeID.Server) {
 				packet.Write((byte)Player.whoAmI);

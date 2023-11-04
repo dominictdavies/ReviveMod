@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace Revive.Utils
+namespace ReviveMod.Utils
 {
 	class UtilCommand
 	{

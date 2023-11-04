@@ -1,9 +1,8 @@
-﻿using Revive.ID;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace Revive.Systems
+namespace ReviveMod.Systems
 {
 	public class ReviveSystem : ModSystem
 	{
@@ -13,7 +12,7 @@ namespace Revive.Systems
 		private void SendAlivePlayerCheck()
 		{
 			ModPacket packet = Mod.GetPacket();
-			packet.Write((byte)PacketID.AlivePlayerCheck);
+			packet.Write((byte)ReviveMod.MessageType.AlivePlayerCheck);
 			packet.Write(anyAlivePlayer);
 			packet.Send();
 		}
