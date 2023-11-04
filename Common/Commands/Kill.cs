@@ -1,5 +1,6 @@
-﻿using ReviveMod.Players;
-using ReviveMod.Utils;
+﻿using Microsoft.Xna.Framework;
+using ReviveMod.Players;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -22,16 +23,28 @@ namespace ReviveMod.Common.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            Player[] playersToKill = UtilCommand.GetPlayersFromArgs(args, caller.Player);
+            IEnumerable<Player> playersToKill;
 
-            // Check if any players are already alive
-            foreach (Player player in playersToKill)
-                if (player.dead)
-                    throw new UsageException($"{player.name} is already dead.");
+            if (args.Length > 0) {
+                playersToKill = ModCommandUtils.GetPlayers(args, caller);
+			} else {
+                playersToKill = new Player[] { caller.Player };
+            }
 
-            // Kill the players
-            foreach (Player player in playersToKill)
-                player.GetModPlayer<RevivePlayer>().Kill();
-        }
+            List<string> alreadyDeadPlayerNames = new();
+
+            foreach (Player player in playersToKill) {
+                if (!player.dead) {
+                    player.GetModPlayer<RevivePlayer>().Kill();
+                } else {
+                    alreadyDeadPlayerNames.Add(player.name);
+				}
+            }
+
+            if (alreadyDeadPlayerNames.Count > 0) {
+				string joinedPlayerNames = string.Join(", ", alreadyDeadPlayerNames);
+				caller.Reply($"The following player(s) are already dead: {joinedPlayerNames}.", Color.Red);
+			}
+		}
     }
 }
