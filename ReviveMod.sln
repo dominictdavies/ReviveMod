@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReviveMod", "ReviveMod.csproj", "{5FCED285-476A-4396-91EF-39F264D4B460}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{D71BC517-BE52-4A13-8A74-53B6784A4A46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5FCED285-476A-4396-91EF-39F264D4B460}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FCED285-476A-4396-91EF-39F264D4B460}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FCED285-476A-4396-91EF-39F264D4B460}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D71BC517-BE52-4A13-8A74-53B6784A4A46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D71BC517-BE52-4A13-8A74-53B6784A4A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D71BC517-BE52-4A13-8A74-53B6784A4A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D71BC517-BE52-4A13-8A74-53B6784A4A46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
