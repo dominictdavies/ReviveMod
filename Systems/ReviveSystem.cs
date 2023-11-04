@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Revive.ID;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -6,13 +7,15 @@ namespace Revive.Systems
 {
 	public class ReviveSystem : ModSystem
 	{
-		public bool oldAnyAlivePlayer;
-		public bool anyAlivePlayer;
+		public bool oldAnyAlivePlayer = true;
+		public bool anyAlivePlayer = true;
 
-		public override void OnWorldLoad()
+		private void SendAlivePlayerCheck()
 		{
-			oldAnyAlivePlayer = true;
-			anyAlivePlayer = true;
+			ModPacket packet = Mod.GetPacket();
+			packet.Write((byte)PacketID.AlivePlayerCheck);
+			packet.Write(anyAlivePlayer);
+			packet.Send();
 		}
 
 		private void UpdateAnyAlivePlayer()
@@ -28,19 +31,23 @@ namespace Revive.Systems
 			anyAlivePlayer = false;
 		}
 
+		public override void OnWorldLoad()
+			=> anyAlivePlayer = oldAnyAlivePlayer = true;
+
+		public override void PreUpdateWorld()
+			=> UpdateAnyAlivePlayer();
+
 		public override void PostUpdateWorld()
 		{
+			// Server declares anyAlivePlayer
 			if (Main.netMode != NetmodeID.Server)
 				return;
 
-			if (anyAlivePlayer != oldAnyAlivePlayer) {
-				ModPacket packet = Mod.GetPacket();
-				packet.Write(anyAlivePlayer);
-				packet.Send();
-			}
+			// Send only when anyAlivePlayer changes
+			if (anyAlivePlayer != oldAnyAlivePlayer)
+				SendAlivePlayerCheck();
 
 			oldAnyAlivePlayer = anyAlivePlayer;
-			UpdateAnyAlivePlayer();
 		}
 	}
 }
