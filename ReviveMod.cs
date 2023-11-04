@@ -1,5 +1,5 @@
-using ReviveMod.Players;
-using ReviveMod.Systems;
+using ReviveMod.Common.Players;
+using ReviveMod.Common.Systems;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace ReviveMod
 {
-	public class ReviveMod : Mod
+    public class ReviveMod : Mod
 	{
 		internal enum MessageType : byte
 		{

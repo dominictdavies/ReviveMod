@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using ReviveMod.Players;
+using ReviveMod.Common.Players;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
