@@ -20,7 +20,7 @@ namespace ReviveMod.Testing.Common.Commands
 			};
 
 			Assert.True(ModCommandUtils.TryGetPlayer("Doomimic", players, out Player player));
-			Assert.AreEqual(players[0].name, "Doomimic");
+			Assert.AreEqual(player.name, "Doomimic");
 		}
 	}
 }
