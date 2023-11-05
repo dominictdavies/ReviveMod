@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using ReviveMod.Source.Common.Commands;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 
 namespace ReviveMod.Testing.Common.Commands
