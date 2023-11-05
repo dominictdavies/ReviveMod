@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -6,13 +7,12 @@ namespace ReviveMod.Source.Common.Commands
 {
     public class ModCommandUtils
     {
-		public static bool TryGetPlayer(string playerName, out Player player)
+		public static bool TryGetPlayer(string playerName, IEnumerable<Player> playerEnumerable, out Player player)
         {
             player = null;
 
-            for (int i = 0; i < Main.maxPlayers; i++)
+            foreach (Player curPlayer in playerEnumerable)
             {
-                Player curPlayer = Main.player[i];
                 if (curPlayer.active && curPlayer.name == playerName)
                 {
                     player = curPlayer;
@@ -23,14 +23,14 @@ namespace ReviveMod.Source.Common.Commands
             return false;
         }
 
-		public static IEnumerable<Player> GetPlayers(ICollection<string> playerNames, CommandCaller caller)
+		public static IEnumerable<Player> GetPlayers(ICollection<string> playerNames, IEnumerable<Player> playerEnumerable, CommandCaller caller)
         {
             List<Player> players = new();
             List<string> invalidPlayerNames = new();
 
             foreach (string playerName in playerNames)
             {
-                if (TryGetPlayer(playerName, out Player player))
+                if (TryGetPlayer(playerName, playerEnumerable, out Player player))
                 {
                     players.Add(player);
                 }

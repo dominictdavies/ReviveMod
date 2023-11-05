@@ -27,7 +27,7 @@ namespace ReviveMod.Source.Common.Commands
 
             if (args.Length > 0)
             {
-                playersToRevive = ModCommandUtils.GetPlayers(args, caller);
+                playersToRevive = ModCommandUtils.GetPlayers(args, Main.player, caller);
             }
             else
             {
