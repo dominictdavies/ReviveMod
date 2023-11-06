@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Newtonsoft.Json.Bson;
+using NUnit.Framework;
 using ReviveMod.Source.Common.Commands;
 using System.Collections.Generic;
 using Terraria;
@@ -20,71 +21,34 @@ namespace ReviveMod.Testing.Common.Commands
             }
         }
 
-        [Test]
-        public void TryGetPlayer_OnlyWrongName()
+        private void SetPlayers(string[] allNames)
         {
-            string getName = "Doomimic";
+            int i = 0;
+            foreach (string name in allNames) {
+                _players[i].active = true;
+                _players[i].name = name;
+                i++;
+            }
+        }
 
-            _players[0] = new() { active = true, name = "John" };
-
-            Assert.False(ModCommandUtils.TryGetPlayer(getName, _players, out Player player));
+        [TestCase("Doomimic", new string[0])]
+        [TestCase("Doomimic", new string[] { "John" })]
+        [TestCase("Doomimic", new string[] { "Steven", "John", "Emily", "doomimic", "DOOMIMIC" })]
+        public void TryGetPlayer_ExcludedName_ReturnFalse(string excludedName, string[] allNames)
+        {
+            SetPlayers(allNames);
+            Assert.IsFalse(ModCommandUtils.TryGetPlayer(excludedName, _players, out Player player));
             Assert.IsNull(player);
         }
 
-        [Test]
-        public void TryGetPlayer_ManyWrongName()
+        [TestCase("Doomimic", new string[] { "Doomimic" })]
+        [TestCase("Doomimic", new string[] { "Steven", "John", "Doomimic", "doomimic", "DOOMIMIC" })]
+        [TestCase("Doomimic", new string[] { "doomimic", "DOOMIMIC", "Doomimic", "Doomimic", "Doomimic" })]
+        public void TryGetPlayer_IncludedName_ReturnTrue(string includedName, string[] allNames)
         {
-            string getName = "Doomimic";
-
-            _players[0] = new() { active = true, name = "John" };
-            _players[1] = new() { active = true, name = "Sarah" };
-            _players[2] = new() { active = true, name = "Steven" };
-            _players[3] = new() { active = true, name = "Emily" };
-            _players[4] = new() { active = true, name = "Andrew" };
-
-            Assert.False(ModCommandUtils.TryGetPlayer(getName, _players, out Player player));
-            Assert.IsNull(player);
-        }
-
-        [Test]
-        public void TryGetPlayer_OnlyRightName()
-        {
-            string getName = "Doomimic";
-
-            _players[0] = new() { active = true, name = getName };
-
-            Assert.True(ModCommandUtils.TryGetPlayer(getName, _players, out Player player));
-            Assert.AreEqual(getName, player.name);
-        }
-
-        [Test]
-        public void TryGetPlayer_ManyRightName()
-        {
-            string getName = "Doomimic";
-
-            _players[0] = new() { active = true, name = getName };
-            _players[1] = new() { active = true, name = getName };
-            _players[2] = new() { active = true, name = getName };
-            _players[3] = new() { active = true, name = getName };
-            _players[4] = new() { active = true, name = getName };
-
-            Assert.True(ModCommandUtils.TryGetPlayer(getName, _players, out Player player));
-            Assert.AreEqual(getName, player.name);
-        }
-
-        [Test]
-        public void TryGetPlayer_ManyMixedName()
-        {
-            string getName = "Doomimic";
-
-            _players[0] = new() { active = true, name = "John" };
-            _players[1] = new() { active = true, name = "Sarah" };
-            _players[2] = new() { active = true, name = getName };
-            _players[3] = new() { active = true, name = getName };
-            _players[4] = new() { active = true, name = "Andrew" };
-
-            Assert.True(ModCommandUtils.TryGetPlayer(getName, _players, out Player player));
-            Assert.AreEqual(getName, player.name);
+            SetPlayers(allNames);
+            Assert.IsTrue(ModCommandUtils.TryGetPlayer(includedName, _players, out Player player));
+            Assert.AreEqual(includedName, player.name);
         }
 
         [Test]
