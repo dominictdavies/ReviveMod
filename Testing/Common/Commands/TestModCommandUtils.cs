@@ -37,7 +37,9 @@ namespace ReviveMod.Testing.Common.Commands
         public void TryGetPlayer_ExcludedName_ReturnFalse(string excludedName, string[] allNames)
         {
             SetPlayerNames(allNames);
+
             Assert.IsFalse(ModCommandUtils.TryGetPlayer(excludedName, _players, out Player player));
+
             Assert.IsNull(player);
         }
 
@@ -47,7 +49,9 @@ namespace ReviveMod.Testing.Common.Commands
         public void TryGetPlayer_IncludedName_ReturnTrue(string includedName, string[] allNames)
         {
             SetPlayerNames(allNames);
+
             Assert.IsTrue(ModCommandUtils.TryGetPlayer(includedName, _players, out Player player));
+
             Assert.AreEqual(includedName, player.name);
         }
 
@@ -57,6 +61,7 @@ namespace ReviveMod.Testing.Common.Commands
         public void GetPlayers_ExcludedNames_ReturnError(string[] excludedNames, string[] allNames)
         {
             SetPlayerNames(allNames);
+
             IEnumerable<Player> players = ModCommandUtils.GetPlayers(excludedNames, _players, out string errorMessage);
             Assert.AreEqual(0, players.Count());
 
@@ -64,38 +69,21 @@ namespace ReviveMod.Testing.Common.Commands
             Assert.AreEqual(expectedErrorMessage, errorMessage);
         }
 
-        [Test]
-        public void GetPlayers_OnlyRightName()
+        [TestCase(new string[] { "Doomimic" }, new string[] { "Doomimic" })]
+        [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John", "Steven", "Doomimic", "doomimic", "DOOMIMIC" })]
+        [TestCase(new string[] { "doomimic", "DOOMIMIC", "John" }, new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
+        public void GetPlayers_IncludedNames_ReturnNullError(string[] includedNames, string[] allNames)
         {
-            string[] getNames = { "Doomimic" };
+            SetPlayerNames(allNames);
 
-            _players[0] = new() { active = true, name = getNames[0] };
-
-            IEnumerable<Player> players = ModCommandUtils.GetPlayers(getNames, _players, out string errorMessage);
+            IEnumerable<Player> players = ModCommandUtils.GetPlayers(includedNames, _players, out string errorMessage);
             int i = 0;
             foreach (Player player in players) {
-                Assert.AreEqual(getNames[i], player.name);
+                Assert.AreEqual(includedNames[i], player.name);
                 i++;
             }
-            Assert.AreEqual(1, i);
-            Assert.IsNull(errorMessage);
-        }
+            Assert.AreEqual(includedNames.Length, i);
 
-        [Test]
-        public void GetPlayers_ManyRightName()
-        {
-            string[] getNames = { "Doomimic", "Fred", "Johnny" };
-
-            _players[0] = new() { active = true, name = getNames[0] };
-            _players[1] = new() { active = true, name = getNames[1] };
-            _players[2] = new() { active = true, name = getNames[2] };
-
-            IEnumerable<Player> players = ModCommandUtils.GetPlayers(getNames, _players, out string errorMessage);
-            int i = 0;
-            foreach (Player player in players) {
-                Assert.AreEqual(getNames[i], player.name);
-                i++;
-            }
             Assert.IsNull(errorMessage);
         }
 
