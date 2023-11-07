@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json.Bson;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using ReviveMod.Source.Common.Commands;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 
 namespace ReviveMod.Testing.Common.Commands
@@ -21,7 +21,7 @@ namespace ReviveMod.Testing.Common.Commands
             }
         }
 
-        private void SetPlayers(string[] allNames)
+        private void SetPlayerNames(string[] allNames)
         {
             int i = 0;
             foreach (string name in allNames) {
@@ -33,60 +33,35 @@ namespace ReviveMod.Testing.Common.Commands
 
         [TestCase("Doomimic", new string[0])]
         [TestCase("Doomimic", new string[] { "John" })]
-        [TestCase("Doomimic", new string[] { "Steven", "John", "Emily", "doomimic", "DOOMIMIC" })]
+        [TestCase("Doomimic", new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
         public void TryGetPlayer_ExcludedName_ReturnFalse(string excludedName, string[] allNames)
         {
-            SetPlayers(allNames);
+            SetPlayerNames(allNames);
             Assert.IsFalse(ModCommandUtils.TryGetPlayer(excludedName, _players, out Player player));
             Assert.IsNull(player);
         }
 
         [TestCase("Doomimic", new string[] { "Doomimic" })]
-        [TestCase("Doomimic", new string[] { "Steven", "John", "Doomimic", "doomimic", "DOOMIMIC" })]
+        [TestCase("Doomimic", new string[] { "John", "Steven", "Doomimic", "doomimic", "DOOMIMIC" })]
         [TestCase("Doomimic", new string[] { "doomimic", "DOOMIMIC", "Doomimic", "Doomimic", "Doomimic" })]
         public void TryGetPlayer_IncludedName_ReturnTrue(string includedName, string[] allNames)
         {
-            SetPlayers(allNames);
+            SetPlayerNames(allNames);
             Assert.IsTrue(ModCommandUtils.TryGetPlayer(includedName, _players, out Player player));
             Assert.AreEqual(includedName, player.name);
         }
 
-        [Test]
-        public void GetPlayers_OnlyWrongName()
+        [TestCase(new string[] { "Doomimic" }, new string[0])]
+        [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John" })]
+        [TestCase(new string[] { "Doomimic", "doom", "DOOM" }, new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
+        public void GetPlayers_ExcludedNames_ReturnError(string[] excludedNames, string[] allNames)
         {
-            string[] getNames = { "Doomimic" };
+            SetPlayerNames(allNames);
+            IEnumerable<Player> players = ModCommandUtils.GetPlayers(excludedNames, _players, out string errorMessage);
+            Assert.AreEqual(0, players.Count());
 
-            _players[0] = new() { active = true, name = "John" };
-
-            IEnumerable<Player> players = ModCommandUtils.GetPlayers(getNames, _players, out string errorMessage);
-            int i = 0;
-            foreach (Player player in players) {
-                Assert.AreEqual(getNames[i], player.name);
-                i++;
-            }
-            Assert.AreEqual(0, i);
-            Assert.AreEqual($"The following player name(s) are invalid: {getNames[0]}.", errorMessage);
-        }
-
-        [Test]
-        public void GetPlayers_ManyWrongName()
-        {
-            string[] getNames = { "Doomimic", "Fred" };
-
-            _players[0] = new() { active = true, name = "John" };
-            _players[1] = new() { active = true, name = "Sarah" };
-            _players[2] = new() { active = true, name = "Steven" };
-            _players[3] = new() { active = true, name = "Emily" };
-            _players[4] = new() { active = true, name = "Andrew" };
-
-            IEnumerable<Player> players = ModCommandUtils.GetPlayers(getNames, _players, out string errorMessage);
-            int i = 0;
-            foreach (Player player in players) {
-                Assert.AreEqual(getNames[i], player.name);
-                i++;
-            }
-            Assert.AreEqual(0, i);
-            Assert.AreEqual($"The following player name(s) are invalid: {getNames[0]}, {getNames[1]}.", errorMessage);
+            string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
+            Assert.AreEqual(expectedErrorMessage, errorMessage);
         }
 
         [Test]
