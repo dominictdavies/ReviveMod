@@ -11,16 +11,6 @@ namespace ReviveMod.Testing.Common.Commands
     {
         private Player[] _players;
 
-        [SetUp]
-        public void SetUp()
-        {
-            _players = new Player[Main.maxPlayers];
-
-            for (int i = 0; i < Main.maxPlayers; i++) {
-                _players[i] = new Player() { active = false };
-            }
-        }
-
         private void SetPlayerNames(string[] allNames)
         {
             int i = 0;
@@ -28,6 +18,16 @@ namespace ReviveMod.Testing.Common.Commands
                 _players[i].active = true;
                 _players[i].name = name;
                 i++;
+            }
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
+            _players = new Player[Main.maxPlayers];
+
+            for (int i = 0; i < Main.maxPlayers; i++) {
+                _players[i] = new Player() { active = false };
             }
         }
 
@@ -87,29 +87,26 @@ namespace ReviveMod.Testing.Common.Commands
             Assert.IsNull(errorMessage);
         }
 
-        [Test]
-        public void GetPlayers_ManyMixedName()
+        [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John", "doomimic", "DOOMIMIC" })]
+        [TestCase(new string[] { "Doomimic", "doomimic", "Steven" }, new string[] { "Doomimic", "Steven" })]
+        [TestCase(new string[] { "Doomimic", "Bob", "DOOMIMIC", "Sarah" }, new string[] { "Doomimic", "doomimic", "Bob", "Billy" })]
+        public void GetPlayers_MixedNames_ReturnError(string[] mixNames, string[] allNames)
         {
-            string[] getNames = { "Doomimic", "Fred", "Johnny", "Sally", "Bob" };
+            SetPlayerNames(allNames);
 
-            _players[0] = new() { active = true, name = "John" };
-            _players[1] = new() { active = true, name = "Sarah" };
-            _players[2] = new() { active = true, name = getNames[1] };
-            _players[3] = new() { active = true, name = getNames[3] };
-            _players[4] = new() { active = true, name = "Andrew" };
+            IEnumerable<string> includedNames = allNames.Intersect(mixNames);
+            IEnumerable<string> excludedNames = allNames.Except(includedNames);
 
-            IEnumerable<Player> players = ModCommandUtils.GetPlayers(getNames, _players, out string errorMessage);
+            IEnumerable<Player> players = ModCommandUtils.GetPlayers(mixNames, _players, out string errorMessage);
             int i = 0;
             foreach (Player player in players) {
-                if (i == 0) {
-                    Assert.AreEqual(getNames[1], player.name);
-                } else {
-                    Assert.AreEqual(getNames[3], player.name);
-                }
+                Assert.AreEqual(includedNames.ElementAt(i), player.name);
                 i++;
             }
-            Assert.AreEqual(2, i);
-            Assert.AreEqual($"The following player name(s) are invalid: {getNames[0]}, {getNames[2]}, {getNames[4]}.", errorMessage);
+            Assert.AreEqual(includedNames.Count(), i);
+
+            string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
+            Assert.AreEqual(expectedErrorMessage, errorMessage);
         }
     }
 }
