@@ -1,3 +1,4 @@
 displayName = ReviveMod
 author = Doomimic
 version = 0.1
+buildIgnore = Testing/*
