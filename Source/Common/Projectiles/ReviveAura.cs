@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace ReviveMod.Projectiles
+namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
@@ -16,17 +16,21 @@ namespace ReviveMod.Projectiles
 
         public override void AI()
         {
-            foreach (Player player in Main.player) {
-                if (!player.active || player.dead) {
+            foreach (Player player in Main.player)
+            {
+                if (!player.active || player.dead)
+                {
                     continue;
                 }
 
-                if (player.whoAmI == Projectile.owner) {
+                if (player.whoAmI == Projectile.owner)
+                {
                     Projectile.timeLeft = -1;
                     break;
                 }
 
-                if (Projectile.Hitbox.Contains(player.Center.ToPoint())) {
+                if (Projectile.Hitbox.Contains(player.Center.ToPoint()))
+                {
                     Projectile.timeLeft--;
                 }
             }
@@ -37,7 +41,8 @@ namespace ReviveMod.Projectiles
         public override void OnKill(int timeLeft)
         {
             Player owner = Main.player[Projectile.owner];
-            if (owner.active && owner.dead) {
+            if (owner.active && owner.dead)
+            {
                 owner.GetModPlayer<RevivePlayer>().Revive();
             }
         }

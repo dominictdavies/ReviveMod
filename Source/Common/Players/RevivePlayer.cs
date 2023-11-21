@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using ReviveMod.ID;
-using ReviveMod.Projectiles;
-using ReviveMod.Systems;
+using ReviveMod.Source.Common.Projectiles;
 using Terraria;
 using Terraria.Chat;
 using Terraria.DataStructures;
@@ -11,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace ReviveMod.Players
 {
-	public class RevivePlayer : ModPlayer
+    public class RevivePlayer : ModPlayer
 	{
 		public int timeSpentDead = 0; // Needed to fix a visual issue
 		public bool revived = false;
