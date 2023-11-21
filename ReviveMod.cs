@@ -1,15 +1,15 @@
-using Revive.ID;
-using Revive.Players;
-using Revive.Systems;
+using ReviveMod.ID;
+using ReviveMod.Players;
+using ReviveMod.Systems;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace Revive
+namespace ReviveMod
 {
-	public class Revive : Mod
+	public class ReviveMod : Mod
 	{
 		public override void HandlePacket(BinaryReader reader, int whoAmI)
 		{

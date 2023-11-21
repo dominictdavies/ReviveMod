@@ -1,4 +1,4 @@
-﻿namespace Revive.ID
+﻿namespace ReviveMod.ID
 {
 	public enum PacketID
 	{

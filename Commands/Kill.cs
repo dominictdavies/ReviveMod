@@ -1,9 +1,9 @@
-﻿using Revive.Players;
-using Revive.Utils;
+﻿using ReviveMod.Players;
+using ReviveMod.Utils;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace Revive.Commands
+namespace ReviveMod.Commands
 {
 	public class KillCommand : ModCommand
 	{

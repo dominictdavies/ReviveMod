@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Revive.ID;
-using Revive.Projectiles;
-using Revive.Systems;
+using ReviveMod.ID;
+using ReviveMod.Projectiles;
+using ReviveMod.Systems;
 using Terraria;
 using Terraria.Chat;
 using Terraria.DataStructures;
@@ -9,7 +9,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-namespace Revive.Players
+namespace ReviveMod.Players
 {
 	public class RevivePlayer : ModPlayer
 	{

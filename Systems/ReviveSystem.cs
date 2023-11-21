@@ -1,9 +1,9 @@
-﻿using Revive.ID;
+﻿using ReviveMod.ID;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace Revive.Systems
+namespace ReviveMod.Systems
 {
 	public class ReviveSystem : ModSystem
 	{
