@@ -11,16 +11,6 @@ namespace ReviveMod.Testing.Common.Commands
     {
         private Player[] _players;
 
-        private void SetPlayerNames(string[] allNames)
-        {
-            int i = 0;
-            foreach (string name in allNames) {
-                _players[i].active = true;
-                _players[i].name = name;
-                i++;
-            }
-        }
-
         [SetUp]
         public void SetUp()
         {
@@ -28,6 +18,16 @@ namespace ReviveMod.Testing.Common.Commands
 
             for (int i = 0; i < Main.maxPlayers; i++) {
                 _players[i] = new Player() { active = false };
+            }
+        }
+
+        private void SetPlayerNames(string[] allNames)
+        {
+            int i = 0;
+            foreach (string name in allNames) {
+                _players[i].active = true;
+                _players[i].name = name;
+                i++;
             }
         }
 
@@ -79,10 +79,9 @@ namespace ReviveMod.Testing.Common.Commands
             IEnumerable<Player> players = ModCommandUtils.GetPlayers(includedNames, _players, out string errorMessage);
             int i = 0;
             foreach (Player player in players) {
-                Assert.AreEqual(includedNames[i], player.name);
-                i++;
+                Assert.AreEqual(includedNames[i++], player.name);
             }
-            Assert.AreEqual(includedNames.Length, i);
+            Assert.AreEqual(i, players.Count());
 
             Assert.IsNull(errorMessage);
         }
@@ -94,16 +93,15 @@ namespace ReviveMod.Testing.Common.Commands
         {
             SetPlayerNames(allNames);
 
-            IEnumerable<string> includedNames = allNames.Intersect(mixNames);
-            IEnumerable<string> excludedNames = allNames.Except(includedNames);
+            IEnumerable<string> includedNames = mixNames.Intersect(allNames);
+            IEnumerable<string> excludedNames = mixNames.Except(allNames);
 
             IEnumerable<Player> players = ModCommandUtils.GetPlayers(mixNames, _players, out string errorMessage);
             int i = 0;
             foreach (Player player in players) {
-                Assert.AreEqual(includedNames.ElementAt(i), player.name);
-                i++;
+                Assert.AreEqual(includedNames.ElementAt(i++), player.name);
             }
-            Assert.AreEqual(includedNames.Count(), i);
+            Assert.AreEqual(i, players.Count());
 
             string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
             Assert.AreEqual(expectedErrorMessage, errorMessage);
