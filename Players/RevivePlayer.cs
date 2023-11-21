@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Revive.ID;
+using Revive.Projectiles;
 using Revive.Systems;
 using Terraria;
 using Terraria.Chat;
@@ -95,9 +96,16 @@ namespace Revive.Players
 		{
 			timeSpentDead = 0;
 			revived = false;
-		}
+        }
 
-		public override void UpdateDead()
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        {
+			if (Main.myPlayer == Player.whoAmI) {
+                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new Vector2(), ModContent.ProjectileType<ReviveAura>(), 0, 0, Player.whoAmI);
+            }
+        }
+
+        public override void UpdateDead()
 		{
 			if (ActiveBossAlivePlayer())
 				Player.respawnTimer++; // Undoes regular respawn timer tickdown
@@ -119,5 +127,5 @@ namespace Revive.Players
 					SendReviveTeleport();
 			}
 		}
-	}
+    }
 }

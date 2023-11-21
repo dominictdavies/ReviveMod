@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace ExampleMod.Content.Projectiles
+namespace Revive.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
