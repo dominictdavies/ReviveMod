@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using ReviveMod.Source.Common.Projectiles;
 using ReviveMod.Source.Common.Systems;
 using Terraria;
 using Terraria.Chat;
@@ -100,6 +101,13 @@ namespace ReviveMod.Source.Common.Players
         {
             timeSpentDead = 0;
             revived = false;
+        }
+
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        {
+            if (Main.myPlayer == Player.whoAmI) {
+                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new Vector2(), ModContent.ProjectileType<ReviveAura>(), 0, 0, Player.whoAmI);
+            }
         }
 
         public override void UpdateDead()
