@@ -1,4 +1,4 @@
-﻿using ReviveMod.Players;
+﻿using ReviveMod.Source.Common.Players;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -43,7 +43,7 @@ namespace ReviveMod.Source.Common.Projectiles
             Player owner = Main.player[Projectile.owner];
             if (owner.active && owner.dead)
             {
-                owner.GetModPlayer<RevivePlayer>().Revive();
+                owner.GetModPlayer<ReviveModPlayer>().Revive();
             }
         }
     }
