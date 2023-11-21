@@ -17,7 +17,16 @@ namespace ReviveMod.Projectiles
         public override void AI()
         {
             foreach (Player player in Main.player) {
-                if (player.active && !player.dead && Projectile.Hitbox.Contains(player.Center.ToPoint())) {
+                if (!player.active || player.dead) {
+                    continue;
+                }
+
+                if (player.whoAmI == Projectile.owner) {
+                    Projectile.timeLeft = -1;
+                    break;
+                }
+
+                if (Projectile.Hitbox.Contains(player.Center.ToPoint())) {
                     Projectile.timeLeft--;
                 }
             }
