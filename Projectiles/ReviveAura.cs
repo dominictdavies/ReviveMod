@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using ReviveMod.Players;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace ReviveMod.Projectiles
@@ -7,17 +8,29 @@ namespace ReviveMod.Projectiles
     {
         public override void SetDefaults()
         {
-            Projectile.width = 64; // The width of projectile hitbox
-            Projectile.height = 64; // The height of projectile hitbox
-            Projectile.aiStyle = 0; // The ai style of the projectile, please reference the source code of Terraria
-            Projectile.timeLeft = 600; // The live time for the projectile (60 = 1 second, so 600 is 10 seconds)
-            Projectile.ignoreWater = true; // Does the projectile's speed be influenced by water?
-            Projectile.tileCollide = true; // Can the projectile collide with tiles?
+            Projectile.width = 64;
+            Projectile.height = 64;
+            Projectile.light = 1f;
+            Projectile.timeLeft = 300;
+        }
+
+        public override void AI()
+        {
+            foreach (Player player in Main.player) {
+                if (player.active && !player.dead && Projectile.Hitbox.Contains(player.Center.ToPoint())) {
+                    Projectile.timeLeft--;
+                }
+            }
+
+            Projectile.timeLeft++;
         }
 
         public override void OnKill(int timeLeft)
         {
-            // Revive player
+            Player owner = Main.player[Projectile.owner];
+            if (owner.active && owner.dead) {
+                owner.GetModPlayer<RevivePlayer>().Revive();
+            }
         }
     }
 }
