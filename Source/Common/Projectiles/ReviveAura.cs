@@ -8,7 +8,7 @@ namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private static readonly int timeToRevive = 5*60;
+        private static readonly int timeToRevive = 15*60;
         private static readonly int progressTimer = 1*60;
         private static readonly int nameTimer = 1*60;
 
