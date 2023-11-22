@@ -30,23 +30,26 @@ namespace ReviveMod.Source
                     break;
 
                 case MessageType.RevivePlayer:
-                    byte reviveWhoAmI = reader.ReadByte();
+                    byte revivedWhoAmI = reader.ReadByte();
 
-                    Player revivedPlayer = Main.player[reviveWhoAmI];
-                    revivedPlayer.GetModPlayer<ReviveModPlayer>().LocalRevive();
+                    ReviveModPlayer revivedModPlayer = Main.player[revivedWhoAmI].GetModPlayer<ReviveModPlayer>();
+                    revivedModPlayer.LocalRevive();
+
+                    if (Main.netMode == NetmodeID.Server) {
+                        revivedModPlayer.SendRevivePlayer(ignoreClient: whoAmI);
+                    }
 
                     break;
 
                 case MessageType.ReviveTeleport:
-                    if (Main.netMode == NetmodeID.MultiplayerClient)
-                        whoAmI = reader.ReadByte();
+                    byte teleportingWhoAmI = reader.ReadByte();
 
-                    Player teleportingPlayer = Main.player[whoAmI];
-                    ReviveModPlayer modTeleportingPlayer = teleportingPlayer.GetModPlayer<ReviveModPlayer>();
-                    modTeleportingPlayer.LocalTeleport();
+                    ReviveModPlayer teleportingModPlayer = Main.player[teleportingWhoAmI].GetModPlayer<ReviveModPlayer>();
+                    teleportingModPlayer.LocalTeleport();
 
-                    if (Main.netMode == NetmodeID.Server)
-                        modTeleportingPlayer.SendReviveTeleport();
+                    if (Main.netMode == NetmodeID.Server) {
+                        teleportingModPlayer.SendReviveTeleport(ignoreClient: whoAmI);
+                    }
 
                     break;
 

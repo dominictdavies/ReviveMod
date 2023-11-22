@@ -1,1 +1,9 @@
-
+od: {
+	Projectiles: {
+		ReviveAura: {
+			DisplayName: {
+				$parentVal: Revive Aura
+			}
+		}
+	}
+}
