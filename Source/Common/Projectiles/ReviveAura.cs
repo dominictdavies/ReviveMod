@@ -10,7 +10,8 @@ namespace ReviveMod.Source.Common.Projectiles
     {
         private static readonly float size = 1f;
         private static readonly int timeToRevive = 5*60;
-        private static readonly int nameTimerDefault = 1*60;
+        private static readonly int progressTimer = 1*60;
+        private static readonly int nameTimer = 1*60;
 
         public override void SetDefaults()
         {
@@ -19,7 +20,6 @@ namespace ReviveMod.Source.Common.Projectiles
             Projectile.scale = size;
             Projectile.light = size;
             Projectile.timeLeft = timeToRevive;
-            Projectile.ai[0] = nameTimerDefault;
         }
 
         public override void AI()
@@ -36,12 +36,17 @@ namespace ReviveMod.Source.Common.Projectiles
 
                 if (Projectile.Hitbox.Contains(player.Center.ToPoint())) {
                     Projectile.timeLeft--;
+
+                    if (Projectile.ai[0]-- == 0) {
+                        player.HealEffect(Projectile.timeLeft / 60 + 1, false);
+                        Projectile.ai[0] = progressTimer;
+                    }
                 }
             }
 
-            if (Projectile.ai[0]-- == 0) {
-                CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Lime, Main.player[Projectile.owner].name);
-                Projectile.ai[0] = nameTimerDefault;
+            if (Projectile.ai[1]-- == 0) {
+                CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Main.player[Projectile.owner].name);
+                Projectile.ai[1] = nameTimer;
             }
 
             Projectile.timeLeft++;
