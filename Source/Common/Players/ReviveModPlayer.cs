@@ -2,10 +2,8 @@
 using ReviveMod.Source.Common.Projectiles;
 using ReviveMod.Source.Common.Systems;
 using Terraria;
-using Terraria.Chat;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ReviveMod.Source.Common.Players
@@ -30,13 +28,21 @@ namespace ReviveMod.Source.Common.Players
                 NetMessage.SendPlayerDeath(Player.whoAmI, playerWasKilled, playerLife, noDirection, noPvp);
         }
 
-        public void LocalRevive()
+        public void LocalRevive(bool verbose = true)
         {
             // Player will respawn next tick
             Player.respawnTimer = 0;
 
             // Makes player teleport to death location
             revived = true;
+
+            if (!verbose) {
+                return;
+            }
+
+            string playerWasRevived = $"{Player.name} was revived!";
+            Color lifeGreen = new(52, 235, 73);
+            Main.NewText(playerWasRevived, lifeGreen);
         }
 
         public void LocalTeleport()
@@ -48,47 +54,30 @@ namespace ReviveMod.Source.Common.Players
             revived = false;
         }
 
-        private void SendRevivePlayer()
+        public void SendRevivePlayer(int toClient = -1, int ignoreClient = -1)
         {
             ModPacket packet = Mod.GetPacket();
             packet.Write((byte)ReviveMod.MessageType.RevivePlayer);
             packet.Write((byte)Player.whoAmI);
-            packet.Send();
+            packet.Send(toClient, ignoreClient);
         }
 
-        public void SendReviveTeleport()
+        public void SendReviveTeleport(int toClient = -1, int ignoreClient = -1)
         {
             ModPacket packet = Mod.GetPacket();
             packet.Write((byte)ReviveMod.MessageType.ReviveTeleport);
-
-            if (Main.netMode == NetmodeID.Server)
-            {
-                packet.Write((byte)Player.whoAmI);
-                packet.Send(ignoreClient: Player.whoAmI);
-            }
-            else
-            {
-                packet.Send();
-            }
+            packet.Write((byte)Player.whoAmI);
+            packet.Send(toClient, ignoreClient);
         }
 
         public void Revive()
         {
-            string playerWasRevived = $"{Player.name} was revived!";
-            Color lifeGreen = new(52, 235, 73);
-
             // Revive the player
             LocalRevive();
 
-            // Sync and announce in chat
-            if (Main.netMode == NetmodeID.Server)
-            {
+            // Sync up other clients
+            if (Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.MultiplayerClient) {
                 SendRevivePlayer();
-                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(playerWasRevived), lifeGreen);
-            }
-            else
-            {
-                Main.NewText(playerWasRevived, lifeGreen);
             }
         }
 
@@ -106,7 +95,7 @@ namespace ReviveMod.Source.Common.Players
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
             if (Main.myPlayer == Player.whoAmI) {
-                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new Vector2(), ModContent.ProjectileType<ReviveAura>(), 0, 0, Player.whoAmI);
+                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
 
@@ -129,8 +118,9 @@ namespace ReviveMod.Source.Common.Players
                 LocalTeleport();
 
                 // Client declares teleport
-                if (Main.netMode == NetmodeID.MultiplayerClient)
+                if (Main.netMode == NetmodeID.MultiplayerClient) {
                     SendReviveTeleport();
+                }
             }
         }
     }
