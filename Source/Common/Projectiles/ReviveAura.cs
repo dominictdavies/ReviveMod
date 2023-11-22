@@ -8,14 +8,15 @@ namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private static readonly int timeToRevive = 10*60;
-        private static readonly int progressTimer = 1*60;
-        private static readonly int nameTimer = 1*60;
+        private readonly int timeToRevive = 10*60;
+        private readonly int progressTextInterval = 1*60;
+        private readonly int nameTextInterval = 1*60;
 
         public override void SetDefaults()
         {
             Projectile.width = 128;
             Projectile.height = 128;
+            Projectile.alpha = 128;
             Projectile.timeLeft = timeToRevive;
         }
 
@@ -38,14 +39,14 @@ namespace ReviveMod.Source.Common.Projectiles
 
                     if (Projectile.ai[0]-- == 0) {
                         CombatText.NewText(player.getRect(), CombatText.HealLife, Projectile.timeLeft / 60 + 1, true);
-                        Projectile.ai[0] = progressTimer;
+                        Projectile.ai[0] = progressTextInterval;
                     }
                 }
             }
 
             if (Projectile.ai[1]-- == 0) {
                 CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Main.player[Projectile.owner].name);
-                Projectile.ai[1] = nameTimer;
+                Projectile.ai[1] = nameTextInterval;
             }
 
             Projectile.timeLeft++;
