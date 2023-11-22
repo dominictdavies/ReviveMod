@@ -8,22 +8,21 @@ namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private static readonly float size = 1f;
         private static readonly int timeToRevive = 5*60;
         private static readonly int progressTimer = 1*60;
         private static readonly int nameTimer = 1*60;
 
         public override void SetDefaults()
         {
-            Projectile.width = 64;
-            Projectile.height = 64;
-            Projectile.scale = size;
-            Projectile.light = size;
+            Projectile.width = 128;
+            Projectile.height = 128;
             Projectile.timeLeft = timeToRevive;
         }
 
         public override void AI()
         {
+            Lighting.AddLight(Projectile.Center, 2f, 0f, 2f);
+
             foreach (Player player in Main.player) {
                 if (!player.active || player.dead) {
                     continue;
@@ -38,7 +37,7 @@ namespace ReviveMod.Source.Common.Projectiles
                     Projectile.timeLeft--;
 
                     if (Projectile.ai[0]-- == 0) {
-                        player.HealEffect(Projectile.timeLeft / 60 + 1, false);
+                        CombatText.NewText(player.getRect(), CombatText.HealLife, Projectile.timeLeft / 60 + 1, true);
                         Projectile.ai[0] = progressTimer;
                     }
                 }
