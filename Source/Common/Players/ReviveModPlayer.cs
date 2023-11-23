@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using ReviveMod.Source.Common.Projectiles;
+﻿using ReviveMod.Source.Common.Projectiles;
 using ReviveMod.Source.Common.Systems;
 using Terraria;
 using Terraria.DataStructures;
@@ -10,8 +9,15 @@ namespace ReviveMod.Source.Common.Players
 {
     public class ReviveModPlayer : ModPlayer
     {
+        private static bool revivingEnabled = true;
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
+
+        public static bool ToggleReviving()
+        {
+            revivingEnabled = !revivingEnabled;
+            return revivingEnabled;
+        }
 
         public void Kill()
         {
@@ -51,8 +57,7 @@ namespace ReviveMod.Source.Common.Players
             }
 
             string playerWasRevived = $"{Player.name} was revived!";
-            Color lifeGreen = new(52, 235, 73);
-            Main.NewText(playerWasRevived, lifeGreen);
+            Main.NewText(playerWasRevived, ReviveMod.lifeGreen);
 
             return true;
         }
@@ -95,7 +100,7 @@ namespace ReviveMod.Source.Common.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            if (Main.myPlayer == Player.whoAmI && Main.CurrentFrameFlags.AnyActiveBossNPC) {
+            if (revivingEnabled && Main.myPlayer == Player.whoAmI && Main.CurrentFrameFlags.AnyActiveBossNPC) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
