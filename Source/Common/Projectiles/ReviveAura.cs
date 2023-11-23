@@ -60,7 +60,7 @@ namespace ReviveMod.Source.Common.Projectiles
             }
 
             Player owner = Main.player[Projectile.owner];
-            if (owner.active && owner.dead) {
+            if (owner.active) {
                 owner.GetModPlayer<ReviveModPlayer>().Revive();
             }
         }
