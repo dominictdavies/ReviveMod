@@ -12,6 +12,7 @@ namespace ReviveMod.Source.Common.Players
         private static bool revivingEnabled = true;
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
+        public bool pausedRespawnTimer = false;
 
         public static bool ToggleReviving()
         {
@@ -108,7 +109,7 @@ namespace ReviveMod.Source.Common.Players
 
         public override void UpdateDead()
         {
-            if (ActiveBossAlivePlayer()) {
+            if (ActiveBossAlivePlayer() || pausedRespawnTimer) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
             }
 
