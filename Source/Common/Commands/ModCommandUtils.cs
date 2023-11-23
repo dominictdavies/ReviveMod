@@ -5,7 +5,7 @@ namespace ReviveMod.Source.Common.Commands
 {
     public class ModCommandUtils
     {
-		public static bool TryGetPlayer(string playerName, IEnumerable<Player> allPlayers, out Player player)
+        public static bool TryGetPlayer(string playerName, IEnumerable<Player> allPlayers, out Player player)
         {
             player = null;
 
@@ -19,7 +19,7 @@ namespace ReviveMod.Source.Common.Commands
             return false;
         }
 
-		public static IEnumerable<Player> GetPlayers(ICollection<string> playerNames, IEnumerable<Player> allPlayers, out string errorMessage)
+        public static IEnumerable<Player> GetPlayers(ICollection<string> playerNames, IEnumerable<Player> allPlayers, out string errorMessage)
         {
             errorMessage = null;
 

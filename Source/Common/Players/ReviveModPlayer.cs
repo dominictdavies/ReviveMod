@@ -119,8 +119,7 @@ namespace ReviveMod.Source.Common.Players
         public override void PreUpdate()
         {
             // Teleport revived player to death location
-            if (revived && !Player.dead && Player.position != Player.lastDeathPostion)
-            {
+            if (revived && !Player.dead && Player.position != Player.lastDeathPostion) {
                 LocalTeleport();
 
                 // Client declares teleport

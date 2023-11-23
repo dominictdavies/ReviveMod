@@ -19,11 +19,9 @@ namespace ReviveMod.Source.Common.Systems
 
         private void UpdateAnyAlivePlayer()
         {
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
+            for (int i = 0; i < Main.maxPlayers; i++) {
                 Player player = Main.player[i];
-                if (player.active && !player.dead)
-                {
+                if (player.active && !player.dead) {
                     anyAlivePlayer = true;
                     return;
                 }

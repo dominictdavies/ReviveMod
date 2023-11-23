@@ -29,34 +29,26 @@ namespace ReviveMod.Source.Common.Commands
 
             IEnumerable<Player> playersToRevive;
 
-            if (args.Length > 0)
-            {
+            if (args.Length > 0) {
                 playersToRevive = ModCommandUtils.GetPlayers(args, Main.player, out string errorMessage);
                 if (errorMessage != null) {
                     caller.Reply(errorMessage, Color.Red);
                 }
-            }
-            else
-            {
+            } else {
                 playersToRevive = new Player[] { caller.Player };
             }
 
             List<string> alreadyAlivePlayerNames = new();
 
-            foreach (Player player in playersToRevive)
-            {
-                if (player.dead)
-                {
+            foreach (Player player in playersToRevive) {
+                if (player.dead) {
                     player.GetModPlayer<ReviveModPlayer>().Revive();
-                }
-                else
-                {
+                } else {
                     alreadyAlivePlayerNames.Add(player.name);
                 }
             }
 
-            if (alreadyAlivePlayerNames.Count > 0)
-            {
+            if (alreadyAlivePlayerNames.Count > 0) {
                 string joinedPlayerNames = string.Join(", ", alreadyAlivePlayerNames);
                 caller.Reply($"The following player(s) are already alive: {joinedPlayerNames}.", Color.Red);
             }
