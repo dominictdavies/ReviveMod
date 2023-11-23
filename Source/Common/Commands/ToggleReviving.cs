@@ -1,4 +1,4 @@
-﻿using ReviveMod.Source.Common.Projectiles;
+﻿using ReviveMod.Source.Common.Players;
 using Terraria;
 using Terraria.Chat;
 using Terraria.Localization;
@@ -27,17 +27,16 @@ namespace ReviveMod.Source.Common.Commands
                 throw new UsageException("No arguments were expected.");
             }
 
-            ReviveAura.SetReviveTime(reviveTime);
+            bool revivingEnabled = ReviveModPlayer.ToggleReviving();
 
             if (Main.netMode == NetmodeID.Server) {
                 ModPacket packet = Mod.GetPacket();
-                packet.Write((byte)ReviveMod.MessageType.ChangeReviveTime);
-                packet.Write(reviveTime);
+                packet.Write((byte)ReviveMod.MessageType.ToggleReviving);
                 packet.Send();
 
-                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"Revive time has been changed to {reviveTime} seconds."), ReviveMod.lifeGreen);
+                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"Reviving set to {revivingEnabled}."), ReviveMod.lifeGreen);
             } else {
-                Main.NewText($"Revive time has been changed to {reviveTime} seconds.", ReviveMod.lifeGreen);
+                Main.NewText($"Reviving set to {revivingEnabled}.", ReviveMod.lifeGreen);
             }
         }
     }

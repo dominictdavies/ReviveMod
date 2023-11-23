@@ -18,7 +18,8 @@ namespace ReviveMod.Source
             AlivePlayerCheck,
             RevivePlayer,
             ReviveTeleport,
-            ChangeReviveTime
+            ChangeReviveTime,
+            ToggleReviving
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -63,6 +64,10 @@ namespace ReviveMod.Source
 
                     ReviveAura.SetReviveTime(reviveTime);
 
+                    break;
+
+                case MessageType.ToggleReviving:
+                    ReviveModPlayer.ToggleReviving();
                     break;
 
                 default:
