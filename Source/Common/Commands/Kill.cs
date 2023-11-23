@@ -23,6 +23,10 @@ namespace ReviveMod.Source.Common.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
+            if (caller.Player.whoAmI != 0) {
+                throw new UsageException("Only the host may use this command.");
+            }
+
             IEnumerable<Player> playersToKill;
 
             if (args.Length > 0)
