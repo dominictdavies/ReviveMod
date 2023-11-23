@@ -19,7 +19,7 @@ namespace ReviveMod.Source.Common.Commands
             => "/reviveTime seconds";
 
         public override string Description
-            => "Alters the time it takes to revives players";
+            => "Alters the time it takes to revives players.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
