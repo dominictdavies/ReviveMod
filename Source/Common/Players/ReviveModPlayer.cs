@@ -10,16 +10,13 @@ namespace ReviveMod.Source.Common.Players
 {
     public class ReviveModPlayer : ModPlayer
     {
-        private static bool revivingEnabled = true;
+        private static bool revive = true;
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
         public bool pausedRespawnTimer = false;
 
-        public static bool ToggleReviving()
-        {
-            revivingEnabled = !revivingEnabled;
-            return revivingEnabled;
-        }
+        public static void SetRevive(bool state)
+            => revive = state;
 
         public void Kill()
         {
@@ -103,14 +100,14 @@ namespace ReviveMod.Source.Common.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            if (revivingEnabled && Main.myPlayer == Player.whoAmI) {
+            if (Main.myPlayer == Player.whoAmI && revive) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
 
         public override void UpdateDead()
         {
-            if ((ActiveBossAlivePlayer() || pausedRespawnTimer) && revivingEnabled) {
+            if ((ActiveBossAlivePlayer() || pausedRespawnTimer) && revive) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
             }
 
