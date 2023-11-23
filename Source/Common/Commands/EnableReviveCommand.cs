@@ -7,19 +7,19 @@ using Terraria.ModLoader;
 
 namespace ReviveMod.Source.Common.Commands
 {
-    public class ToggleRevivingCommand : ModCommand
+    public class EnableReviveCommand : ModCommand
     {
         public override CommandType Type
             => CommandType.World;
 
         public override string Command
-            => "toggleReviving";
+            => "enableRevive";
 
         public override string Usage
-            => "/toggleReviving";
+            => "/enableRevive";
 
         public override string Description
-            => "Toggles whether or not revive auras should appear at all.";
+            => "Enables this mod.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
@@ -31,16 +31,17 @@ namespace ReviveMod.Source.Common.Commands
                 throw new UsageException("No arguments were expected.");
             }
 
-            bool revivingEnabled = ReviveModPlayer.ToggleReviving();
+            ReviveModPlayer.SetRevive(true);
 
             if (Main.netMode == NetmodeID.Server) {
                 ModPacket packet = Mod.GetPacket();
-                packet.Write((byte)ReviveMod.MessageType.ToggleReviving);
+                packet.Write((byte)ReviveMod.MessageType.SetRevive);
+                packet.Write(true);
                 packet.Send();
 
-                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"Reviving set to {revivingEnabled}."), ReviveMod.lifeGreen);
+                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"Revive mod enabled."), ReviveMod.lifeGreen);
             } else {
-                Main.NewText($"Reviving set to {revivingEnabled}.", ReviveMod.lifeGreen);
+                Main.NewText($"Revive mod enabled.", ReviveMod.lifeGreen);
             }
         }
     }

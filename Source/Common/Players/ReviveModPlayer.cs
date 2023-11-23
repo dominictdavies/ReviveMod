@@ -1,4 +1,5 @@
-﻿using ReviveMod.Source.Common.Projectiles;
+﻿using Microsoft.Xna.Framework;
+using ReviveMod.Source.Common.Projectiles;
 using ReviveMod.Source.Common.Systems;
 using Terraria;
 using Terraria.DataStructures;
@@ -9,15 +10,13 @@ namespace ReviveMod.Source.Common.Players
 {
     public class ReviveModPlayer : ModPlayer
     {
-        private static bool revivingEnabled = true;
+        private static bool revive = true;
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
+        public bool pausedRespawnTimer = false;
 
-        public static bool ToggleReviving()
-        {
-            revivingEnabled = !revivingEnabled;
-            return revivingEnabled;
-        }
+        public static void SetRevive(bool state)
+            => revive = state;
 
         public void Kill()
         {
@@ -66,7 +65,7 @@ namespace ReviveMod.Source.Common.Players
         public void LocalTeleport()
         {
             // Move player to death position
-            Player.Center = Player.lastDeathPostion;
+            Player.Teleport(Player.lastDeathPostion - new Vector2(Player.width / 2, Player.height / 2), TeleportationStyleID.DebugTeleport);
 
             // Reset flag
             revived = false;
@@ -101,14 +100,14 @@ namespace ReviveMod.Source.Common.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            if (revivingEnabled && Main.myPlayer == Player.whoAmI) {
+            if (Main.myPlayer == Player.whoAmI && revive) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
 
         public override void UpdateDead()
         {
-            if (ActiveBossAlivePlayer()) {
+            if ((ActiveBossAlivePlayer() || pausedRespawnTimer) && revive) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
             }
 

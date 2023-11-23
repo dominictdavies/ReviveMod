@@ -36,8 +36,8 @@ namespace ReviveMod.Source.Common.Projectiles
                 }
 
                 if (player.whoAmI == Projectile.owner) {
-                    Projectile.timeLeft = -1;
-                    break;
+                    Projectile.timeLeft = 0;
+                    return;
                 }
 
                 if (Projectile.Hitbox.Contains(player.Center.ToPoint())) {
