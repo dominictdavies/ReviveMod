@@ -30,8 +30,9 @@ namespace ReviveMod.Source.Common.Players
             Player.KillMe(playerWasKilled, playerLife, noDirection, noPvp);
 
             // Server syncs up clients through NetMessage
-            if (Main.netMode == NetmodeID.Server)
+            if (Main.netMode == NetmodeID.Server) {
                 NetMessage.SendPlayerDeath(Player.whoAmI, playerWasKilled, playerLife, noDirection, noPvp);
+            }
         }
 
         public bool Revive(bool verbose = true, bool broadcast = true)
@@ -107,8 +108,9 @@ namespace ReviveMod.Source.Common.Players
 
         public override void UpdateDead()
         {
-            if (ActiveBossAlivePlayer())
+            if (ActiveBossAlivePlayer()) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
+            }
 
             timeSpentDead++;
         }

@@ -39,12 +39,14 @@ namespace ReviveMod.Source.Common.Systems
         public override void PostUpdateWorld()
         {
             // Server declares anyAlivePlayer
-            if (Main.netMode != NetmodeID.Server)
+            if (Main.netMode != NetmodeID.Server) {
                 return;
+            }
 
             // Send only when anyAlivePlayer changes
-            if (anyAlivePlayer != oldAnyAlivePlayer)
+            if (anyAlivePlayer != oldAnyAlivePlayer) {
                 SendAlivePlayerCheck();
+            }
 
             oldAnyAlivePlayer = anyAlivePlayer;
         }
