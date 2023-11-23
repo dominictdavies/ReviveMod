@@ -8,16 +8,19 @@ namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private readonly int timeToRevive = 10*60;
+        private static int reviveTime = 10*60;
         private readonly int progressTextInterval = 1*60;
         private readonly int nameTextInterval = 1*60;
+
+        public static void SetReviveTime(int reviveTimeSecs)
+            => reviveTime = reviveTimeSecs * 60;
 
         public override void SetDefaults()
         {
             Projectile.width = 128;
             Projectile.height = 128;
             Projectile.alpha = 128;
-            Projectile.timeLeft = timeToRevive;
+            Projectile.timeLeft = reviveTime;
         }
 
         public override void AI()

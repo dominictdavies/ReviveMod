@@ -1,4 +1,6 @@
+using Microsoft.Xna.Framework;
 using ReviveMod.Source.Common.Players;
+using ReviveMod.Source.Common.Projectiles;
 using ReviveMod.Source.Common.Systems;
 using System.IO;
 using Terraria;
@@ -9,11 +11,14 @@ namespace ReviveMod.Source
 {
     public class ReviveMod : Mod
     {
+        public static readonly Color lifeGreen = new(52, 235, 73);
+
         internal enum MessageType : byte
         {
             AlivePlayerCheck,
             RevivePlayer,
-            ReviveTeleport
+            ReviveTeleport,
+            ChangeReviveTime
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -50,6 +55,13 @@ namespace ReviveMod.Source
                     if (Main.netMode == NetmodeID.Server) {
                         teleportingModPlayer.SendReviveTeleport(ignoreClient: whoAmI);
                     }
+
+                    break;
+
+                case MessageType.ChangeReviveTime:
+                    byte reviveTime = reader.ReadByte();
+
+                    ReviveAura.SetReviveTime(reviveTime);
 
                     break;
 

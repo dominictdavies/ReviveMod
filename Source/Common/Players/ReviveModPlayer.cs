@@ -51,8 +51,7 @@ namespace ReviveMod.Source.Common.Players
             }
 
             string playerWasRevived = $"{Player.name} was revived!";
-            Color lifeGreen = new(52, 235, 73);
-            Main.NewText(playerWasRevived, lifeGreen);
+            Main.NewText(playerWasRevived, ReviveMod.lifeGreen);
 
             return true;
         }

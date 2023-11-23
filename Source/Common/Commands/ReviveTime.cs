@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using ReviveMod.Source.Common.Players;
-using System.Collections.Generic;
+﻿using ReviveMod.Source.Common.Projectiles;
 using Terraria;
+using Terraria.Chat;
+using Terraria.Localization;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ReviveMod.Source.Common.Commands
@@ -22,30 +23,22 @@ namespace ReviveMod.Source.Common.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            IEnumerable<Player> playersToRevive;
+            if (args.Length != 1) {
+                throw new UsageException("Exactly one argument was expected.");
+            }
 
-            if (args.Length > 0) {
-                playersToRevive = ModCommandUtils.GetPlayers(args, Main.player, out string errorMessage);
-                if (errorMessage != null) {
-                    caller.Reply(errorMessage, Color.Red);
-                }
+            byte reviveTime = byte.Parse(args[0]);
+            ReviveAura.SetReviveTime(reviveTime);
+
+            if (Main.netMode == NetmodeID.Server) {
+                ModPacket packet = Mod.GetPacket();
+                packet.Write((byte)ReviveMod.MessageType.ChangeReviveTime);
+                packet.Write(reviveTime);
+                packet.Send();
+
+                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral($"Revive time has been changed to {reviveTime} seconds."), ReviveMod.lifeGreen);
             } else {
-                playersToRevive = new Player[] { caller.Player };
-            }
-
-            List<string> alreadyAlivePlayerNames = new();
-
-            foreach (Player player in playersToRevive) {
-                if (player.dead) {
-                    player.GetModPlayer<ReviveModPlayer>().Revive();
-                } else {
-                    alreadyAlivePlayerNames.Add(player.name);
-                }
-            }
-
-            if (alreadyAlivePlayerNames.Count > 0) {
-                string joinedPlayerNames = string.Join(", ", alreadyAlivePlayerNames);
-                caller.Reply($"The following player(s) are already alive: {joinedPlayerNames}.", Color.Red);
+                Main.NewText($"Revive time has been changed to {reviveTime} seconds.", ReviveMod.lifeGreen);
             }
         }
     }
