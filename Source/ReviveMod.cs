@@ -33,7 +33,7 @@ namespace ReviveMod.Source
                     byte revivedWhoAmI = reader.ReadByte();
 
                     ReviveModPlayer revivedModPlayer = Main.player[revivedWhoAmI].GetModPlayer<ReviveModPlayer>();
-                    revivedModPlayer.LocalRevive();
+                    revivedModPlayer.Revive(broadcast: false);
 
                     if (Main.netMode == NetmodeID.Server) {
                         revivedModPlayer.SendRevivePlayer(ignoreClient: whoAmI);

@@ -28,21 +28,33 @@ namespace ReviveMod.Source.Common.Players
                 NetMessage.SendPlayerDeath(Player.whoAmI, playerWasKilled, playerLife, noDirection, noPvp);
         }
 
-        public void LocalRevive(bool verbose = true)
+        public bool Revive(bool verbose = true, bool broadcast = true)
         {
+            // Revive failed
+            if (!Player.dead || revived == true) {
+                return false;
+            }
+
             // Player will respawn next tick
             Player.respawnTimer = 0;
 
             // Makes player teleport to death location
             revived = true;
 
+            if (broadcast && Main.netMode != NetmodeID.SinglePlayer) {
+                SendRevivePlayer();
+            }
+
+            // Revive succeeded
             if (!verbose) {
-                return;
+                return true;
             }
 
             string playerWasRevived = $"{Player.name} was revived!";
             Color lifeGreen = new(52, 235, 73);
             Main.NewText(playerWasRevived, lifeGreen);
+
+            return true;
         }
 
         public void LocalTeleport()
@@ -68,17 +80,6 @@ namespace ReviveMod.Source.Common.Players
             packet.Write((byte)ReviveMod.MessageType.ReviveTeleport);
             packet.Write((byte)Player.whoAmI);
             packet.Send(toClient, ignoreClient);
-        }
-
-        public void Revive()
-        {
-            // Revive the player
-            LocalRevive();
-
-            // Sync up other clients
-            if (Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.MultiplayerClient) {
-                SendRevivePlayer();
-            }
         }
 
         private bool ActiveBossAlivePlayer()
