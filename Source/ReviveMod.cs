@@ -26,8 +26,7 @@ namespace ReviveMod.Source
         {
             MessageType type = (MessageType)reader.ReadByte();
 
-            switch (type)
-            {
+            switch (type) {
                 case MessageType.AlivePlayerCheck:
                     bool anyAlivePlayer = reader.ReadBoolean();
 
