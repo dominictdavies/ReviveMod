@@ -1,4 +1,5 @@
-﻿using ReviveMod.Source.Common.Projectiles;
+﻿using Microsoft.Xna.Framework;
+using ReviveMod.Source.Common.Projectiles;
 using ReviveMod.Source.Common.Systems;
 using Terraria;
 using Terraria.DataStructures;
@@ -67,7 +68,7 @@ namespace ReviveMod.Source.Common.Players
         public void LocalTeleport()
         {
             // Move player to death position
-            Player.Center = Player.lastDeathPostion;
+            Player.Teleport(Player.lastDeathPostion - new Vector2(Player.width / 2, Player.height / 2), TeleportationStyleID.DebugTeleport);
 
             // Reset flag
             revived = false;
