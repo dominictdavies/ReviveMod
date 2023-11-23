@@ -109,7 +109,7 @@ namespace ReviveMod.Source.Common.Players
 
         public override void UpdateDead()
         {
-            if (ActiveBossAlivePlayer() || pausedRespawnTimer) {
+            if ((ActiveBossAlivePlayer() || pausedRespawnTimer) && revivingEnabled) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
             }
 
