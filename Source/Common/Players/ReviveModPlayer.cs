@@ -102,7 +102,7 @@ namespace ReviveMod.Source.Common.Players
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
             if (revivingEnabled && Main.myPlayer == Player.whoAmI) {
-                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
 

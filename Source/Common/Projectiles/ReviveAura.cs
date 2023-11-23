@@ -20,6 +20,9 @@ namespace ReviveMod.Source.Common.Projectiles
             Projectile.width = 128;
             Projectile.height = 128;
             Projectile.alpha = 128;
+            Projectile.aiStyle = 0;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
             Projectile.timeLeft = reviveTime;
         }
 
