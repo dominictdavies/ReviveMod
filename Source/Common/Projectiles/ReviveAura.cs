@@ -11,6 +11,8 @@ namespace ReviveMod.Source.Common.Projectiles
         private static int reviveTime = 10 * 60;
         private readonly int progressTextInterval = 1 * 60;
         private readonly int nameTextInterval = 1 * 60;
+        private readonly float acceleration = 0.3f;
+        private readonly float maxVelocity = 7f;
 
         public static void SetReviveTime(int reviveTimeSecs)
             => reviveTime = reviveTimeSecs * 60;
@@ -58,22 +60,28 @@ namespace ReviveMod.Source.Common.Projectiles
             }
 
             // Aura movement
-            float acceleration = 0.3f;
-            float maxVelocity = 7f;
             Player owner = Main.player[Projectile.owner];
-            if (owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
-                Projectile.velocity.X -= acceleration;
+            if (Main.myPlayer == Projectile.owner) {
+                if (owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
+                    Projectile.velocity.X -= acceleration;
+                }
+                if (owner.controlRight && Projectile.velocity.X < maxVelocity) {
+                    Projectile.velocity.X += acceleration;
+                }
+                if (owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
+                    Projectile.velocity.Y -= acceleration;
+                }
+                if (owner.controlDown && Projectile.velocity.Y < maxVelocity) {
+                    Projectile.velocity.Y += acceleration;
+                }
+
+                if (Main.netMode == NetmodeID.MultiplayerClient) {
+                    NetMessage.SendData(MessageID.SyncProjectile, number: Projectile.whoAmI);
+                }
             }
-            if (owner.controlRight && Projectile.velocity.X < maxVelocity) {
-                Projectile.velocity.X += acceleration;
-            }
-            if (owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
-                Projectile.velocity.Y -= acceleration;
-            }
-            if (owner.controlDown && Projectile.velocity.Y < maxVelocity) {
-                Projectile.velocity.Y += acceleration;
-            }
+
             owner.Center = Projectile.Center;
+            owner.lastDeathPostion = Projectile.Center;
 
             // Keeps aura alive
             Projectile.timeLeft++;
