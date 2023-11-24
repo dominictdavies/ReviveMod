@@ -11,8 +11,8 @@ namespace ReviveMod.Source.Common.Projectiles
         private static int reviveTime = 10 * 60;
         private readonly int progressTextInterval = 1 * 60;
         private readonly int nameTextInterval = 1 * 60;
-        private readonly float acceleration = 0.3f;
-        private readonly float maxVelocity = 7f;
+        private readonly float acceleration = 0.2f;
+        private readonly float maxVelocity = 2f;
 
         public static void SetReviveTime(int reviveTimeSecs)
             => reviveTime = reviveTimeSecs * 60;
@@ -59,6 +59,9 @@ namespace ReviveMod.Source.Common.Projectiles
                 Projectile.ai[1] = nameTextInterval;
             }
 
+            // Keeps aura alive
+            Projectile.timeLeft++;
+
             // Aura movement
             Player owner = Main.player[Projectile.owner];
             if (Main.myPlayer == Projectile.owner) {
@@ -74,7 +77,6 @@ namespace ReviveMod.Source.Common.Projectiles
                 if (owner.controlDown && Projectile.velocity.Y < maxVelocity) {
                     Projectile.velocity.Y += acceleration;
                 }
-
                 if (Main.netMode == NetmodeID.MultiplayerClient) {
                     NetMessage.SendData(MessageID.SyncProjectile, number: Projectile.whoAmI);
                 }
@@ -82,9 +84,6 @@ namespace ReviveMod.Source.Common.Projectiles
 
             owner.Center = Projectile.Center;
             owner.lastDeathPostion = Projectile.Center;
-
-            // Keeps aura alive
-            Projectile.timeLeft++;
         }
 
         public override void OnKill(int timeLeft)
