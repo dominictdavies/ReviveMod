@@ -21,6 +21,7 @@ namespace ReviveMod.Source.Common.Commands
         {
             ReviveModPlayer callerModPlayer = caller.Player.GetModPlayer<ReviveModPlayer>();
             callerModPlayer.pausedRespawnTimer = !callerModPlayer.pausedRespawnTimer;
+            caller.Reply(callerModPlayer.pausedRespawnTimer ? "Timer is now paused." : "Timer is now unpaused.", ReviveMod.lifeGreen);
         }
     }
 }

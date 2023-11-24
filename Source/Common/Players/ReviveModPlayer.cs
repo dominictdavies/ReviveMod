@@ -107,7 +107,8 @@ namespace ReviveMod.Source.Common.Players
 
         public override void UpdateDead()
         {
-            if ((ActiveBossAlivePlayer() || pausedRespawnTimer) && revive) {
+            // % 60 stops ringing from Calamity
+            if ((ActiveBossAlivePlayer() || (pausedRespawnTimer && Player.respawnTimer % 60 != 0)) && revive) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
             }
 
