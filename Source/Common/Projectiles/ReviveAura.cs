@@ -30,6 +30,7 @@ namespace ReviveMod.Source.Common.Projectiles
         {
             Lighting.AddLight(Projectile.Center, 2f, 0f, 2f);
 
+            // Aura removal and timer decreasing
             foreach (Player player in Main.player) {
                 if (!player.active || player.dead) {
                     continue;
@@ -50,11 +51,31 @@ namespace ReviveMod.Source.Common.Projectiles
                 }
             }
 
+            // Player name text
             if (Projectile.ai[1]-- == 0) {
                 CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Main.player[Projectile.owner].name);
                 Projectile.ai[1] = nameTextInterval;
             }
 
+            // Aura movement
+            float acceleration = 0.3f;
+            float maxVelocity = 7f;
+            Player owner = Main.player[Projectile.owner];
+            if (owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
+                Projectile.velocity.X -= acceleration;
+            }
+            if (owner.controlRight && Projectile.velocity.X < maxVelocity) {
+                Projectile.velocity.X += acceleration;
+            }
+            if (owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
+                Projectile.velocity.Y -= acceleration;
+            }
+            if (owner.controlDown && Projectile.velocity.Y < maxVelocity) {
+                Projectile.velocity.Y += acceleration;
+            }
+            owner.Center = Projectile.Center;
+
+            // Keeps aura alive
             Projectile.timeLeft++;
         }
 
