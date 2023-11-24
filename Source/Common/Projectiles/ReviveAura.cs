@@ -11,6 +11,8 @@ namespace ReviveMod.Source.Common.Projectiles
         private static int reviveTime = 10 * 60;
         private readonly int progressTextInterval = 1 * 60;
         private readonly int nameTextInterval = 1 * 60;
+        private readonly float acceleration = 0.2f;
+        private readonly float maxVelocity = 2f;
 
         public static void SetReviveTime(int reviveTimeSecs)
             => reviveTime = reviveTimeSecs * 60;
@@ -30,6 +32,7 @@ namespace ReviveMod.Source.Common.Projectiles
         {
             Lighting.AddLight(Projectile.Center, 2f, 0f, 2f);
 
+            // Aura removal and timer decreasing
             foreach (Player player in Main.player) {
                 if (!player.active || player.dead) {
                     continue;
@@ -50,12 +53,37 @@ namespace ReviveMod.Source.Common.Projectiles
                 }
             }
 
+            // Player name text
             if (Projectile.ai[1]-- == 0) {
                 CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Main.player[Projectile.owner].name);
                 Projectile.ai[1] = nameTextInterval;
             }
 
+            // Keeps aura alive
             Projectile.timeLeft++;
+
+            // Aura movement
+            Player owner = Main.player[Projectile.owner];
+            if (Main.myPlayer == Projectile.owner) {
+                if (owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
+                    Projectile.velocity.X -= acceleration;
+                }
+                if (owner.controlRight && Projectile.velocity.X < maxVelocity) {
+                    Projectile.velocity.X += acceleration;
+                }
+                if (owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
+                    Projectile.velocity.Y -= acceleration;
+                }
+                if (owner.controlDown && Projectile.velocity.Y < maxVelocity) {
+                    Projectile.velocity.Y += acceleration;
+                }
+                if (Main.netMode == NetmodeID.MultiplayerClient) {
+                    NetMessage.SendData(MessageID.SyncProjectile, number: Projectile.whoAmI);
+                }
+            }
+
+            owner.Center = Projectile.Center;
+            owner.lastDeathPostion = Projectile.Center;
         }
 
         public override void OnKill(int timeLeft)
