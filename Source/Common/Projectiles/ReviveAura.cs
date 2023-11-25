@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ReviveMod.Source.Common.Players;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -17,15 +19,56 @@ namespace ReviveMod.Source.Common.Projectiles
         public static void SetReviveTime(int reviveTimeSecs)
             => reviveTime = reviveTimeSecs * 60;
 
+        private Color GetReviveColor()
+        {
+            byte alpha = 128;
+            float progress = 1 - (float)Projectile.timeLeft / reviveTime;
+
+            byte red;
+            byte green;
+            byte blue;
+
+            if (progress < 1.0 / 3.0) {
+                red = 255;
+                green = 0;
+                blue = (byte)(255 - progress * 3 * 255);
+            } else if (progress < 2.0 / 3.0) {
+                red = 255;
+                green = (byte)((progress - 1.0 / 3.0) * 3 * 255);
+                blue = 0;
+            } else {
+                red = (byte)(255 - (progress - 2.0 / 3.0) * 3 * 255);
+                green = 255;
+                blue = 0;
+            }
+
+            return new(red, green, blue, alpha);
+        }
+
         public override void SetDefaults()
         {
             Projectile.width = 128;
             Projectile.height = 128;
-            Projectile.alpha = 128;
+            Projectile.alpha = 255;
             Projectile.aiStyle = 0;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = reviveTime;
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            // R255 G000 B255 Purple
+            // Decrease blue
+            // R255 G000 B000 Red
+            // Increase green
+            // R255 G255 B000 Yellow
+            // Decrease red
+            // R000 G255 B000 Green
+
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Color color = GetReviveColor();
+            Main.EntitySpriteDraw(texture, Projectile.position - Main.screenPosition, texture.Bounds, color, 0f, Vector2.Zero, Projectile.scale, SpriteEffects.None);
         }
 
         public override void AI()
