@@ -6,3 +6,18 @@ As a way to balance respawn chaining when fighting bosses, this mod disables reg
 
 Commands are available to make it easier or harder to revive your teammates.
 Use /p to pause your respawn timer to give others more time to revive you!
+
+= Changelog =
+
+v0.1.1.2:
+- Auras now shift through the colour spectrum as a player's revival progresses
+
+v0.1.1.1:
+- Fixed an issue with the Calamity mod loudly repeating a respawn ding when respawn timer is paused
+
+v0.1.1:
+- Fixed major bug causing auras to dissappear
+- Players can now move their auras around
+
+v0.1:
+- Initial release
