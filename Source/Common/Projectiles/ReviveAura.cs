@@ -10,11 +10,12 @@ namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private static int reviveTime = 10 * 60;
-        private readonly int progressTextInterval = 1 * 60;
-        private readonly int nameTextInterval = 1 * 60;
         private readonly float acceleration = 0.2f;
         private readonly float maxVelocity = 2f;
+
+        private static int reviveTime = 10 * 60;
+        private int progressTextTimer;
+        private int nameTextTimer;
 
         public static void SetReviveTime(int reviveTimeSecs)
             => reviveTime = reviveTimeSecs * 60;
@@ -53,6 +54,9 @@ namespace ReviveMod.Source.Common.Projectiles
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = reviveTime;
+
+            progressTextTimer = 0;
+            nameTextTimer = 0;
         }
 
         public override void PostDraw(Color lightColor)
@@ -78,20 +82,20 @@ namespace ReviveMod.Source.Common.Projectiles
                     return;
                 }
 
-                if (Projectile.Hitbox.Contains(player.Center.ToPoint())) {
+                if (Projectile.Hitbox.Intersects(player.getRect())) {
                     Projectile.timeLeft--;
 
-                    if (Projectile.ai[0]-- == 0) {
+                    if (progressTextTimer-- == 0) {
                         CombatText.NewText(player.getRect(), CombatText.HealLife, Projectile.timeLeft / 60 + 1, true);
-                        Projectile.ai[0] = progressTextInterval;
+                        progressTextTimer = 1 * 60;
                     }
                 }
             }
 
             // Player name text
-            if (Projectile.ai[1]-- == 0) {
+            if (nameTextTimer-- == 0) {
                 CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Main.player[Projectile.owner].name);
-                Projectile.ai[1] = nameTextInterval;
+                nameTextTimer = 1 * 60;
             }
 
             // Keeps aura alive
