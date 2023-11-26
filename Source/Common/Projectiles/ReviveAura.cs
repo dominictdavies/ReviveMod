@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ReviveMod.Source.Common.Players;
+using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -8,29 +11,66 @@ namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private static int reviveTime = 10 * 60;
-        private readonly int progressTextInterval = 1 * 60;
-        private readonly int nameTextInterval = 1 * 60;
         private readonly float acceleration = 0.2f;
         private readonly float maxVelocity = 2f;
 
+        private static int reviveTime = 10 * 60;
+        private int progressTextTimer;
+        private int nameTextTimer;
+
         public static void SetReviveTime(int reviveTimeSecs)
             => reviveTime = reviveTimeSecs * 60;
+
+        private Vector3 GetAuraColor()
+        {
+            float progress = 1f - (float)Projectile.timeLeft / reviveTime;
+
+            float red;
+            float green;
+            float blue;
+
+            if (progress < 1f / 3f) {
+                red = 1f;
+                green = 0f;
+                blue = 1f - progress * 3f;
+            } else if (progress < 2f / 3f) {
+                red = 1f;
+                green = (progress - 1f / 3f) * 3f;
+                blue = 0f;
+            } else {
+                red = 1f - (progress - 2f / 3f) * 3f;
+                green = 1f;
+                blue = 0f;
+            }
+
+            return new(red, green, blue);
+        }
 
         public override void SetDefaults()
         {
             Projectile.width = 128;
             Projectile.height = 128;
-            Projectile.alpha = 128;
+            Projectile.alpha = 255;
             Projectile.aiStyle = 0;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = reviveTime;
+
+            progressTextTimer = 0;
+            nameTextTimer = 0;
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Vector3 rgb = GetAuraColor() * 255;
+            Color color = new((int)rgb.X, (int)rgb.Y, (int)rgb.Z, 128);
+            Main.EntitySpriteDraw(texture, Projectile.position - Main.screenPosition, texture.Bounds, color, 0f, Vector2.Zero, Projectile.scale, SpriteEffects.None);
         }
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, 2f, 0f, 2f);
+            Lighting.AddLight(Projectile.Center, GetAuraColor());
 
             // Aura removal and timer decreasing
             foreach (Player player in Main.player) {
@@ -43,20 +83,20 @@ namespace ReviveMod.Source.Common.Projectiles
                     return;
                 }
 
-                if (Projectile.Hitbox.Contains(player.Center.ToPoint())) {
+                if (Projectile.Hitbox.Intersects(player.getRect())) {
                     Projectile.timeLeft--;
 
-                    if (Projectile.ai[0]-- == 0) {
+                    if (progressTextTimer-- == 0) {
                         CombatText.NewText(player.getRect(), CombatText.HealLife, Projectile.timeLeft / 60 + 1, true);
-                        Projectile.ai[0] = progressTextInterval;
+                        progressTextTimer = 1 * 60;
                     }
                 }
             }
 
             // Player name text
-            if (Projectile.ai[1]-- == 0) {
+            if (nameTextTimer-- == 0) {
                 CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Main.player[Projectile.owner].name);
-                Projectile.ai[1] = nameTextInterval;
+                nameTextTimer = 1 * 60;
             }
 
             // Keeps aura alive
@@ -88,12 +128,24 @@ namespace ReviveMod.Source.Common.Projectiles
 
         public override void OnKill(int timeLeft)
         {
+            Player owner = Main.player[Projectile.owner];
+            for (int i = 0; i < 50; i++) {
+                double speed = 2d;
+                double speedX = Main.rand.NextDouble() * speed * 2 - speed;
+                double speedY = Math.Sqrt(speed * speed - speedX * speedX);
+
+                if (Main.rand.NextBool()) {
+                    speedY *= -1;
+                }
+
+                Dust.NewDust(owner.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
+            }
+
             // Only other clients may revive owner
             if (Main.netMode == NetmodeID.Server || Main.myPlayer == Projectile.owner) {
                 return;
             }
 
-            Player owner = Main.player[Projectile.owner];
             if (owner.active) {
                 owner.GetModPlayer<ReviveModPlayer>().Revive();
             }
