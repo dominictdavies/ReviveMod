@@ -19,30 +19,29 @@ namespace ReviveMod.Source.Common.Projectiles
         public static void SetReviveTime(int reviveTimeSecs)
             => reviveTime = reviveTimeSecs * 60;
 
-        private Color GetReviveColor()
+        private Vector3 GetAuraColor()
         {
-            byte alpha = 128;
-            float progress = 1 - (float)Projectile.timeLeft / reviveTime;
+            float progress = 1f - (float)Projectile.timeLeft / reviveTime;
 
-            byte red;
-            byte green;
-            byte blue;
+            float red;
+            float green;
+            float blue;
 
-            if (progress < 1.0 / 3.0) {
-                red = 255;
-                green = 0;
-                blue = (byte)(255 - progress * 3 * 255);
-            } else if (progress < 2.0 / 3.0) {
-                red = 255;
-                green = (byte)((progress - 1.0 / 3.0) * 3 * 255);
-                blue = 0;
+            if (progress < 1f / 3f) {
+                red = 1f;
+                green = 0f;
+                blue = 1f - progress * 3f;
+            } else if (progress < 2f / 3f) {
+                red = 1f;
+                green = (progress - 1f / 3f) * 3f;
+                blue = 0f;
             } else {
-                red = (byte)(255 - (progress - 2.0 / 3.0) * 3 * 255);
-                green = 255;
-                blue = 0;
+                red = 1f - (progress - 2f / 3f) * 3f;
+                green = 1f;
+                blue = 0f;
             }
 
-            return new(red, green, blue, alpha);
+            return new(red, green, blue);
         }
 
         public override void SetDefaults()
@@ -58,22 +57,15 @@ namespace ReviveMod.Source.Common.Projectiles
 
         public override void PostDraw(Color lightColor)
         {
-            // R255 G000 B255 Purple
-            // Decrease blue
-            // R255 G000 B000 Red
-            // Increase green
-            // R255 G255 B000 Yellow
-            // Decrease red
-            // R000 G255 B000 Green
-
             Texture2D texture = TextureAssets.Projectile[Type].Value;
-            Color color = GetReviveColor();
+            Vector3 rgb = GetAuraColor() * 255;
+            Color color = new((int)rgb.X, (int)rgb.Y, (int)rgb.Z, 128);
             Main.EntitySpriteDraw(texture, Projectile.position - Main.screenPosition, texture.Bounds, color, 0f, Vector2.Zero, Projectile.scale, SpriteEffects.None);
         }
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, 2f, 0f, 2f);
+            Lighting.AddLight(Projectile.Center, GetAuraColor());
 
             // Aura removal and timer decreasing
             foreach (Player player in Main.player) {
