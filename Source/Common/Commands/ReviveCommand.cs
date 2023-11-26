@@ -19,7 +19,7 @@ namespace ReviveMod.Source.Common.Commands
             "\n Providing no args will revive yourself.";
 
         public override string Description
-            => "Revives players for debug purposes";
+            => "Revives players for debug purposes.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
