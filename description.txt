@@ -9,6 +9,12 @@ Use /p to pause your respawn timer to give others more time to revive you!
 
 = Changelog =
 
+v0.1.1.4:
+- Made light colour match sprite of aura
+- Fixed revive numbers appearing multiple times
+- Added respawn dust effect
+- New icon.png
+
 v0.1.1.3:
 - Fixed resolution of icon.png
 
