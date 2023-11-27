@@ -15,6 +15,7 @@ namespace ReviveMod.Source.Common.Projectiles
         private readonly float maxVelocity = 2f;
 
         private static int reviveTime = 10 * 60;
+        private int reviveTimeMax;
         private int progressTextTimer;
         private int nameTextTimer;
 
@@ -23,7 +24,7 @@ namespace ReviveMod.Source.Common.Projectiles
 
         private Vector3 GetAuraColor()
         {
-            float progress = 1f - (float)Projectile.timeLeft / reviveTime;
+            float progress = 1f - (float)Projectile.timeLeft / reviveTimeMax;
 
             float red;
             float green;
@@ -48,16 +49,17 @@ namespace ReviveMod.Source.Common.Projectiles
 
         public override void SetDefaults()
         {
+            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTime : reviveTime / 2;
+            progressTextTimer = 0;
+            nameTextTimer = 0;
+
             Projectile.width = 128;
             Projectile.height = 128;
             Projectile.alpha = 255;
             Projectile.aiStyle = 0;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = reviveTime;
-
-            progressTextTimer = 0;
-            nameTextTimer = 0;
+            Projectile.timeLeft = reviveTimeMax;
         }
 
         public override void PostDraw(Color lightColor)
