@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using ReviveMod.Source.Common.Projectiles;
 using ReviveMod.Source.Common.Systems;
+using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -66,6 +67,17 @@ namespace ReviveMod.Source.Common.Players
         {
             // Move player to death position
             Player.Teleport(Player.lastDeathPostion - new Vector2(Player.width / 2, Player.height / 2), TeleportationStyleID.DebugTeleport);
+            for (int i = 0; i < 50; i++) {
+                double speed = 2d;
+                double speedX = Main.rand.NextDouble() * speed * 2 - speed;
+                double speedY = Math.Sqrt(speed * speed - speedX * speedX);
+
+                if (Main.rand.NextBool()) {
+                    speedY *= -1;
+                }
+
+                Dust.NewDust(Player.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
+            }
 
             // Reset flag
             revived = false;

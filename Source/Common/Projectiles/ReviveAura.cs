@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReviveMod.Source.Common.Players;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -130,24 +129,12 @@ namespace ReviveMod.Source.Common.Projectiles
 
         public override void OnKill(int timeLeft)
         {
-            Player owner = Main.player[Projectile.owner];
-            for (int i = 0; i < 50; i++) {
-                double speed = 2d;
-                double speedX = Main.rand.NextDouble() * speed * 2 - speed;
-                double speedY = Math.Sqrt(speed * speed - speedX * speedX);
-
-                if (Main.rand.NextBool()) {
-                    speedY *= -1;
-                }
-
-                Dust.NewDust(owner.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
-            }
-
             // Only other clients may revive owner
             if (Main.netMode == NetmodeID.Server || Main.myPlayer == Projectile.owner) {
                 return;
             }
 
+            Player owner = Main.player[Projectile.owner];
             if (owner.active) {
                 owner.GetModPlayer<ReviveModPlayer>().Revive();
             }
