@@ -58,13 +58,6 @@ namespace ReviveMod.Source
 
                     break;
 
-                case MessageType.ChangeReviveTime:
-                    byte reviveTime = reader.ReadByte();
-
-                    ReviveAura.SetReviveTime(reviveTime);
-
-                    break;
-
                 case MessageType.SetRevive:
                     bool state = reader.ReadBoolean();
 

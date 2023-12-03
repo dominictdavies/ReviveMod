@@ -6,4 +6,28 @@ od: {
 			}
 		}
 	}
+
+	Configs: {
+		ReviveModConfig: {
+			ReviveTime: {
+				Tooltip: {
+					$parentVal: ""
+				}
+
+				Label: {
+					$parentVal: Revive Time
+				}
+			}
+
+			Headers: {
+				Auras: {
+					$parentVal: Auras
+				}
+			}
+
+			DisplayName: {
+				$parentVal: Revive Mod Config
+			}
+		}
+	}
 }

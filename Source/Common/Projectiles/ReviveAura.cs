@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReviveMod.Common.Configs;
 using ReviveMod.Source.Common.Players;
 using Terraria;
 using Terraria.GameContent;
@@ -13,13 +14,9 @@ namespace ReviveMod.Source.Common.Projectiles
         private readonly float acceleration = 0.2f;
         private readonly float maxVelocity = 2f;
 
-        private static int reviveTime = 10 * 60;
         private int reviveTimeMax;
         private int progressTextTimer;
         private int nameTextTimer;
-
-        public static void SetReviveTime(int reviveTimeSecs)
-            => reviveTime = reviveTimeSecs * 60;
 
         private Vector3 GetAuraColor()
         {
@@ -48,7 +45,9 @@ namespace ReviveMod.Source.Common.Projectiles
 
         public override void SetDefaults()
         {
-            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTime : reviveTime / 2;
+            int reviveTimeSeconds = ModContent.GetInstance<ReviveModConfig>().ReviveTime * 60;
+
+            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : reviveTimeSeconds / 2;
             progressTextTimer = 0;
             nameTextTimer = 0;
 
