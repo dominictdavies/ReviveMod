@@ -23,6 +23,10 @@ od: {
 				Auras: {
 					$parentVal: Auras Header
 				}
+
+				Reviving: {
+					$parentVal: Reviving Header
+				}
 			}
 
 			DisplayName: {
@@ -36,6 +40,16 @@ od: {
 
 				Label: {
 					$parentVal: Movement Speed
+				}
+			}
+
+			NoBossMultiplier: {
+				Tooltip: {
+					$parentVal: ""
+				}
+
+				Label: {
+					$parentVal: No Boss Multiplier
 				}
 			}
 		}

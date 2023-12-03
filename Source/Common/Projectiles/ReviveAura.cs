@@ -43,8 +43,9 @@ namespace ReviveMod.Source.Common.Projectiles
         public override void SetDefaults()
         {
             int reviveTimeSeconds = ModContent.GetInstance<ReviveModConfig>().ReviveTime * 60;
+            float noBossMultiplier = ModContent.GetInstance<ReviveModConfig>().NoBossMultiplier;
 
-            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : reviveTimeSeconds / 2;
+            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
             progressTextTimer = 0;
             nameTextTimer = 0;
 
