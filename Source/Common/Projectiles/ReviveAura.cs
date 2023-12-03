@@ -11,9 +11,6 @@ namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private readonly float acceleration = 0.2f;
-        private readonly float maxVelocity = 2f;
-
         private int reviveTimeMax;
         private int progressTextTimer;
         private int nameTextTimer;
@@ -103,6 +100,9 @@ namespace ReviveMod.Source.Common.Projectiles
             Projectile.timeLeft++;
 
             // Aura movement
+
+            float maxVelocity = ModContent.GetInstance<ReviveModConfig>().MovementSpeed;
+            float acceleration = maxVelocity / 10f;
             Player owner = Main.player[Projectile.owner];
             if (Main.myPlayer == Projectile.owner) {
                 if (owner.controlLeft && Projectile.velocity.X > -maxVelocity) {

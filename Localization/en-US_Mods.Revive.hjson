@@ -21,12 +21,22 @@ od: {
 
 			Headers: {
 				Auras: {
-					$parentVal: Auras
+					$parentVal: Auras Header
 				}
 			}
 
 			DisplayName: {
 				$parentVal: Revive Mod Config
+			}
+
+			MovementSpeed: {
+				Tooltip: {
+					$parentVal: ""
+				}
+
+				Label: {
+					$parentVal: Movement Speed
+				}
 			}
 		}
 	}
