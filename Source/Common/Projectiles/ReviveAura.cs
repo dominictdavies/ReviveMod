@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReviveMod.Source.Common.Players;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -15,6 +14,7 @@ namespace ReviveMod.Source.Common.Projectiles
         private readonly float maxVelocity = 2f;
 
         private static int reviveTime = 10 * 60;
+        private int reviveTimeMax;
         private int progressTextTimer;
         private int nameTextTimer;
 
@@ -23,7 +23,7 @@ namespace ReviveMod.Source.Common.Projectiles
 
         private Vector3 GetAuraColor()
         {
-            float progress = 1f - (float)Projectile.timeLeft / reviveTime;
+            float progress = 1f - (float)Projectile.timeLeft / reviveTimeMax;
 
             float red;
             float green;
@@ -48,16 +48,17 @@ namespace ReviveMod.Source.Common.Projectiles
 
         public override void SetDefaults()
         {
+            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTime : reviveTime / 2;
+            progressTextTimer = 0;
+            nameTextTimer = 0;
+
             Projectile.width = 128;
             Projectile.height = 128;
             Projectile.alpha = 255;
             Projectile.aiStyle = 0;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = reviveTime;
-
-            progressTextTimer = 0;
-            nameTextTimer = 0;
+            Projectile.timeLeft = reviveTimeMax;
         }
 
         public override void PostDraw(Color lightColor)
@@ -128,24 +129,12 @@ namespace ReviveMod.Source.Common.Projectiles
 
         public override void OnKill(int timeLeft)
         {
-            Player owner = Main.player[Projectile.owner];
-            for (int i = 0; i < 50; i++) {
-                double speed = 2d;
-                double speedX = Main.rand.NextDouble() * speed * 2 - speed;
-                double speedY = Math.Sqrt(speed * speed - speedX * speedX);
-
-                if (Main.rand.NextBool()) {
-                    speedY *= -1;
-                }
-
-                Dust.NewDust(owner.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
-            }
-
             // Only other clients may revive owner
             if (Main.netMode == NetmodeID.Server || Main.myPlayer == Projectile.owner) {
                 return;
             }
 
+            Player owner = Main.player[Projectile.owner];
             if (owner.active) {
                 owner.GetModPlayer<ReviveModPlayer>().Revive();
             }
