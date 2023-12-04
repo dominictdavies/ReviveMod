@@ -13,7 +13,7 @@ namespace ReviveMod.Common.Configs
         [DefaultValue(true)]
         public bool Enabled;
 
-        [Range(1, 180)]
+        [Range(0, 180)]
         [DefaultValue(10)]
         public int ReviveTime;
 

@@ -11,13 +11,15 @@ namespace ReviveMod.Content.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private int reviveTimeMax;
+        private int reviveTimerMax;
         private int progressTextTimer;
         private int nameTextTimer;
 
+        private ref int ReviveTimer => ref Projectile.timeLeft;
+
         private Vector3 GetAuraColor()
         {
-            float progress = 1f - (float)Projectile.timeLeft / reviveTimeMax;
+            float progress = 1f - (float)ReviveTimer / reviveTimerMax;
 
             float red;
             float green;
@@ -45,7 +47,11 @@ namespace ReviveMod.Content.Projectiles
             int reviveTimeSeconds = ModContent.GetInstance<ReviveModConfig>().ReviveTime * 60;
             float noBossMultiplier = ModContent.GetInstance<ReviveModConfig>().NoBossMultiplier;
 
-            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
+            reviveTimerMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
+            if (reviveTimerMax <= 0) {
+                reviveTimerMax = 1;
+            }
+
             progressTextTimer = 0;
             nameTextTimer = 0;
 
@@ -55,7 +61,7 @@ namespace ReviveMod.Content.Projectiles
             Projectile.aiStyle = 0;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = reviveTimeMax;
+            ReviveTimer = reviveTimerMax;
         }
 
         public override void PostDraw(Color lightColor)
@@ -77,15 +83,15 @@ namespace ReviveMod.Content.Projectiles
                 }
 
                 if (player.whoAmI == Projectile.owner) {
-                    Projectile.timeLeft = 0;
+                    ReviveTimer = 0;
                     return;
                 }
 
                 if (Projectile.Hitbox.Intersects(player.getRect())) {
-                    Projectile.timeLeft--;
+                    ReviveTimer--;
 
                     if (progressTextTimer-- == 0) {
-                        CombatText.NewText(player.getRect(), CombatText.HealLife, Projectile.timeLeft / 60 + 1, true);
+                        CombatText.NewText(player.getRect(), CombatText.HealLife, ReviveTimer / 60 + 1, true);
                         progressTextTimer = 1 * 60;
                     }
                 }
@@ -98,10 +104,9 @@ namespace ReviveMod.Content.Projectiles
             }
 
             // Keeps aura alive
-            Projectile.timeLeft++;
+            ReviveTimer++;
 
             // Aura movement
-
             float maxVelocity = ModContent.GetInstance<ReviveModConfig>().MovementSpeed;
             float acceleration = maxVelocity / 10f;
             Player owner = Main.player[Projectile.owner];
