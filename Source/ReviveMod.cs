@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using ReviveMod.Source.Common.Players;
-using ReviveMod.Source.Common.Projectiles;
 using ReviveMod.Source.Common.Systems;
 using System.IO;
 using Terraria;
@@ -54,13 +53,6 @@ namespace ReviveMod.Source
                     if (Main.netMode == NetmodeID.Server) {
                         teleportingModPlayer.SendReviveTeleport(ignoreClient: whoAmI);
                     }
-
-                    break;
-
-                case MessageType.SetRevive:
-                    bool state = reader.ReadBoolean();
-
-                    ReviveModPlayer.SetRevive(state);
 
                     break;
 
