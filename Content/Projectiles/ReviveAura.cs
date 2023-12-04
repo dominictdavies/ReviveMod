@@ -23,20 +23,15 @@ namespace ReviveMod.Content.Projectiles
             float green;
             float blue;
 
-            if (progress < 1f / 3f)
-            {
+            if (progress < 1f / 3f) {
                 red = 1f;
                 green = 0f;
                 blue = 1f - progress * 3f;
-            }
-            else if (progress < 2f / 3f)
-            {
+            } else if (progress < 2f / 3f) {
                 red = 1f;
                 green = (progress - 1f / 3f) * 3f;
                 blue = 0f;
-            }
-            else
-            {
+            } else {
                 red = 1f - (progress - 2f / 3f) * 3f;
                 green = 1f;
                 blue = 0f;
@@ -76,25 +71,20 @@ namespace ReviveMod.Content.Projectiles
             Lighting.AddLight(Projectile.Center, GetAuraColor());
 
             // Aura removal and timer decreasing
-            foreach (Player player in Main.player)
-            {
-                if (!player.active || player.dead)
-                {
+            foreach (Player player in Main.player) {
+                if (!player.active || player.dead) {
                     continue;
                 }
 
-                if (player.whoAmI == Projectile.owner)
-                {
+                if (player.whoAmI == Projectile.owner) {
                     Projectile.timeLeft = 0;
                     return;
                 }
 
-                if (Projectile.Hitbox.Intersects(player.getRect()))
-                {
+                if (Projectile.Hitbox.Intersects(player.getRect())) {
                     Projectile.timeLeft--;
 
-                    if (progressTextTimer-- == 0)
-                    {
+                    if (progressTextTimer-- == 0) {
                         CombatText.NewText(player.getRect(), CombatText.HealLife, Projectile.timeLeft / 60 + 1, true);
                         progressTextTimer = 1 * 60;
                     }
@@ -102,8 +92,7 @@ namespace ReviveMod.Content.Projectiles
             }
 
             // Player name text
-            if (nameTextTimer-- == 0)
-            {
+            if (nameTextTimer-- == 0) {
                 CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Main.player[Projectile.owner].name);
                 nameTextTimer = 1 * 60;
             }
@@ -116,26 +105,20 @@ namespace ReviveMod.Content.Projectiles
             float maxVelocity = ModContent.GetInstance<ReviveModConfig>().MovementSpeed;
             float acceleration = maxVelocity / 10f;
             Player owner = Main.player[Projectile.owner];
-            if (Main.myPlayer == Projectile.owner)
-            {
-                if (owner.controlLeft && Projectile.velocity.X > -maxVelocity)
-                {
+            if (Main.myPlayer == Projectile.owner) {
+                if (owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
                     Projectile.velocity.X -= acceleration;
                 }
-                if (owner.controlRight && Projectile.velocity.X < maxVelocity)
-                {
+                if (owner.controlRight && Projectile.velocity.X < maxVelocity) {
                     Projectile.velocity.X += acceleration;
                 }
-                if (owner.controlUp && Projectile.velocity.Y > -maxVelocity)
-                {
+                if (owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
                     Projectile.velocity.Y -= acceleration;
                 }
-                if (owner.controlDown && Projectile.velocity.Y < maxVelocity)
-                {
+                if (owner.controlDown && Projectile.velocity.Y < maxVelocity) {
                     Projectile.velocity.Y += acceleration;
                 }
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                {
+                if (Main.netMode == NetmodeID.MultiplayerClient) {
                     NetMessage.SendData(MessageID.SyncProjectile, number: Projectile.whoAmI);
                 }
             }
@@ -147,14 +130,12 @@ namespace ReviveMod.Content.Projectiles
         public override void OnKill(int timeLeft)
         {
             // Only other clients may revive owner
-            if (Main.netMode == NetmodeID.Server || Main.myPlayer == Projectile.owner)
-            {
+            if (Main.netMode == NetmodeID.Server || Main.myPlayer == Projectile.owner) {
                 return;
             }
 
             Player owner = Main.player[Projectile.owner];
-            if (owner.active)
-            {
+            if (owner.active) {
                 owner.GetModPlayer<ReviveModPlayer>().Revive();
             }
         }
