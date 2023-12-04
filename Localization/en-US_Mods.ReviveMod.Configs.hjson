@@ -7,17 +7,17 @@ ReviveModConfig: {
 	}
 
 	ReviveTime: {
-		Label: Revive time
-		Tooltip: ""
+		Label: Revive Time
+		Tooltip: How many seconds it takes to revive a player
 	}
 
 	NoBossMultiplier: {
-		Label: No boss multiplier
-		Tooltip: ""
+		Label: No Boss Multiplier
+		Tooltip: What revive time is scaled by when no bosses are active
 	}
 
 	MovementSpeed: {
-		Label: Movement speed
-		Tooltip: ""
+		Label: Movement Speed
+		Tooltip: How quickly you can move as an aura
 	}
 }
