@@ -18,7 +18,6 @@ namespace ReviveMod.Source
             AlivePlayerCheck,
             RevivePlayer,
             ReviveTeleport,
-            ChangeReviveTime,
             SetRevive
         }
 
@@ -55,13 +54,6 @@ namespace ReviveMod.Source
                     if (Main.netMode == NetmodeID.Server) {
                         teleportingModPlayer.SendReviveTeleport(ignoreClient: whoAmI);
                     }
-
-                    break;
-
-                case MessageType.ChangeReviveTime:
-                    byte reviveTime = reader.ReadByte();
-
-                    ReviveAura.SetReviveTime(reviveTime);
 
                     break;
 

@@ -1,0 +1,23 @@
+ReviveModConfig: {
+	DisplayName: Revive Mod Config
+
+	Headers: {
+		Reviving: Reviving
+		Auras: Auras
+	}
+
+	ReviveTime: {
+		Label: Revive Time
+		Tooltip: How many seconds it takes to revive a player
+	}
+
+	NoBossMultiplier: {
+		Label: No Boss Multiplier
+		Tooltip: What revive time is scaled by when no bosses are active
+	}
+
+	MovementSpeed: {
+		Label: Movement Speed
+		Tooltip: How quickly you can move as an aura
+	}
+}

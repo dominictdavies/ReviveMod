@@ -4,11 +4,18 @@ This is a multiplayer mod that makes it possible to revive other players in serv
 Upon death, players will leave an aura where they died that others can enter in order to revive the player.
 As a way to balance respawn chaining when fighting bosses, this mod disables regular respawning during boss fights, forcing remaining players to revive others.
 
-Commands are available to make it easier or harder to revive your teammates.
-Use /p to pause your respawn timer to give others more time to revive you!
+Config options allow you to alter the balancing of this mod, such as how long it takes to revive others and the speed at which auras may move.
+
+Some commands are available to make it easier or harder to revive your teammates.
+Use /p to pause your respawn timer to give others more time to revive you.
 Use /help to see other commands and their descriptions.
 
 = Changelog =
+
+v0.1.2:
+- Config settings now available for altering revive time, the no boss multiplier and aura movement speed
+- Removed reviveTime command
+- Small content updates will alter the 3rd build number instead from now on
 
 v0.1.1.6:
 - Updated icon.png

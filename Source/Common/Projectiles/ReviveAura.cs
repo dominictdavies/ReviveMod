@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReviveMod.Common.Configs;
 using ReviveMod.Source.Common.Players;
 using Terraria;
 using Terraria.GameContent;
@@ -10,16 +11,9 @@ namespace ReviveMod.Source.Common.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private readonly float acceleration = 0.2f;
-        private readonly float maxVelocity = 2f;
-
-        private static int reviveTime = 10 * 60;
         private int reviveTimeMax;
         private int progressTextTimer;
         private int nameTextTimer;
-
-        public static void SetReviveTime(int reviveTimeSecs)
-            => reviveTime = reviveTimeSecs * 60;
 
         private Vector3 GetAuraColor()
         {
@@ -48,7 +42,10 @@ namespace ReviveMod.Source.Common.Projectiles
 
         public override void SetDefaults()
         {
-            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTime : reviveTime / 2;
+            int reviveTimeSeconds = ModContent.GetInstance<ReviveModConfig>().ReviveTime * 60;
+            float noBossMultiplier = ModContent.GetInstance<ReviveModConfig>().NoBossMultiplier;
+
+            reviveTimeMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
             progressTextTimer = 0;
             nameTextTimer = 0;
 
@@ -104,6 +101,9 @@ namespace ReviveMod.Source.Common.Projectiles
             Projectile.timeLeft++;
 
             // Aura movement
+
+            float maxVelocity = ModContent.GetInstance<ReviveModConfig>().MovementSpeed;
+            float acceleration = maxVelocity / 10f;
             Player owner = Main.player[Projectile.owner];
             if (Main.myPlayer == Projectile.owner) {
                 if (owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
