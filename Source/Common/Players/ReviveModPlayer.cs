@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using ReviveMod.Source.Common.Projectiles;
+using ReviveMod.Common.Configs;
+using ReviveMod.Content.Projectiles;
 using ReviveMod.Source.Common.Systems;
 using System;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,13 +13,9 @@ namespace ReviveMod.Source.Common.Players
 {
     public class ReviveModPlayer : ModPlayer
     {
-        private static bool revive = true;
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
         public bool pausedRespawnTimer = false;
-
-        public static void SetRevive(bool state)
-            => revive = state;
 
         public void Kill()
         {
@@ -112,7 +110,7 @@ namespace ReviveMod.Source.Common.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            if (Main.myPlayer == Player.whoAmI && revive) {
+            if (Main.myPlayer == Player.whoAmI && ModContent.GetInstance<ReviveModConfig>().Enabled) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
@@ -120,7 +118,7 @@ namespace ReviveMod.Source.Common.Players
         public override void UpdateDead()
         {
             // % 60 stops ringing from Calamity
-            if ((ActiveBossAlivePlayer() || (pausedRespawnTimer && Player.respawnTimer % 60 != 0)) && revive) {
+            if ((ActiveBossAlivePlayer() || (pausedRespawnTimer && Player.respawnTimer % 60 != 0)) && ModContent.GetInstance<ReviveModConfig>().Enabled) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
             }
 
@@ -140,6 +138,14 @@ namespace ReviveMod.Source.Common.Players
                 if (Main.netMode == NetmodeID.MultiplayerClient) {
                     SendReviveTeleport();
                 }
+            }
+        }
+
+        public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+            if (KeybindSystem.PauseRespawnTimer.JustPressed) {
+                pausedRespawnTimer = !pausedRespawnTimer;
+                Main.NewText(pausedRespawnTimer ? "Timer is now paused." : "Timer is now unpaused.", ReviveMod.lifeGreen);
             }
         }
     }

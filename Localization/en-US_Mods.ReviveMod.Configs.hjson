@@ -6,6 +6,11 @@ ReviveModConfig: {
 		Auras: Auras
 	}
 
+	Enabled: {
+		Label: Enabled
+		Tooltip: Whether this mod is enabled at all
+	}
+
 	ReviveTime: {
 		Label: Revive Time
 		Tooltip: How many seconds it takes to revive a player

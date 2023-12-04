@@ -10,6 +10,9 @@ namespace ReviveMod.Common.Configs
         public override ConfigScope Mode => ConfigScope.ServerSide;
 
         [Header("Reviving")]
+        [DefaultValue(true)]
+        public bool Enabled;
+
         [Range(1, 180)]
         [DefaultValue(10)]
         public int ReviveTime;
