@@ -5,6 +5,7 @@ using ReviveMod.Source.Common.Systems;
 using System;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -137,6 +138,14 @@ namespace ReviveMod.Source.Common.Players
                 if (Main.netMode == NetmodeID.MultiplayerClient) {
                     SendReviveTeleport();
                 }
+            }
+        }
+
+        public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+            if (KeybindSystem.PauseRespawnTimer.JustPressed) {
+                pausedRespawnTimer = !pausedRespawnTimer;
+                Main.NewText(pausedRespawnTimer ? "Timer is now paused." : "Timer is now unpaused.", ReviveMod.lifeGreen);
             }
         }
     }

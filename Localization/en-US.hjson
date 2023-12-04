@@ -1,1 +1,6 @@
-Mods.ReviveMod.Projectiles.ReviveAura.DisplayName: Revive Aura
+Mods: {
+	ReviveMod: {
+		Keybinds.PauseRespawnTimer.DisplayName: Pause Respawn Timer
+		Projectiles.ReviveAura.DisplayName: Revive Aura
+	}
+}
