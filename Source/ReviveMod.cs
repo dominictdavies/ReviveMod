@@ -18,7 +18,6 @@ namespace ReviveMod.Source
             AlivePlayerCheck,
             RevivePlayer,
             ReviveTeleport,
-            ChangeReviveTime,
             SetRevive
         }
 
