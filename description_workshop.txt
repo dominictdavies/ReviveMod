@@ -1,0 +1,8 @@
+[h1] Revive Mod [/h1]
+
+This is a multiplayer mod that makes it possible to revive other players in servers.
+Upon death, players will leave an aura where they died that others can enter in order to revive the player.
+As a way to balance respawn chaining when fighting bosses, this mod disables regular respawning during boss fights, forcing remaining players to revive others.
+
+Use the "Pause Respawn Timer" keybind (P by default) to give others more time to revive you.
+Config options allow you to alter the balancing of this mod, such as how long it takes to revive others and the speed at which auras may move.
