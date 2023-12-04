@@ -1,0 +1,9 @@
+Mods: {
+	ReviveMod: {
+		Projectiles: {
+			ReviveAura: {
+				DisplayName: Revive Aura
+			}
+		}
+	}
+}

@@ -1,0 +1,23 @@
+ReviveModConfig: {
+	DisplayName: Revive Mod Config
+
+	Headers: {
+		Reviving: Reviving
+		Auras: Auras
+	}
+
+	ReviveTime: {
+		Label: Revive time
+		Tooltip: ""
+	}
+
+	NoBossMultiplier: {
+		Label: No boss multiplier
+		Tooltip: ""
+	}
+
+	MovementSpeed: {
+		Label: Movement speed
+		Tooltip: ""
+	}
+}
