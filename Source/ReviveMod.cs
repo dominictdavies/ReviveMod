@@ -16,8 +16,7 @@ namespace ReviveMod.Source
         {
             AlivePlayerCheck,
             RevivePlayer,
-            ReviveTeleport,
-            SetRevive
+            ReviveTeleport
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
