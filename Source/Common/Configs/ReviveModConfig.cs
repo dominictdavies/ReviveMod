@@ -26,6 +26,7 @@ namespace ReviveMod.Common.Configs
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message)
         {
+            // Only host may alter config
             if (!NetMessage.DoesPlayerSlotCountAsAHost(whoAmI)) {
                 message = NetworkText.FromKey("tModLoader.ModConfigRejectChangesNotHost");
                 return false;

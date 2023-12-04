@@ -1,9 +1,1 @@
-Mods: {
-	ReviveMod: {
-		Projectiles: {
-			ReviveAura: {
-				DisplayName: Revive Aura
-			}
-		}
-	}
-}
+Mods.ReviveMod.Projectiles.ReviveAura.DisplayName: Revive Aura
