@@ -44,8 +44,9 @@ namespace ReviveMod.Content.Projectiles
 
         public override void SetDefaults()
         {
-            int reviveTimeSeconds = ModContent.GetInstance<ReviveModConfig>().ReviveTime * 60;
-            float noBossMultiplier = ModContent.GetInstance<ReviveModConfig>().NoBossMultiplier;
+            ReviveModConfig config = ModContent.GetInstance<ReviveModConfig>();
+            int reviveTimeSeconds = config.ReviveTime * 60;
+            float noBossMultiplier = config.NoBossMultiplier;
 
             reviveTimerMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
             if (reviveTimerMax <= 0) {
@@ -74,7 +75,10 @@ namespace ReviveMod.Content.Projectiles
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, GetAuraColor());
+            ReviveModConfig config = ModContent.GetInstance<ReviveModConfig>();
+            if (config.ProduceLight) {
+                Lighting.AddLight(Projectile.Center, GetAuraColor());
+            }
 
             // Aura removal and timer decreasing
             foreach (Player player in Main.player) {
@@ -107,7 +111,7 @@ namespace ReviveMod.Content.Projectiles
             ReviveTimer++;
 
             // Aura movement
-            float maxVelocity = ModContent.GetInstance<ReviveModConfig>().MovementSpeed;
+            float maxVelocity = config.MovementSpeed;
             float acceleration = maxVelocity / 10f;
             Player owner = Main.player[Projectile.owner];
             if (Main.myPlayer == Projectile.owner) {

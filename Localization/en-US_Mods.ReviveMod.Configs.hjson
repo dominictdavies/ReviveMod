@@ -8,7 +8,7 @@ ReviveModConfig: {
 
 	Enabled: {
 		Label: Enabled
-		Tooltip: Whether this mod is enabled at all
+		Tooltip: If auras will be spawned at all
 	}
 
 	ReviveTime: {
@@ -19,6 +19,11 @@ ReviveModConfig: {
 	NoBossMultiplier: {
 		Label: No Boss Multiplier
 		Tooltip: What revive time is scaled by when no bosses are active
+	}
+
+	ProduceLight: {
+		Label: Produce Light
+		Tooltip: If auras should produce light
 	}
 
 	MovementSpeed: {

@@ -23,6 +23,9 @@ namespace ReviveMod.Common.Configs
         public float NoBossMultiplier;
 
         [Header("Auras")]
+        [DefaultValue(true)]
+        public bool ProduceLight;
+
         [Range(0f, 10f)]
         [Increment(0.25f)]
         [DefaultValue(2f)]
