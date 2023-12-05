@@ -2,6 +2,7 @@
 using ReviveMod.Source.Common.Players;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ReviveMod.Source.Common.Commands
@@ -23,7 +24,7 @@ namespace ReviveMod.Source.Common.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            if (!NetMessage.DoesPlayerSlotCountAsAHost(caller.Player.whoAmI)) {
+            if (Main.netMode == NetmodeID.MultiplayerClient && !NetMessage.DoesPlayerSlotCountAsAHost(caller.Player.whoAmI)) {
                 throw new UsageException("Only a host may use this command.");
             }
 
