@@ -75,9 +75,8 @@ namespace ReviveMod.Testing.Common.Commands
             Assert.IsNull(player);
         }
 
-        [TestCase(new string[] { "Doomimic" }, new string[0])]
-        [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John" })]
-        [TestCase(new string[] { "Doomimic", "doom", "DOOM" }, new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
+        [TestCase(new string[] { "Doomimic", "Mike", "Emily" }, new string[] { "John" })]
+        [TestCase(new string[] { "John", "Doomimic", "Sarah" }, new string[] { "Mike", "Steven", "Emily", "Josh", "Dylan" })]
         public void GetPlayers_ExcludedNames_ReturnsError(string[] excludedNames, string[] allActiveNames)
         {
             var players = CreatePlayers(allActiveNames);
@@ -90,8 +89,7 @@ namespace ReviveMod.Testing.Common.Commands
         }
 
         [TestCase(new string[] { "Doomimic" }, new string[] { "Doomimic" })]
-        [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John", "Steven", "Doomimic", "doomimic", "DOOMIMIC" })]
-        [TestCase(new string[] { "doomimic", "DOOMIMIC", "John" }, new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
+        [TestCase(new string[] { "Doomimic", "Mike", "Emily" }, new string[] { "John", "Steven", "Emily", "Doomimic", "Mike" })]
         public void GetPlayers_IncludedNames_ReturnsNullError(string[] includedNames, string[] allActiveNames)
         {
             var players = CreatePlayers(allActiveNames);
@@ -106,9 +104,9 @@ namespace ReviveMod.Testing.Common.Commands
             Assert.IsNull(errorMessage);
         }
 
-        [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John", "doomimic", "DOOMIMIC" })]
-        [TestCase(new string[] { "Doomimic", "doomimic", "Steven" }, new string[] { "Doomimic", "Steven" })]
-        [TestCase(new string[] { "Doomimic", "Bob", "DOOMIMIC", "Sarah" }, new string[] { "Doomimic", "doomimic", "Bob", "Billy" })]
+        [TestCase(new string[] { "John", "Doomimic", "Sarah" }, new string[] { "John", "Doomimic", "Steven" })]
+        [TestCase(new string[] { "Doomimic", "Sarah", "Steven" }, new string[] { "Sarah", "Steven" })]
+        [TestCase(new string[] { "Doomimic", "Josh", "Steven" }, new string[] { "John", "Doomimic", "Steven", "Mike" })]
         public void GetPlayers_MixedNames_ReturnsError(string[] mixNames, string[] allActiveNames)
         {
             var players = CreatePlayers(allActiveNames);
@@ -124,6 +122,36 @@ namespace ReviveMod.Testing.Common.Commands
             Assert.AreEqual(i, actualPlayers.Count());
 
             string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
+            Assert.AreEqual(expectedErrorMessage, errorMessage);
+        }
+
+        [Test]
+        public void GetPlayers_NoActivePlayers_ReturnsError()
+        {
+            var names = new string[] { "John", "Doomimic", "Sarah" };
+            var allActiveNames = Array.Empty<string>();
+
+            var players = CreatePlayers(allActiveNames);
+
+            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string errorMessage);
+            Assert.AreEqual(0, actualPlayers.Count());
+
+            string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
+            Assert.AreEqual(expectedErrorMessage, errorMessage);
+        }
+
+        [Test]
+        public void GetPlayers_CaseSensitivity_ReturnsError()
+        {
+            var names = new string[] { "John", "Doomimic", "Sarah" };
+            var allActiveNames = new string[] { "john", "JOHN", "dooMIMIC", "sarah", "SARAH"};
+
+            var players = CreatePlayers(allActiveNames);
+
+            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string errorMessage);
+            Assert.AreEqual(0, actualPlayers.Count());
+
+            string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
             Assert.AreEqual(expectedErrorMessage, errorMessage);
         }
     }
