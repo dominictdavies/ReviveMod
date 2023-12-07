@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ReviveMod.Source.Common.Players
@@ -15,7 +16,7 @@ namespace ReviveMod.Source.Common.Players
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
-        public bool pausedRespawnTimer = false;
+        public bool respawnTimerPaused = false;
 
         public void Kill()
         {
@@ -55,8 +56,8 @@ namespace ReviveMod.Source.Common.Players
                 return true;
             }
 
-            string playerWasRevived = $"{Player.name} was revived!";
-            Main.NewText(playerWasRevived, ReviveMod.lifeGreen);
+            string playerRevived = Language.GetTextValue("Mods.ReviveMod.Chat.PlayerRevived");
+            Main.NewText(string.Format(playerRevived, Player.name), ReviveMod.lifeGreen);
 
             return true;
         }
@@ -118,7 +119,7 @@ namespace ReviveMod.Source.Common.Players
         public override void UpdateDead()
         {
             // % 60 stops ringing from Calamity
-            if ((ActiveBossAlivePlayer() || (pausedRespawnTimer && Player.respawnTimer % 60 != 0)) && ModContent.GetInstance<ReviveModConfig>().Enabled) {
+            if ((ActiveBossAlivePlayer() || (respawnTimerPaused && Player.respawnTimer % 60 != 0)) && ModContent.GetInstance<ReviveModConfig>().Enabled) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
             }
 
@@ -144,8 +145,11 @@ namespace ReviveMod.Source.Common.Players
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
             if (KeybindSystem.PauseRespawnTimer.JustPressed) {
-                pausedRespawnTimer = !pausedRespawnTimer;
-                Main.NewText(pausedRespawnTimer ? "Timer is now paused." : "Timer is now unpaused.", ReviveMod.lifeGreen);
+                respawnTimerPaused = !respawnTimerPaused;
+                string respawnTimerText = respawnTimerPaused ?
+                                          Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerPaused") :
+                                          Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerUnpaused");
+                Main.NewText(respawnTimerText, ReviveMod.lifeGreen);
             }
         }
     }
