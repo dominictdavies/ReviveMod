@@ -77,15 +77,15 @@ namespace ReviveMod.Testing.Common.Commands
 
         [TestCase(new string[] { "Doomimic", "Mike", "Emily" }, new string[] { "John" })]
         [TestCase(new string[] { "John", "Doomimic", "Sarah" }, new string[] { "Mike", "Steven", "Emily", "Josh", "Dylan" })]
-        public void GetPlayers_ExcludedNames_ReturnsError(string[] excludedNames, string[] allActiveNames)
+        public void GetPlayers_ExcludedNames_ReturnsWarning(string[] excludedNames, string[] allActiveNames)
         {
             var players = CreatePlayers(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(excludedNames, players, out string errorMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(excludedNames, players, out string warningMessage);
             Assert.AreEqual(0, actualPlayers.Count());
 
-            string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
-            Assert.AreEqual(expectedErrorMessage, errorMessage);
+            string expectedWarningMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
+            Assert.AreEqual(expectedWarningMessage, warningMessage);
         }
 
         [TestCase(new string[] { "Doomimic" }, new string[] { "Doomimic" })]
@@ -94,65 +94,65 @@ namespace ReviveMod.Testing.Common.Commands
         {
             var players = CreatePlayers(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(includedNames, players, out string errorMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(includedNames, players, out string warningMessage);
             int i = 0;
             foreach (Player actualPlayer in actualPlayers) {
                 Assert.AreEqual(includedNames[i++], actualPlayer.name);
             }
             Assert.AreEqual(i, actualPlayers.Count());
 
-            Assert.IsNull(errorMessage);
+            Assert.IsNull(warningMessage);
         }
 
         [TestCase(new string[] { "John", "Doomimic", "Sarah" }, new string[] { "John", "Doomimic", "Steven" })]
         [TestCase(new string[] { "Doomimic", "Sarah", "Steven" }, new string[] { "Sarah", "Steven" })]
         [TestCase(new string[] { "Doomimic", "Josh", "Steven" }, new string[] { "John", "Doomimic", "Steven", "Mike" })]
-        public void GetPlayers_MixedNames_ReturnsPlayersAndError(string[] mixNames, string[] allActiveNames)
+        public void GetPlayers_MixedNames_ReturnsPlayersAndWarning(string[] mixNames, string[] allActiveNames)
         {
             var players = CreatePlayers(allActiveNames);
 
             var includedNames = mixNames.Intersect(allActiveNames);
             var excludedNames = mixNames.Except(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(mixNames, players, out string errorMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(mixNames, players, out string warningMessage);
             int i = 0;
             foreach (Player player in actualPlayers) {
                 Assert.AreEqual(includedNames.ElementAt(i++), player.name);
             }
             Assert.AreEqual(i, actualPlayers.Count());
 
-            string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
-            Assert.AreEqual(expectedErrorMessage, errorMessage);
+            string expectedWarningMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
+            Assert.AreEqual(expectedWarningMessage, warningMessage);
         }
 
         [Test]
-        public void GetPlayers_NoActivePlayers_ReturnsError()
+        public void GetPlayers_NoActivePlayers_ReturnsWarning()
         {
             var names = new string[] { "John", "Doomimic", "Sarah" };
             var allActiveNames = Array.Empty<string>();
 
             var players = CreatePlayers(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string errorMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warningMessage);
             Assert.AreEqual(0, actualPlayers.Count());
 
-            string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
-            Assert.AreEqual(expectedErrorMessage, errorMessage);
+            string expectedWarningMessage = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
+            Assert.AreEqual(expectedWarningMessage, warningMessage);
         }
 
         [Test]
-        public void GetPlayers_CaseSensitivity_ReturnsError()
+        public void GetPlayers_CaseSensitivity_ReturnsWarning()
         {
             var names = new string[] { "John", "Doomimic", "Sarah" };
             var allActiveNames = new string[] { "john", "JOHN", "dooMIMIC", "sarah", "SARAH"};
 
             var players = CreatePlayers(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string errorMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warningMessage);
             Assert.AreEqual(0, actualPlayers.Count());
 
-            string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
-            Assert.AreEqual(expectedErrorMessage, errorMessage);
+            string expectedWarningMessage = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
+            Assert.AreEqual(expectedWarningMessage, warningMessage);
         }
     }
 }
