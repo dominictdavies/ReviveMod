@@ -90,7 +90,7 @@ namespace ReviveMod.Testing.Common.Commands
 
         [TestCase(new string[] { "Doomimic" }, new string[] { "Doomimic" })]
         [TestCase(new string[] { "Doomimic", "Mike", "Emily" }, new string[] { "John", "Steven", "Emily", "Doomimic", "Mike" })]
-        public void GetPlayers_IncludedNames_ReturnsNullError(string[] includedNames, string[] allActiveNames)
+        public void GetPlayers_IncludedNames_ReturnsPlayers(string[] includedNames, string[] allActiveNames)
         {
             var players = CreatePlayers(allActiveNames);
 
@@ -107,7 +107,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase(new string[] { "John", "Doomimic", "Sarah" }, new string[] { "John", "Doomimic", "Steven" })]
         [TestCase(new string[] { "Doomimic", "Sarah", "Steven" }, new string[] { "Sarah", "Steven" })]
         [TestCase(new string[] { "Doomimic", "Josh", "Steven" }, new string[] { "John", "Doomimic", "Steven", "Mike" })]
-        public void GetPlayers_MixedNames_ReturnsError(string[] mixNames, string[] allActiveNames)
+        public void GetPlayers_MixedNames_ReturnsPlayersAndError(string[] mixNames, string[] allActiveNames)
         {
             var players = CreatePlayers(allActiveNames);
 
