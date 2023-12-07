@@ -29,7 +29,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase("Doomimic", new string[0])]
         [TestCase("Doomimic", new string[] { "John" })]
         [TestCase("Doomimic", new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
-        public void TryGetPlayer_ExcludedName_ReturnFalse(string excludedName, string[] allNames)
+        public void TryGetPlayer_ExcludedName_ReturnsFalse(string excludedName, string[] allNames)
         {
             var players = CreatePlayers(allNames);
 
@@ -41,7 +41,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase("Doomimic", new string[] { "Doomimic" })]
         [TestCase("Doomimic", new string[] { "John", "Steven", "Doomimic", "doomimic", "DOOMIMIC" })]
         [TestCase("Doomimic", new string[] { "doomimic", "DOOMIMIC", "Doomimic", "Doomimic", "Doomimic" })]
-        public void TryGetPlayer_IncludedName_ReturnTrue(string includedName, string[] allNames)
+        public void TryGetPlayer_IncludedName_ReturnsTrue(string includedName, string[] allNames)
         {
             var players = CreatePlayers(allNames);
 
@@ -53,7 +53,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase(new string[] { "Doomimic" }, new string[0])]
         [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John" })]
         [TestCase(new string[] { "Doomimic", "doom", "DOOM" }, new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
-        public void GetPlayers_ExcludedNames_ReturnError(string[] excludedNames, string[] allNames)
+        public void GetPlayers_ExcludedNames_ReturnsError(string[] excludedNames, string[] allNames)
         {
             var players = CreatePlayers(allNames);
 
@@ -67,7 +67,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase(new string[] { "Doomimic" }, new string[] { "Doomimic" })]
         [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John", "Steven", "Doomimic", "doomimic", "DOOMIMIC" })]
         [TestCase(new string[] { "doomimic", "DOOMIMIC", "John" }, new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
-        public void GetPlayers_IncludedNames_ReturnNullError(string[] includedNames, string[] allNames)
+        public void GetPlayers_IncludedNames_ReturnsNullError(string[] includedNames, string[] allNames)
         {
             var players = CreatePlayers(allNames);
 
@@ -84,7 +84,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase(new string[] { "Doomimic", "doomimic", "DOOMIMIC" }, new string[] { "John", "doomimic", "DOOMIMIC" })]
         [TestCase(new string[] { "Doomimic", "doomimic", "Steven" }, new string[] { "Doomimic", "Steven" })]
         [TestCase(new string[] { "Doomimic", "Bob", "DOOMIMIC", "Sarah" }, new string[] { "Doomimic", "doomimic", "Bob", "Billy" })]
-        public void GetPlayers_MixedNames_ReturnError(string[] mixNames, string[] allNames)
+        public void GetPlayers_MixedNames_ReturnsError(string[] mixNames, string[] allNames)
         {
             var players = CreatePlayers(allNames);
 
