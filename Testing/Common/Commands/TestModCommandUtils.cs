@@ -62,7 +62,7 @@ namespace ReviveMod.Testing.Common.Commands
         {
             SetPlayerNames(allNames);
 
-            IEnumerable<Player> players = ModCommandUtils.GetPlayers(excludedNames, _players, out string errorMessage);
+            var players = ModCommandUtils.GetPlayers(excludedNames, _players, out string errorMessage);
             Assert.AreEqual(0, players.Count());
 
             string expectedErrorMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
@@ -76,7 +76,7 @@ namespace ReviveMod.Testing.Common.Commands
         {
             SetPlayerNames(allNames);
 
-            IEnumerable<Player> players = ModCommandUtils.GetPlayers(includedNames, _players, out string errorMessage);
+            var players = ModCommandUtils.GetPlayers(includedNames, _players, out string errorMessage);
             int i = 0;
             foreach (Player player in players) {
                 Assert.AreEqual(includedNames[i++], player.name);
@@ -93,10 +93,10 @@ namespace ReviveMod.Testing.Common.Commands
         {
             SetPlayerNames(allNames);
 
-            IEnumerable<string> includedNames = mixNames.Intersect(allNames);
-            IEnumerable<string> excludedNames = mixNames.Except(allNames);
+            var includedNames = mixNames.Intersect(allNames);
+            var excludedNames = mixNames.Except(allNames);
 
-            IEnumerable<Player> players = ModCommandUtils.GetPlayers(mixNames, _players, out string errorMessage);
+            var players = ModCommandUtils.GetPlayers(mixNames, _players, out string errorMessage);
             int i = 0;
             foreach (Player player in players) {
                 Assert.AreEqual(includedNames.ElementAt(i++), player.name);
