@@ -21,10 +21,10 @@ namespace ReviveMod.Testing.Common.Commands
             }
         }
 
-        private void SetPlayerNames(string[] allNames)
+        private void SetPlayers(string[] allActiveNames)
         {
             int i = 0;
-            foreach (string name in allNames) {
+            foreach (string name in allActiveNames) {
                 _players[i].active = true;
                 _players[i].name = name;
                 i++;
@@ -36,7 +36,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase("Doomimic", new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
         public void TryGetPlayer_ExcludedName_ReturnFalse(string excludedName, string[] allNames)
         {
-            SetPlayerNames(allNames);
+            SetPlayers(allNames);
 
             Assert.IsFalse(ModCommandUtils.TryGetPlayer(excludedName, _players, out Player player));
 
@@ -48,7 +48,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase("Doomimic", new string[] { "doomimic", "DOOMIMIC", "Doomimic", "Doomimic", "Doomimic" })]
         public void TryGetPlayer_IncludedName_ReturnTrue(string includedName, string[] allNames)
         {
-            SetPlayerNames(allNames);
+            SetPlayers(allNames);
 
             Assert.IsTrue(ModCommandUtils.TryGetPlayer(includedName, _players, out Player player));
 
@@ -60,7 +60,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase(new string[] { "Doomimic", "doom", "DOOM" }, new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
         public void GetPlayers_ExcludedNames_ReturnError(string[] excludedNames, string[] allNames)
         {
-            SetPlayerNames(allNames);
+            SetPlayers(allNames);
 
             var players = ModCommandUtils.GetPlayers(excludedNames, _players, out string errorMessage);
             Assert.AreEqual(0, players.Count());
@@ -74,7 +74,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase(new string[] { "doomimic", "DOOMIMIC", "John" }, new string[] { "John", "Steven", "Emily", "doomimic", "DOOMIMIC" })]
         public void GetPlayers_IncludedNames_ReturnNullError(string[] includedNames, string[] allNames)
         {
-            SetPlayerNames(allNames);
+            SetPlayers(allNames);
 
             var players = ModCommandUtils.GetPlayers(includedNames, _players, out string errorMessage);
             int i = 0;
@@ -91,7 +91,7 @@ namespace ReviveMod.Testing.Common.Commands
         [TestCase(new string[] { "Doomimic", "Bob", "DOOMIMIC", "Sarah" }, new string[] { "Doomimic", "doomimic", "Bob", "Billy" })]
         public void GetPlayers_MixedNames_ReturnError(string[] mixNames, string[] allNames)
         {
-            SetPlayerNames(allNames);
+            SetPlayers(allNames);
 
             var includedNames = mixNames.Intersect(allNames);
             var excludedNames = mixNames.Except(allNames);
