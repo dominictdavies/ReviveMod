@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using ReviveMod.Common.Configs;
-using ReviveMod.Content.Projectiles;
 using ReviveMod.Source.Common.Systems;
+using ReviveMod.Source.Content.Projectiles;
 using System;
 using Terraria;
 using Terraria.DataStructures;
