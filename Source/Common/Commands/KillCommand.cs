@@ -31,9 +31,9 @@ namespace ReviveMod.Source.Common.Commands
             IEnumerable<Player> playersToKill;
 
             if (args.Length > 0) {
-                playersToKill = ModCommandUtils.GetPlayers(args, Main.player, out string errorMessage);
-                if (errorMessage != null) {
-                    caller.Reply(errorMessage, Color.Red);
+                playersToKill = ModCommandUtils.GetPlayers(args, Main.player, out string warning);
+                if (warning != null) {
+                    caller.Reply(warning, Color.Red);
                 }
             } else {
                 playersToKill = new Player[] { caller.Player };

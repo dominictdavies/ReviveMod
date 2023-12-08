@@ -19,9 +19,9 @@ namespace ReviveMod.Source.Common.Commands
             return false;
         }
 
-        public static IEnumerable<Player> GetPlayers(ICollection<string> playerNames, IEnumerable<Player> allPlayers, out string errorMessage)
+        public static IEnumerable<Player> GetPlayers(ICollection<string> playerNames, IEnumerable<Player> allPlayers, out string warning)
         {
-            errorMessage = null;
+            warning = null;
 
             List<Player> players = new();
             List<string> invalidPlayerNames = new();
@@ -36,7 +36,7 @@ namespace ReviveMod.Source.Common.Commands
 
             if (invalidPlayerNames.Count > 0) {
                 string joinedPlayerNames = string.Join(", ", invalidPlayerNames);
-                errorMessage = $"The following player name(s) are invalid: {joinedPlayerNames}.";
+                warning = $"The following player name(s) are invalid: {joinedPlayerNames}.";
             }
 
             return players;

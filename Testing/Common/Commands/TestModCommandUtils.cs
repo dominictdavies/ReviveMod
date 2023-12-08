@@ -81,11 +81,11 @@ namespace ReviveMod.Testing.Common.Commands
         {
             var players = CreatePlayers(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(excludedNames, players, out string warningMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(excludedNames, players, out string warning);
             Assert.AreEqual(0, actualPlayers.Count());
 
-            string expectedWarningMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
-            Assert.AreEqual(expectedWarningMessage, warningMessage);
+            string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
+            Assert.AreEqual(expectedWarning, warning);
         }
 
         [TestCase(new string[] { "Doomimic" }, new string[] { "Doomimic" })]
@@ -94,14 +94,14 @@ namespace ReviveMod.Testing.Common.Commands
         {
             var players = CreatePlayers(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(includedNames, players, out string warningMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(includedNames, players, out string warning);
             int i = 0;
             foreach (Player actualPlayer in actualPlayers) {
                 Assert.AreEqual(includedNames[i++], actualPlayer.name);
             }
             Assert.AreEqual(i, actualPlayers.Count());
 
-            Assert.IsNull(warningMessage);
+            Assert.IsNull(warning);
         }
 
         [TestCase(new string[] { "John", "Doomimic", "Sarah" }, new string[] { "John", "Doomimic", "Steven" })]
@@ -114,15 +114,15 @@ namespace ReviveMod.Testing.Common.Commands
             var includedNames = mixNames.Intersect(allActiveNames);
             var excludedNames = mixNames.Except(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(mixNames, players, out string warningMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(mixNames, players, out string warning);
             int i = 0;
             foreach (Player player in actualPlayers) {
                 Assert.AreEqual(includedNames.ElementAt(i++), player.name);
             }
             Assert.AreEqual(i, actualPlayers.Count());
 
-            string expectedWarningMessage = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
-            Assert.AreEqual(expectedWarningMessage, warningMessage);
+            string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
+            Assert.AreEqual(expectedWarning, warning);
         }
 
         [Test]
@@ -133,11 +133,11 @@ namespace ReviveMod.Testing.Common.Commands
 
             var players = CreatePlayers(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warningMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warning);
             Assert.AreEqual(0, actualPlayers.Count());
 
-            string expectedWarningMessage = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
-            Assert.AreEqual(expectedWarningMessage, warningMessage);
+            string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
+            Assert.AreEqual(expectedWarning, warning);
         }
 
         [Test]
@@ -148,11 +148,11 @@ namespace ReviveMod.Testing.Common.Commands
 
             var players = CreatePlayers(allActiveNames);
 
-            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warningMessage);
+            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warning);
             Assert.AreEqual(0, actualPlayers.Count());
 
-            string expectedWarningMessage = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
-            Assert.AreEqual(expectedWarningMessage, warningMessage);
+            string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
+            Assert.AreEqual(expectedWarning, warning);
         }
     }
 }
