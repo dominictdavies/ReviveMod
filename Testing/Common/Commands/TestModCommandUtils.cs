@@ -11,20 +11,11 @@ namespace ReviveMod.Testing.Common.Commands
     {
         private static Player[] CreatePlayers(string[] allActiveNames)
         {
-            var players = new Player[Main.maxPlayers];
-
-            for (int i = 0; i < Main.maxPlayers; i++) {
-                Player player = new() { active = false };
-
-                if (i < allActiveNames.Length) {
-                    player.active = true;
-                    player.name = allActiveNames[i];
-                }
-
-                players[i] = player;
-            }
-
-            return players;
+            return Enumerable.Range(0, Main.maxPlayers)
+                .Select(i => new Player {
+                    active = i < allActiveNames.Length,
+                    name = i < allActiveNames.Length ? allActiveNames[i] : null
+                }).ToArray();
         }
 
         [TestCase("Doomimic", new string[] { "John" })]
