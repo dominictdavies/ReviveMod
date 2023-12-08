@@ -82,7 +82,7 @@ namespace ReviveMod.Testing.Common.Commands
             var players = CreatePlayers(allActiveNames);
 
             var actualPlayers = ModCommandUtils.GetPlayers(excludedNames, players, out string warning);
-            Assert.AreEqual(0, actualPlayers.Count());
+            Assert.That(actualPlayers.Count(), Is.Zero);
 
             string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
             Assert.AreEqual(expectedWarning, warning);
@@ -95,11 +95,7 @@ namespace ReviveMod.Testing.Common.Commands
             var players = CreatePlayers(allActiveNames);
 
             var actualPlayers = ModCommandUtils.GetPlayers(includedNames, players, out string warning);
-            int i = 0;
-            foreach (Player actualPlayer in actualPlayers) {
-                Assert.AreEqual(includedNames[i++], actualPlayer.name);
-            }
-            Assert.AreEqual(i, actualPlayers.Count());
+            Assert.That(actualPlayers.Select(player => player.name).ToArray(), Is.EquivalentTo(includedNames));
 
             Assert.IsNull(warning);
         }
@@ -110,16 +106,11 @@ namespace ReviveMod.Testing.Common.Commands
         public void GetPlayers_MixedNames_ReturnsPlayersAndWarning(string[] mixNames, string[] allActiveNames)
         {
             var players = CreatePlayers(allActiveNames);
-
             var includedNames = mixNames.Intersect(allActiveNames);
             var excludedNames = mixNames.Except(allActiveNames);
 
             var actualPlayers = ModCommandUtils.GetPlayers(mixNames, players, out string warning);
-            int i = 0;
-            foreach (Player player in actualPlayers) {
-                Assert.AreEqual(includedNames.ElementAt(i++), player.name);
-            }
-            Assert.AreEqual(i, actualPlayers.Count());
+            Assert.That(actualPlayers.Select(player => player.name).ToArray(), Is.EquivalentTo(includedNames));
 
             string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
             Assert.AreEqual(expectedWarning, warning);
@@ -134,7 +125,7 @@ namespace ReviveMod.Testing.Common.Commands
             var players = CreatePlayers(allActiveNames);
 
             var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warning);
-            Assert.AreEqual(0, actualPlayers.Count());
+            Assert.That(actualPlayers.Count(), Is.Zero);
 
             string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
             Assert.AreEqual(expectedWarning, warning);
@@ -149,9 +140,26 @@ namespace ReviveMod.Testing.Common.Commands
             var players = CreatePlayers(allActiveNames);
 
             var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warning);
-            Assert.AreEqual(0, actualPlayers.Count());
+            Assert.That(actualPlayers.Count(), Is.Zero);
 
             string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", names) + ".";
+            Assert.AreEqual(expectedWarning, warning);
+        }
+
+        [Test]
+        public void GetPlayers_KeepOrder_ReturnsPlayersAndWarning()
+        {
+            var names = new string[] { "John", "Doomimic", "Sarah", "Mike", "Dylan", "Emily" };
+            var allActiveNames = new string[] { "Sarah", "Doomimic", "Dylan" };
+
+            var players = CreatePlayers(allActiveNames);
+            var includedNames = names.Intersect(allActiveNames);
+            var excludedNames = names.Except(allActiveNames);
+
+            var actualPlayers = ModCommandUtils.GetPlayers(names, players, out string warning);
+            Assert.That(actualPlayers.Select(player => player.name).ToArray(), Is.EqualTo(includedNames));
+
+            string expectedWarning = "The following player name(s) are invalid: " + string.Join(", ", excludedNames) + ".";
             Assert.AreEqual(expectedWarning, warning);
         }
     }
