@@ -3,12 +3,13 @@ ReviveModConfig: {
 
 	Headers: {
 		Reviving: Reviving
+		Balancing: Balancing
 		Auras: Auras
 	}
 
 	Enabled: {
 		Label: Enabled
-		Tooltip: If auras will be spawned at all
+		Tooltip: If auras are spawned at all
 	}
 
 	ReviveTime: {
@@ -23,11 +24,41 @@ ReviveModConfig: {
 
 	ProduceLight: {
 		Label: Produce Light
-		Tooltip: If auras should produce light
+		Tooltip: If auras produce light
 	}
 
 	MovementSpeed: {
 		Label: Movement Speed
 		Tooltip: How quickly you can move as an aura
+	}
+
+	DrainLife: {
+		Label: Drain Life
+		Tooltip: If player life is drained when reviving others
+	}
+
+	DrainSpeed: {
+		Label: Drain Speed
+		Tooltip: The speed at which player life is drained
+	}
+
+	SlowPlayers: {
+		Label: Slow Players
+		Tooltip: If players are slowed when reviving others
+	}
+
+	SpeedMultiplier: {
+		Label: Speed Multiplier
+		Tooltip: What player speed is scaled by
+	}
+
+	ReduceDamage: {
+		Label: Reduce Damage
+		Tooltip: If players have reduced output damage when reviving others
+	}
+
+	DamageMultiplier: {
+		Label: Damage Multiplier
+		Tooltip: What player output damage is scaled by
 	}
 }

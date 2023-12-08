@@ -22,6 +22,31 @@ namespace ReviveMod.Common.Configs
         [DefaultValue(0.5f)]
         public float NoBossMultiplier;
 
+        [Header("Balancing")]
+        [DefaultValue(false)]
+        public bool DrainLife;
+
+        [Range(0f, 10f)]
+        [Increment(0.25f)]
+        [DefaultValue(2f)]
+        public float DrainSpeed;
+
+        [DefaultValue(false)]
+        public bool SlowPlayers;
+
+        [Range(0f, 1f)]
+        [Increment(0.1f)]
+        [DefaultValue(0.8f)]
+        public float SpeedMultiplier;
+
+        [DefaultValue(false)]
+        public bool ReduceDamage;
+
+        [Range(0f, 1f)]
+        [Increment(0.1f)]
+        [DefaultValue(0.8f)]
+        public float DamageMultiplier;
+
         [Header("Auras")]
         [DefaultValue(true)]
         public bool ProduceLight;
