@@ -2,5 +2,10 @@ Mods: {
 	ReviveMod: {
 		Keybinds.PauseRespawnTimer.DisplayName: Pause Respawn Timer
 		Projectiles.ReviveAura.DisplayName: Revive Aura
+		Chat: {
+			PlayerRevived: "{0} was revived!"
+			RespawnTimerPaused: Respawn timer is now paused.
+			RespawnTimerUnpaused: Respawn timer is now unpaused.
+		}
 	}
 }
