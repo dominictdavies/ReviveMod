@@ -37,9 +37,9 @@ ReviveModConfig: {
 		Tooltip: If player life is drained when reviving others
 	}
 
-	DrainSpeed: {
-		Label: Drain Speed
-		Tooltip: The speed at which player life is drained
+	DrainPercentage: {
+		Label: Drain Percentage
+		Tooltip: The percentage of the player's max life that is drained
 	}
 
 	SlowPlayers: {

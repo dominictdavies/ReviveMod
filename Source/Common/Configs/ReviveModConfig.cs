@@ -26,10 +26,9 @@ namespace ReviveMod.Common.Configs
         [DefaultValue(false)]
         public bool DrainLife;
 
-        [Range(0f, 10f)]
-        [Increment(0.25f)]
-        [DefaultValue(2f)]
-        public float DrainSpeed;
+        [Range(0, 100)]
+        [DefaultValue(25)]
+        public int DrainPercentage;
 
         [DefaultValue(false)]
         public bool SlowPlayers;
