@@ -8,22 +8,5 @@ Mods: {
 			RespawnTimerPaused: Respawn timer is now paused.
 			RespawnTimerUnpaused: Respawn timer is now unpaused.
 		}
-
-		Buffs: {
-			TransfusingDebuff: {
-				DisplayName: Transfusing
-				Description: You are losing blood
-			}
-
-			StrainedDebuff: {
-				DisplayName: Strained
-				Description: You are moving slowly
-			}
-
-			WearyDebuff: {
-				DisplayName: Weary
-				Description: Your attacks are weaker
-			}
-		}
 	}
 }
