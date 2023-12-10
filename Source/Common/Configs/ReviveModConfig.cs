@@ -35,7 +35,7 @@ namespace ReviveMod.Common.Configs
 
         [Range(0f, 1f)]
         [Increment(0.1f)]
-        [DefaultValue(0.8f)]
+        [DefaultValue(0.5f)]
         public float SpeedMultiplier;
 
         [DefaultValue(false)]
