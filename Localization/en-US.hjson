@@ -19,6 +19,11 @@ Mods: {
 				DisplayName: Strained
 				Description: You are moving slowly
 			}
+
+			WearyDebuff: {
+				DisplayName: Weary
+				Description: Your attacks are weaker
+			}
 		}
 	}
 }
