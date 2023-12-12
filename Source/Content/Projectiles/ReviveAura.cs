@@ -161,25 +161,4 @@ namespace ReviveMod.Source.Content.Projectiles
             }
         }
     }
-
-    public class ReviveAuraDebuffedPlayer : ModPlayer
-    {
-        public override void ResetEffects()
-        {
-            if (Player.HasBuff(ModContent.BuffType<TransfusingDebuff>())) {
-                int debuffIndex = Player.FindBuffIndex(ModContent.BuffType<TransfusingDebuff>());
-                Player.buffTime[debuffIndex] = 1;
-            }
-
-            if (Player.HasBuff(ModContent.BuffType<StrainedDebuff>())) {
-                int debuffIndex = Player.FindBuffIndex(ModContent.BuffType<StrainedDebuff>());
-                Player.buffTime[debuffIndex] = 1;
-            }
-
-            if (Player.HasBuff(ModContent.BuffType<WearyDebuff>())) {
-                int debuffIndex = Player.FindBuffIndex(ModContent.BuffType<WearyDebuff>());
-                Player.buffTime[debuffIndex] = 1;
-            }
-        }
-    }
 }

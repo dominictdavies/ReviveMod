@@ -15,6 +15,7 @@ namespace ReviveMod.Source.Content.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.GetModPlayer<StrainedDebuffPlayer>().strainedDebuff = true;
+            ModBuffUtils.RemoveDebuffIfNotInAura(player, ref buffIndex);
         }
     }
 
