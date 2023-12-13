@@ -98,11 +98,6 @@ namespace ReviveMod.Source.Common.Players
             packet.Send(toClient, ignoreClient);
         }
 
-        private bool ActiveBossAlivePlayer()
-            => Main.CurrentFrameFlags.AnyActiveBossNPC
-            && ModContent.GetInstance<ReviveModSystem>().anyAlivePlayer
-            && timeSpentDead > 0; // Prevents respawn timer showing incorrect number
-
         public override void OnEnterWorld()
         {
             timeSpentDead = 0;
@@ -119,7 +114,7 @@ namespace ReviveMod.Source.Common.Players
         public override void UpdateDead()
         {
             // % 60 stops ringing from Calamity
-            if ((ActiveBossAlivePlayer() || (respawnTimerPaused && Player.respawnTimer % 60 != 0)) && ModContent.GetInstance<ReviveModConfig>().Enabled) {
+            if (((CommonUtils.ActiveBossAlivePlayer() && timeSpentDead > 0) || (respawnTimerPaused && Player.respawnTimer % 60 != 0)) && ModContent.GetInstance<ReviveModConfig>().Enabled) {
                 Player.respawnTimer++; // Undoes regular respawn timer tickdown
             }
 

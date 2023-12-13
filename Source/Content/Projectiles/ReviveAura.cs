@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReviveMod.Common.Configs;
+using ReviveMod.Source.Common;
 using ReviveMod.Source.Common.Players;
+using ReviveMod.Source.Content.Buffs;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -48,7 +50,7 @@ namespace ReviveMod.Source.Content.Projectiles
             int reviveTimeSeconds = config.ReviveTime * 60;
             float noBossMultiplier = config.NoBossMultiplier;
 
-            reviveTimerMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
+            reviveTimerMax = CommonUtils.ActiveBossAlivePlayer() ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
             if (reviveTimerMax <= 0) {
                 reviveTimerMax = 1;
             }
@@ -93,6 +95,17 @@ namespace ReviveMod.Source.Content.Projectiles
 
                 if (Projectile.Hitbox.Intersects(player.getRect())) {
                     ReviveTimer--;
+
+                    // Apply balancing debuffs
+                    if (config.DrainLife) {
+                        player.AddBuff(ModContent.BuffType<TransfusingDebuff>(), Projectile.timeLeft);
+                    }
+                    if (config.SlowPlayers) {
+                        player.AddBuff(ModContent.BuffType<StrainedDebuff>(), Projectile.timeLeft);
+                    }
+                    if (config.ReduceDamage) {
+                        player.AddBuff(ModContent.BuffType<WearyDebuff>(), Projectile.timeLeft);
+                    }
 
                     if (progressTextTimer-- == 0) {
                         CombatText.NewText(player.getRect(), CombatText.HealLife, ReviveTimer / 60 + 1, true);
