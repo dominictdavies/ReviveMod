@@ -1,4 +1,5 @@
 ﻿using ReviveMod.Common.Configs;
+using ReviveMod.Source.Common;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -40,7 +41,12 @@ namespace ReviveMod.Source.Content.Buffs
 
                 // Life regen is measured in 1/2 life per second so this effect causes 1/4 max life to be lost over 10 seconds
                 var config = ModContent.GetInstance<ReviveModConfig>();
-                Player.lifeRegen -= Player.statLifeMax2 * config.DrainPercentage / (config.ReviveTime * 50);
+                int lifeDecay = Player.statLifeMax2 * config.DrainPercentage / (config.ReviveTime * 50);
+                if (!CommonUtils.ActiveBossAlivePlayer() && config.NoBossMultiplier > 0) {
+                    lifeDecay = (int)(lifeDecay * (1f / config.NoBossMultiplier));
+                }
+
+                Player.lifeRegen -= lifeDecay;
             }
         }
     }

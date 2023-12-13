@@ -10,6 +10,7 @@ namespace ReviveMod.Common.Configs
         public override ConfigScope Mode => ConfigScope.ServerSide;
 
         [Header("Reviving")]
+
         [DefaultValue(true)]
         public bool Enabled;
 
@@ -18,11 +19,12 @@ namespace ReviveMod.Common.Configs
         public int ReviveTime;
 
         [Range(0f, 1f)]
-        [Increment(0.1f)]
+        [Increment(0.05f)]
         [DefaultValue(0.5f)]
         public float NoBossMultiplier;
 
         [Header("Balancing")]
+
         [DefaultValue(false)]
         public bool DrainLife;
 
@@ -34,7 +36,7 @@ namespace ReviveMod.Common.Configs
         public bool SlowPlayers;
 
         [Range(0f, 1f)]
-        [Increment(0.1f)]
+        [Increment(0.05f)]
         [DefaultValue(0.5f)]
         public float SpeedMultiplier;
 
@@ -42,11 +44,12 @@ namespace ReviveMod.Common.Configs
         public bool ReduceDamage;
 
         [Range(0f, 1f)]
-        [Increment(0.1f)]
+        [Increment(0.05f)]
         [DefaultValue(0.8f)]
         public float DamageMultiplier;
 
         [Header("Auras")]
+
         [DefaultValue(true)]
         public bool ProduceLight;
 

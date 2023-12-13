@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReviveMod.Common.Configs;
+using ReviveMod.Source.Common;
 using ReviveMod.Source.Common.Players;
 using ReviveMod.Source.Content.Buffs;
 using Terraria;
@@ -49,7 +50,7 @@ namespace ReviveMod.Source.Content.Projectiles
             int reviveTimeSeconds = config.ReviveTime * 60;
             float noBossMultiplier = config.NoBossMultiplier;
 
-            reviveTimerMax = Main.CurrentFrameFlags.AnyActiveBossNPC ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
+            reviveTimerMax = CommonUtils.ActiveBossAlivePlayer() ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
             if (reviveTimerMax <= 0) {
                 reviveTimerMax = 1;
             }
