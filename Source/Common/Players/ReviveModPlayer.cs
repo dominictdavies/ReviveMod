@@ -52,12 +52,10 @@ namespace ReviveMod.Source.Common.Players
             }
 
             // Revive succeeded
-            if (!verbose) {
-                return true;
+            if (verbose) {
+                string playerRevived = Language.GetTextValue("Mods.ReviveMod.Chat.PlayerRevived");
+                Main.NewText(string.Format(playerRevived, Player.name), ReviveMod.lifeGreen);
             }
-
-            string playerRevived = Language.GetTextValue("Mods.ReviveMod.Chat.PlayerRevived");
-            Main.NewText(string.Format(playerRevived, Player.name), ReviveMod.lifeGreen);
 
             return true;
         }
