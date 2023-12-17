@@ -86,11 +86,11 @@ namespace ReviveMod.Source.Content.Projectiles
             Owner.lastDeathPostion = Projectile.Center;
         }
 
-        private void ShowProgress(Rectangle location)
-            => CombatText.NewText(location, CombatText.HealLife, (int)ReviveTimer / 60 + 1, dramatic: true);
+        private void ShowProgress(Player player)
+            => CombatText.NewText(player.getRect(), CombatText.HealLife, (int)ReviveTimer / 60 + 1, dramatic: true);
 
-        private void ShowName(Rectangle location)
-            => CombatText.NewText(location, Color.Magenta, Owner.name);
+        private void ShowName()
+            => CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Owner.name);
 
         private void ProduceLight()
             => Lighting.AddLight(Projectile.Center, GetAuraColor());
@@ -148,13 +148,13 @@ namespace ReviveMod.Source.Content.Projectiles
                 ApplyDebuffs(config, player);
 
                 if (_progressTextTimer-- == 0) {
-                    ShowProgress(player.getRect());
+                    ShowProgress(player);
                     _progressTextTimer = 1 * 60;
                 }
             }
 
             if (_nameTextTimer-- == 0) {
-                ShowName(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0));
+                ShowName();
                 _nameTextTimer = 1 * 60;
             }
 
