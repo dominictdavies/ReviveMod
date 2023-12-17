@@ -45,9 +45,8 @@ namespace ReviveMod.Source.Content.Projectiles
             return new(red, green, blue);
         }
 
-        private void ApplyDebuffs(Player player)
+        private void ApplyDebuffs(ReviveModConfig config, Player player)
         {
-            ReviveModConfig config = ModContent.GetInstance<ReviveModConfig>();
             if (config.DrainLife) {
                 player.AddBuff(ModContent.BuffType<TransfusingDebuff>(), (int)ReviveTimer);
             }
@@ -59,25 +58,9 @@ namespace ReviveMod.Source.Content.Projectiles
             }
         }
 
-        private void ShowProgress(Rectangle location)
+        private void MoveAura(float movementSpeed)
         {
-            if (_progressTextTimer-- == 0) {
-                CombatText.NewText(location, CombatText.HealLife, (int)ReviveTimer / 60 + 1, dramatic: true);
-                _progressTextTimer = 1 * 60;
-            }
-        }
-
-        private void ShowName(Rectangle location)
-        {
-            if (_nameTextTimer-- == 0) {
-                CombatText.NewText(location, Color.Magenta, Owner.name);
-                _nameTextTimer = 1 * 60;
-            }
-        }
-
-        private void MoveAura()
-        {
-            float maxVelocity = ModContent.GetInstance<ReviveModConfig>().MovementSpeed;
+            float maxVelocity = movementSpeed;
             float acceleration = maxVelocity / 10f;
             if (Main.myPlayer == Projectile.owner) {
                 if (Owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
@@ -103,12 +86,14 @@ namespace ReviveMod.Source.Content.Projectiles
             Owner.lastDeathPostion = Projectile.Center;
         }
 
+        private void ShowProgress(Rectangle location)
+            => CombatText.NewText(location, CombatText.HealLife, (int)ReviveTimer / 60 + 1, dramatic: true);
+
+        private void ShowName(Rectangle location)
+            => CombatText.NewText(location, Color.Magenta, Owner.name);
+
         private void ProduceLight()
-        {
-            if (ModContent.GetInstance<ReviveModConfig>().ProduceLight) {
-                Lighting.AddLight(Projectile.Center, GetAuraColor());
-            }
-        }
+            => Lighting.AddLight(Projectile.Center, GetAuraColor());
 
         public override void SetDefaults()
         {
@@ -151,19 +136,31 @@ namespace ReviveMod.Source.Content.Projectiles
                 return;
             }
 
+            ReviveModConfig config = ModContent.GetInstance<ReviveModConfig>();
+            MoveAura(config.MovementSpeed);
+
             foreach (Player player in Main.player) {
                 if (!player.active || player.dead || !Projectile.Hitbox.Intersects(player.getRect())) {
                     continue;
                 }
 
                 ReviveTimer--;
-                ApplyDebuffs(player);
-                ShowProgress(player.getRect());
+                ApplyDebuffs(config, player);
+
+                if (_progressTextTimer-- == 0) {
+                    ShowProgress(player.getRect());
+                    _progressTextTimer = 1 * 60;
+                }
             }
 
-            ShowName(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0));
-            MoveAura();
-            ProduceLight();
+            if (_nameTextTimer-- == 0) {
+                ShowName(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0));
+                _nameTextTimer = 1 * 60;
+            }
+
+            if (config.ProduceLight) {
+                ProduceLight();
+            }
 
             if (ReviveTimer == 0) {
                 Projectile.Kill();
@@ -176,12 +173,9 @@ namespace ReviveMod.Source.Content.Projectiles
 
         public override void OnKill(int timeLeft)
         {
-            // Revive owner runs the revive
-            if (Main.myPlayer != Projectile.owner) {
-                return;
+            if (Main.myPlayer == Projectile.owner) {
+                Owner.GetModPlayer<ReviveModPlayer>().Revive();
             }
-
-            Owner.GetModPlayer<ReviveModPlayer>().Revive();
         }
     }
 }
