@@ -13,16 +13,16 @@ namespace ReviveMod.Source.Content.Projectiles
 {
     public class ReviveAura : ModProjectile
     {
-        private int reviveTimerMax;
-        private int progressTextTimer;
-        private int nameTextTimer;
+        private int _reviveTimerMax;
+        private int _progressTextTimer;
+        private int _nameTextTimer;
 
         private ref Player Owner => ref Main.player[Projectile.owner];
         private ref float ReviveTimer => ref Projectile.ai[0];
 
         private Vector3 GetAuraColor()
         {
-            float progress = 1f - ReviveTimer / reviveTimerMax;
+            float progress = 1f - ReviveTimer / _reviveTimerMax;
 
             float red;
             float green;
@@ -45,18 +45,83 @@ namespace ReviveMod.Source.Content.Projectiles
             return new(red, green, blue);
         }
 
+        private void ApplyDebuffs(Player player)
+        {
+            ReviveModConfig config = ModContent.GetInstance<ReviveModConfig>();
+            if (config.DrainLife) {
+                player.AddBuff(ModContent.BuffType<TransfusingDebuff>(), (int)ReviveTimer);
+            }
+            if (config.SlowPlayers) {
+                player.AddBuff(ModContent.BuffType<StrainedDebuff>(), (int)ReviveTimer);
+            }
+            if (config.ReduceDamage) {
+                player.AddBuff(ModContent.BuffType<WearyDebuff>(), (int)ReviveTimer);
+            }
+        }
+
+        private void ShowProgress(Rectangle location)
+        {
+            if (_progressTextTimer-- == 0) {
+                CombatText.NewText(location, CombatText.HealLife, (int)ReviveTimer / 60 + 1, dramatic: true);
+                _progressTextTimer = 1 * 60;
+            }
+        }
+
+        private void ShowName(Rectangle location)
+        {
+            if (_nameTextTimer-- == 0) {
+                CombatText.NewText(location, Color.Magenta, Owner.name);
+                _nameTextTimer = 1 * 60;
+            }
+        }
+
+        private void MoveAura()
+        {
+            float maxVelocity = ModContent.GetInstance<ReviveModConfig>().MovementSpeed;
+            float acceleration = maxVelocity / 10f;
+            if (Main.myPlayer == Projectile.owner) {
+                if (Owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
+                    Projectile.velocity.X -= acceleration;
+                }
+                if (Owner.controlRight && Projectile.velocity.X < maxVelocity) {
+                    Projectile.velocity.X += acceleration;
+                }
+                if (Owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
+                    Projectile.velocity.Y -= acceleration;
+                }
+                if (Owner.controlDown && Projectile.velocity.Y < maxVelocity) {
+                    Projectile.velocity.Y += acceleration;
+                }
+
+                // Updates position for other clients
+                if (Main.netMode == NetmodeID.MultiplayerClient) {
+                    NetMessage.SendData(MessageID.SyncProjectile, number: Projectile.whoAmI);
+                }
+            }
+
+            Owner.Center = Projectile.Center;
+            Owner.lastDeathPostion = Projectile.Center;
+        }
+
+        private void ProduceLight()
+        {
+            if (ModContent.GetInstance<ReviveModConfig>().ProduceLight) {
+                Lighting.AddLight(Projectile.Center, GetAuraColor());
+            }
+        }
+
         public override void SetDefaults()
         {
             ReviveModConfig config = ModContent.GetInstance<ReviveModConfig>();
             int reviveTimeSeconds = config.ReviveTime * 60;
             float noBossMultiplier = config.NoBossMultiplier;
 
-            reviveTimerMax = CommonUtils.ActiveBossAlivePlayer() ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
-            if (reviveTimerMax <= 0) { // Players will not be instantly revived when reviveTimerMax is 0
-                reviveTimerMax = 1;
+            _reviveTimerMax = CommonUtils.ActiveBossAlivePlayer() ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
+            if (_reviveTimerMax <= 0) { // Players will not be instantly revived when _reviveTimerMax is 0
+                _reviveTimerMax = 1;
             }
-            progressTextTimer = 0;
-            nameTextTimer = 0;
+            _progressTextTimer = 0;
+            _nameTextTimer = 0;
 
             Projectile.width = 128;
             Projectile.height = 128;
@@ -78,77 +143,27 @@ namespace ReviveMod.Source.Content.Projectiles
         {
             // Projectile.ai is set to 0's by default
             if (ReviveTimer == 0) {
-                ReviveTimer = reviveTimerMax;
+                ReviveTimer = _reviveTimerMax;
             }
 
-            // Aura removal if owner is back
             if (!Owner.dead) {
                 Projectile.Kill();
                 return;
             }
 
-            ReviveModConfig config = ModContent.GetInstance<ReviveModConfig>();
-
             foreach (Player player in Main.player) {
-                if (!player.active || player.dead) {
+                if (!player.active || player.dead || !Projectile.Hitbox.Intersects(player.getRect())) {
                     continue;
                 }
 
-                // Decrease timer, apply buffs, show progress
-                if (Projectile.Hitbox.Intersects(player.getRect())) {
-                    ReviveTimer--;
-
-                    // Apply balancing debuffs
-                    if (config.DrainLife) {
-                        player.AddBuff(ModContent.BuffType<TransfusingDebuff>(), (int)ReviveTimer);
-                    }
-                    if (config.SlowPlayers) {
-                        player.AddBuff(ModContent.BuffType<StrainedDebuff>(), (int)ReviveTimer);
-                    }
-                    if (config.ReduceDamage) {
-                        player.AddBuff(ModContent.BuffType<WearyDebuff>(), (int)ReviveTimer);
-                    }
-
-                    if (progressTextTimer-- == 0) {
-                        CombatText.NewText(player.getRect(), CombatText.HealLife, (int)ReviveTimer / 60 + 1, dramatic: true);
-                        progressTextTimer = 1 * 60;
-                    }
-                }
+                ReviveTimer--;
+                ApplyDebuffs(player);
+                ShowProgress(player.getRect());
             }
 
-            // Player name text
-            if (nameTextTimer-- == 0) {
-                CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Main.player[Projectile.owner].name);
-                nameTextTimer = 1 * 60;
-            }
-
-            // Aura movement
-            float maxVelocity = config.MovementSpeed;
-            float acceleration = maxVelocity / 10f;
-            if (Main.myPlayer == Projectile.owner) {
-                if (Owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
-                    Projectile.velocity.X -= acceleration;
-                }
-                if (Owner.controlRight && Projectile.velocity.X < maxVelocity) {
-                    Projectile.velocity.X += acceleration;
-                }
-                if (Owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
-                    Projectile.velocity.Y -= acceleration;
-                }
-                if (Owner.controlDown && Projectile.velocity.Y < maxVelocity) {
-                    Projectile.velocity.Y += acceleration;
-                }
-                if (Main.netMode == NetmodeID.MultiplayerClient) {
-                    NetMessage.SendData(MessageID.SyncProjectile, number: Projectile.whoAmI);
-                }
-            }
-
-            if (config.ProduceLight) {
-                Lighting.AddLight(Projectile.Center, GetAuraColor());
-            }
-
-            Owner.Center = Projectile.Center;
-            Owner.lastDeathPostion = Projectile.Center;
+            ShowName(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0));
+            MoveAura();
+            ProduceLight();
 
             if (ReviveTimer == 0) {
                 Projectile.Kill();
