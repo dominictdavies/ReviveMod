@@ -93,22 +93,22 @@ namespace ReviveMod.Source.Content.Projectiles
                     return;
                 }
 
-                if (Projectile.Hitbox.Intersects(player.getRect())) {
+                if (Projectile.Hitbox.Intersects(player.getRect()) && ReviveTimer > 0) {
                     ReviveTimer--;
 
                     // Apply balancing debuffs
                     if (config.DrainLife) {
-                        player.AddBuff(ModContent.BuffType<TransfusingDebuff>(), Projectile.timeLeft);
+                        player.AddBuff(ModContent.BuffType<TransfusingDebuff>(), ReviveTimer);
                     }
                     if (config.SlowPlayers) {
-                        player.AddBuff(ModContent.BuffType<StrainedDebuff>(), Projectile.timeLeft);
+                        player.AddBuff(ModContent.BuffType<StrainedDebuff>(), ReviveTimer);
                     }
                     if (config.ReduceDamage) {
-                        player.AddBuff(ModContent.BuffType<WearyDebuff>(), Projectile.timeLeft);
+                        player.AddBuff(ModContent.BuffType<WearyDebuff>(), ReviveTimer);
                     }
 
                     if (progressTextTimer-- == 0) {
-                        CombatText.NewText(player.getRect(), CombatText.HealLife, ReviveTimer / 60 + 1, true);
+                        CombatText.NewText(player.getRect(), CombatText.HealLife, ReviveTimer / 60 + 1, dramatic: true);
                         progressTextTimer = 1 * 60;
                     }
                 }
@@ -151,15 +151,13 @@ namespace ReviveMod.Source.Content.Projectiles
 
         public override void OnKill(int timeLeft)
         {
-            // Only other clients may revive owner
-            if (Main.netMode == NetmodeID.Server || Main.myPlayer == Projectile.owner) {
+            // Revive owner runs the revive
+            if (Main.myPlayer != Projectile.owner) {
                 return;
             }
 
-            Player owner = Main.player[Projectile.owner];
-            if (owner.active) {
-                owner.GetModPlayer<ReviveModPlayer>().Revive();
-            }
+            Player owner = Main.player[Main.myPlayer];
+            owner.GetModPlayer<ReviveModPlayer>().Revive();
         }
     }
 }
