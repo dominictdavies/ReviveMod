@@ -17,6 +17,7 @@ namespace ReviveMod.Source.Content.Projectiles
         private int progressTextTimer;
         private int nameTextTimer;
 
+        private ref Player Owner => ref Main.player[Projectile.owner];
         private ref float ReviveTimer => ref Projectile.ai[0];
 
         private Vector3 GetAuraColor()
@@ -51,10 +52,9 @@ namespace ReviveMod.Source.Content.Projectiles
             float noBossMultiplier = config.NoBossMultiplier;
 
             reviveTimerMax = CommonUtils.ActiveBossAlivePlayer() ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
-            if (reviveTimerMax <= 0) { // So players are not instantly revived when reviveTimerMax is 0
+            if (reviveTimerMax <= 0) { // Players will not be instantly revived when reviveTimerMax is 0
                 reviveTimerMax = 1;
             }
-
             progressTextTimer = 0;
             nameTextTimer = 0;
 
@@ -76,13 +76,13 @@ namespace ReviveMod.Source.Content.Projectiles
 
         public override void AI()
         {
+            // Projectile.ai is set to 0's by default
             if (ReviveTimer == 0) {
                 ReviveTimer = reviveTimerMax;
             }
 
             // Aura removal if owner is back
-            Player owner = Main.player[Projectile.owner];
-            if (!owner.dead) {
+            if (!Owner.dead) {
                 Projectile.Kill();
                 return;
             }
@@ -126,16 +126,16 @@ namespace ReviveMod.Source.Content.Projectiles
             float maxVelocity = config.MovementSpeed;
             float acceleration = maxVelocity / 10f;
             if (Main.myPlayer == Projectile.owner) {
-                if (owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
+                if (Owner.controlLeft && Projectile.velocity.X > -maxVelocity) {
                     Projectile.velocity.X -= acceleration;
                 }
-                if (owner.controlRight && Projectile.velocity.X < maxVelocity) {
+                if (Owner.controlRight && Projectile.velocity.X < maxVelocity) {
                     Projectile.velocity.X += acceleration;
                 }
-                if (owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
+                if (Owner.controlUp && Projectile.velocity.Y > -maxVelocity) {
                     Projectile.velocity.Y -= acceleration;
                 }
-                if (owner.controlDown && Projectile.velocity.Y < maxVelocity) {
+                if (Owner.controlDown && Projectile.velocity.Y < maxVelocity) {
                     Projectile.velocity.Y += acceleration;
                 }
                 if (Main.netMode == NetmodeID.MultiplayerClient) {
@@ -147,8 +147,8 @@ namespace ReviveMod.Source.Content.Projectiles
                 Lighting.AddLight(Projectile.Center, GetAuraColor());
             }
 
-            owner.Center = Projectile.Center;
-            owner.lastDeathPostion = Projectile.Center;
+            Owner.Center = Projectile.Center;
+            Owner.lastDeathPostion = Projectile.Center;
 
             if (ReviveTimer == 0) {
                 Projectile.Kill();
@@ -166,8 +166,7 @@ namespace ReviveMod.Source.Content.Projectiles
                 return;
             }
 
-            Player owner = Main.player[Main.myPlayer];
-            owner.GetModPlayer<ReviveModPlayer>().Revive();
+            Owner.GetModPlayer<ReviveModPlayer>().Revive();
         }
     }
 }
