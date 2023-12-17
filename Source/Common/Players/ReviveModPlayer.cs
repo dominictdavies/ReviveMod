@@ -109,11 +109,47 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
+        public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+            if (KeybindSystem.PauseRespawnTimer.JustPressed) {
+                respawnTimerPaused = !respawnTimerPaused;
+                string respawnTimerText = respawnTimerPaused ?
+                                          Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerPaused") :
+                                          Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerUnpaused");
+                Main.NewText(respawnTimerText, ReviveMod.lifeGreen);
+            }
+        }
+
+        private bool HardcoreAndNotAllDeadForGood()
+        {
+            if (Player.difficulty != PlayerDifficultyID.Hardcore) {
+                return false;
+            }
+
+            foreach (Player player in Main.player) {
+                if (!player.active) {
+                    continue;
+                }
+
+                if (player.difficulty == PlayerDifficultyID.Hardcore && !player.dead) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool AvoidMaxTimerAndWholeSecond()
+            => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
+
         public override void UpdateDead()
         {
-            // % 60 stops ringing from Calamity
-            if (((CommonUtils.ActiveBossAlivePlayer() && timeSpentDead > 0) || (respawnTimerPaused && Player.respawnTimer % 60 != 0)) && ModContent.GetInstance<ReviveModConfig>().Enabled) {
-                Player.respawnTimer++; // Undoes regular respawn timer tickdown
+            if (!ModContent.GetInstance<ReviveModConfig>().Enabled) {
+                return;
+            }
+
+            if ((respawnTimerPaused || CommonUtils.ActiveBossAlivePlayer() || HardcoreAndNotAllDeadForGood()) && AvoidMaxTimerAndWholeSecond()) {
+                Player.respawnTimer++; // Undoes regular respawnTimer tick down
             }
 
             timeSpentDead++;
@@ -132,17 +168,6 @@ namespace ReviveMod.Source.Common.Players
                 if (Main.netMode == NetmodeID.MultiplayerClient) {
                     SendReviveTeleport();
                 }
-            }
-        }
-
-        public override void ProcessTriggers(TriggersSet triggersSet)
-        {
-            if (KeybindSystem.PauseRespawnTimer.JustPressed) {
-                respawnTimerPaused = !respawnTimerPaused;
-                string respawnTimerText = respawnTimerPaused ?
-                                          Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerPaused") :
-                                          Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerUnpaused");
-                Main.NewText(respawnTimerText, ReviveMod.lifeGreen);
             }
         }
     }
