@@ -131,7 +131,7 @@ namespace ReviveMod.Source.Content.Projectiles
                 ReviveTimer = _reviveTimerMax;
             }
 
-            if (!Owner.dead) {
+            if (!Owner.dead || Owner.ghost) {
                 Projectile.Kill();
                 return;
             }
