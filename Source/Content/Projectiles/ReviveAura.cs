@@ -162,7 +162,7 @@ namespace ReviveMod.Source.Content.Projectiles
                 ProduceLight();
             }
 
-            if (ReviveTimer == 0) {
+            if (ReviveTimer <= 0) {
                 Projectile.Kill();
                 return;
             }
