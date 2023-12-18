@@ -140,7 +140,15 @@ namespace ReviveMod.Source.Content.Projectiles
             MoveAura(config.MovementSpeed);
 
             foreach (Player player in Main.player) {
-                if (!player.active || player.dead || !Projectile.Hitbox.Intersects(player.getRect())) {
+                if (!player.active) {
+                    continue;
+                }
+
+                if (player.dead || !Projectile.Hitbox.Intersects(player.getRect())) {
+                    continue;
+                }
+
+                if (Owner.difficulty == PlayerDifficultyID.Hardcore && player.difficulty != PlayerDifficultyID.Hardcore) {
                     continue;
                 }
 
