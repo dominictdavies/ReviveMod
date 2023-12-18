@@ -16,6 +16,7 @@ namespace ReviveMod.Source.Common.Players
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
+        public bool usuallyHardcore = false;
         public bool respawnTimerPaused = false;
 
         public void Kill()
@@ -43,6 +44,11 @@ namespace ReviveMod.Source.Common.Players
 
             // Player will respawn next tick
             Player.respawnTimer = 0;
+            if (Player.difficulty == PlayerDifficultyID.Hardcore) {
+                // Will get reset upon respawn
+                Player.difficulty = PlayerDifficultyID.SoftCore;
+                usuallyHardcore = true;
+            }
 
             // Makes player teleport to death location
             revived = true;
@@ -96,11 +102,9 @@ namespace ReviveMod.Source.Common.Players
             packet.Send(toClient, ignoreClient);
         }
 
+        /* Called on client only, so use for UI */
         public override void OnEnterWorld()
-        {
-            timeSpentDead = 0;
-            revived = false;
-        }
+            => timeSpentDead = 0; 
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
@@ -156,7 +160,13 @@ namespace ReviveMod.Source.Common.Players
         }
 
         public override void OnRespawn()
-            => timeSpentDead = 0;
+        {
+            timeSpentDead = 0;
+
+            if (usuallyHardcore) {
+                Player.difficulty = PlayerDifficultyID.Hardcore;
+            }
+        }
 
         public override void PreUpdate()
         {
