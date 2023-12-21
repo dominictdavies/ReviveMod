@@ -18,6 +18,7 @@ namespace ReviveMod.Source.Common.Players
         public bool revived = false;
         public bool usuallyHardcore = false;
         public bool auraActive = false;
+        public bool oldAuraActive = false;
         public bool respawnTimerPaused = false;
 
         public void Kill()
@@ -109,7 +110,11 @@ namespace ReviveMod.Source.Common.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            if (Main.myPlayer == Player.whoAmI && ModContent.GetInstance<ReviveModConfig>().Enabled) {
+            if (!ModContent.GetInstance<ReviveModConfig>().Enabled || Main.netMode == NetmodeID.SinglePlayer) {
+                return;
+            }
+
+            if (Main.myPlayer == Player.whoAmI) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
@@ -149,16 +154,17 @@ namespace ReviveMod.Source.Common.Players
 
         public override void UpdateDead()
         {
+            if (!ModContent.GetInstance<ReviveModConfig>().Enabled || Main.netMode == NetmodeID.SinglePlayer) {
+                return;
+            }
+
             /* Done this way as aura despawning does not call OnKill */
-            if (!auraActive && Main.myPlayer == Player.whoAmI) {
+            if (oldAuraActive && !auraActive && Main.myPlayer == Player.whoAmI) {
                 Revive();
             }
 
+            oldAuraActive = auraActive;
             auraActive = false;
-
-            if (!ModContent.GetInstance<ReviveModConfig>().Enabled) {
-                return;
-            }
 
             if ((respawnTimerPaused || CommonUtils.ActiveBossAlivePlayer() || HardcoreAndNotAllDeadForGood()) && AvoidMaxTimerAndWholeSecond()) {
                 Player.respawnTimer++; // Undoes regular respawnTimer tick down
