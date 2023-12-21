@@ -17,6 +17,7 @@ namespace ReviveMod.Source.Common.Players
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
         public bool usuallyHardcore = false;
+        public bool auraActive = false;
         public bool respawnTimerPaused = false;
 
         public void Kill()
@@ -148,6 +149,13 @@ namespace ReviveMod.Source.Common.Players
 
         public override void UpdateDead()
         {
+            /* Done this way as aura despawning does not call OnKill */
+            if (!auraActive && Main.myPlayer == Player.whoAmI) {
+                Revive();
+            }
+
+            auraActive = false;
+
             if (!ModContent.GetInstance<ReviveModConfig>().Enabled) {
                 return;
             }

@@ -126,6 +126,8 @@ namespace ReviveMod.Source.Content.Projectiles
 
         public override void AI()
         {
+            Owner.GetModPlayer<ReviveModPlayer>().auraActive = true;
+
             // Projectile.ai is set to 0's by default
             if (ReviveTimer == 0) {
                 ReviveTimer = _reviveTimerMax;
@@ -177,13 +179,6 @@ namespace ReviveMod.Source.Content.Projectiles
 
             // Undoes regular timeLeft tick down
             Projectile.timeLeft++;
-        }
-
-        public override void OnKill(int timeLeft)
-        {
-            if (Main.myPlayer == Projectile.owner) {
-                Owner.GetModPlayer<ReviveModPlayer>().Revive();
-            }
         }
     }
 }
