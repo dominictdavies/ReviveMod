@@ -1,5 +1,5 @@
-v0.2:
-- Added new balancing options available in config:
-- Drain life added as an option
-- Slow players added as an option
-- Reduce output damage added as an option
+v0.3.0:
+- Improved revive netcode
+    - Known bug where revive timers will occasionally not visually count down in order
+- Hardcore revival added
+- Mod is now disabled in singleplayer
