@@ -18,6 +18,7 @@ namespace ReviveMod.Source.Common.Players
         public bool revived = false;
         public bool usuallyHardcore = false;
         public bool auraActive = false;
+        public bool oldAuraActive = false;
         public bool respawnTimerPaused = false;
 
         public void Kill()
@@ -158,10 +159,11 @@ namespace ReviveMod.Source.Common.Players
             }
 
             /* Done this way as aura despawning does not call OnKill */
-            if (!auraActive && Main.myPlayer == Player.whoAmI) {
+            if (oldAuraActive && !auraActive && Main.myPlayer == Player.whoAmI) {
                 Revive();
             }
 
+            oldAuraActive = auraActive;
             auraActive = false;
 
             if ((respawnTimerPaused || CommonUtils.ActiveBossAlivePlayer() || HardcoreAndNotAllDeadForGood()) && AvoidMaxTimerAndWholeSecond()) {
