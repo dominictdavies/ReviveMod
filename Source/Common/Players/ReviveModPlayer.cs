@@ -16,6 +16,8 @@ namespace ReviveMod.Source.Common.Players
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
+        public bool usuallyHardcore = false;
+        public bool auraActive = false;
         public bool respawnTimerPaused = false;
 
         public void Kill()
@@ -43,6 +45,11 @@ namespace ReviveMod.Source.Common.Players
 
             // Player will respawn next tick
             Player.respawnTimer = 0;
+            if (Player.difficulty == PlayerDifficultyID.Hardcore) {
+                // Will get reset upon respawn
+                Player.difficulty = PlayerDifficultyID.SoftCore;
+                usuallyHardcore = true;
+            }
 
             // Makes player teleport to death location
             revived = true;
@@ -96,42 +103,14 @@ namespace ReviveMod.Source.Common.Players
             packet.Send(toClient, ignoreClient);
         }
 
+        /* Called on client only, so use for UI */
         public override void OnEnterWorld()
-        {
-            timeSpentDead = 0;
-            revived = false;
-        }
+            => timeSpentDead = 0; 
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
             if (Main.myPlayer == Player.whoAmI && ModContent.GetInstance<ReviveModConfig>().Enabled) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
-            }
-        }
-
-        public override void UpdateDead()
-        {
-            // % 60 stops ringing from Calamity
-            if (((CommonUtils.ActiveBossAlivePlayer() && timeSpentDead > 0) || (respawnTimerPaused && Player.respawnTimer % 60 != 0)) && ModContent.GetInstance<ReviveModConfig>().Enabled) {
-                Player.respawnTimer++; // Undoes regular respawn timer tickdown
-            }
-
-            timeSpentDead++;
-        }
-
-        public override void OnRespawn()
-            => timeSpentDead = 0;
-
-        public override void PreUpdate()
-        {
-            // Teleport revived player to death location
-            if (revived && !Player.dead && Player.position != Player.lastDeathPostion) {
-                LocalTeleport();
-
-                // Client declares teleport
-                if (Main.netMode == NetmodeID.MultiplayerClient) {
-                    SendReviveTeleport();
-                }
             }
         }
 
@@ -143,6 +122,70 @@ namespace ReviveMod.Source.Common.Players
                                           Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerPaused") :
                                           Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerUnpaused");
                 Main.NewText(respawnTimerText, ReviveMod.lifeGreen);
+            }
+        }
+
+        private bool HardcoreAndNotAllDeadForGood()
+        {
+            if (Player.difficulty != PlayerDifficultyID.Hardcore) {
+                return false;
+            }
+
+            foreach (Player player in Main.player) {
+                if (!player.active) {
+                    continue;
+                }
+
+                if (player.difficulty == PlayerDifficultyID.Hardcore && !player.dead) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool AvoidMaxTimerAndWholeSecond()
+            => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
+
+        public override void UpdateDead()
+        {
+            /* Done this way as aura despawning does not call OnKill */
+            if (!auraActive && Main.myPlayer == Player.whoAmI) {
+                Revive();
+            }
+
+            auraActive = false;
+
+            if (!ModContent.GetInstance<ReviveModConfig>().Enabled) {
+                return;
+            }
+
+            if ((respawnTimerPaused || CommonUtils.ActiveBossAlivePlayer() || HardcoreAndNotAllDeadForGood()) && AvoidMaxTimerAndWholeSecond()) {
+                Player.respawnTimer++; // Undoes regular respawnTimer tick down
+            }
+
+            timeSpentDead++;
+        }
+
+        public override void OnRespawn()
+        {
+            timeSpentDead = 0;
+
+            if (usuallyHardcore) {
+                Player.difficulty = PlayerDifficultyID.Hardcore;
+            }
+        }
+
+        public override void PreUpdate()
+        {
+            // Teleport revived player to death location
+            if (revived && !Player.dead && Player.position != Player.lastDeathPostion) {
+                LocalTeleport();
+
+                // Client declares teleport
+                if (Main.netMode == NetmodeID.MultiplayerClient) {
+                    SendReviveTeleport();
+                }
             }
         }
     }

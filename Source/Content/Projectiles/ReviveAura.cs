@@ -86,11 +86,11 @@ namespace ReviveMod.Source.Content.Projectiles
             Owner.lastDeathPostion = Projectile.Center;
         }
 
-        private void ShowProgress(Rectangle location)
-            => CombatText.NewText(location, CombatText.HealLife, (int)ReviveTimer / 60 + 1, dramatic: true);
+        private void ShowProgress(Player player)
+            => CombatText.NewText(player.getRect(), CombatText.HealLife, (int)ReviveTimer / 60 + 1, dramatic: true);
 
-        private void ShowName(Rectangle location)
-            => CombatText.NewText(location, Color.Magenta, Owner.name);
+        private void ShowName()
+            => CombatText.NewText(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0), Color.Magenta, Owner.name);
 
         private void ProduceLight()
             => Lighting.AddLight(Projectile.Center, GetAuraColor());
@@ -126,12 +126,14 @@ namespace ReviveMod.Source.Content.Projectiles
 
         public override void AI()
         {
+            Owner.GetModPlayer<ReviveModPlayer>().auraActive = true;
+
             // Projectile.ai is set to 0's by default
             if (ReviveTimer == 0) {
                 ReviveTimer = _reviveTimerMax;
             }
 
-            if (!Owner.dead) {
+            if (!Owner.dead || Owner.ghost) {
                 Projectile.Kill();
                 return;
             }
@@ -140,7 +142,15 @@ namespace ReviveMod.Source.Content.Projectiles
             MoveAura(config.MovementSpeed);
 
             foreach (Player player in Main.player) {
-                if (!player.active || player.dead || !Projectile.Hitbox.Intersects(player.getRect())) {
+                if (!player.active) {
+                    continue;
+                }
+
+                if (player.dead || !Projectile.Hitbox.Intersects(player.getRect())) {
+                    continue;
+                }
+
+                if (Owner.difficulty == PlayerDifficultyID.Hardcore && player.difficulty != PlayerDifficultyID.Hardcore) {
                     continue;
                 }
 
@@ -148,13 +158,13 @@ namespace ReviveMod.Source.Content.Projectiles
                 ApplyDebuffs(config, player);
 
                 if (_progressTextTimer-- == 0) {
-                    ShowProgress(player.getRect());
+                    ShowProgress(player);
                     _progressTextTimer = 1 * 60;
                 }
             }
 
             if (_nameTextTimer-- == 0) {
-                ShowName(new Rectangle((int)Projectile.Center.X, (int)Projectile.Center.Y, 0, 0));
+                ShowName();
                 _nameTextTimer = 1 * 60;
             }
 
@@ -162,20 +172,13 @@ namespace ReviveMod.Source.Content.Projectiles
                 ProduceLight();
             }
 
-            if (ReviveTimer == 0) {
+            if (ReviveTimer <= 0) {
                 Projectile.Kill();
                 return;
             }
 
             // Undoes regular timeLeft tick down
             Projectile.timeLeft++;
-        }
-
-        public override void OnKill(int timeLeft)
-        {
-            if (Main.myPlayer == Projectile.owner) {
-                Owner.GetModPlayer<ReviveModPlayer>().Revive();
-            }
         }
     }
 }
