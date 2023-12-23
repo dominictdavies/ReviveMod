@@ -1,5 +1,2 @@
-v0.3.0:
-- Improved revive netcode
-    - Known bug where revive timers will occasionally not visually count down in order
-- Hardcore revival added
-- Mod is now disabled in singleplayer
+v0.3.1:
+- Fixed hardcore players still being deleted even after a revive
