@@ -19,6 +19,7 @@ namespace ReviveMod.Source.Common.Players
         public bool usuallyHardcore = false;
         public bool auraActive = false;
         public bool oldAuraActive = false;
+        public bool oldGhost = false;
         public bool respawnTimerPaused = false;
 
         public void Kill()
@@ -189,7 +190,7 @@ namespace ReviveMod.Source.Common.Players
             }
 
             /* Done this way as aura despawning does not call OnKill */
-            if (oldAuraActive && !auraActive && Main.myPlayer == Player.whoAmI) {
+            if (Main.myPlayer == Player.whoAmI && !auraActive && oldAuraActive) {
                 Revive();
             }
 
@@ -220,6 +221,12 @@ namespace ReviveMod.Source.Common.Players
                     SendReviveTeleport();
                 }
             }
+
+            if (Main.myPlayer == Player.whoAmI && Player.difficulty == PlayerDifficultyID.Hardcore && Player.ghost && !oldGhost) {
+                Player.KillMeForGood();
+            }
+
+            oldGhost = Player.ghost;
         }
     }
 }
