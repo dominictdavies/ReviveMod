@@ -206,12 +206,20 @@ namespace ReviveMod.Source.Common.Players
 
         public override void OnRespawn()
         {
+            if (ReviveModDisabled()) {
+                return;
+            }
+
             timeSpentDead = 0;
             ResetHardcorePlayer();
         }
 
         public override void PreUpdate()
         {
+            if (ReviveModDisabled()) {
+                return;
+            }
+
             // Teleport revived player to death location
             if (revived && !Player.dead && Player.position != Player.lastDeathPostion) {
                 LocalTeleport();
