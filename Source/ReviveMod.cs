@@ -31,18 +31,6 @@ namespace ReviveMod.Source
 
                     break;
 
-                case MessageType.RevivePlayer:
-                    byte revivedWhoAmI = reader.ReadByte();
-
-                    ReviveModPlayer revivedModPlayer = Main.player[revivedWhoAmI].GetModPlayer<ReviveModPlayer>();
-                    revivedModPlayer.Revive(broadcast: false);
-
-                    if (Main.netMode == NetmodeID.Server) {
-                        revivedModPlayer.SendRevivePlayer(ignoreClient: whoAmI);
-                    }
-
-                    break;
-
                 case MessageType.ReviveTeleport:
                     byte teleportingWhoAmI = reader.ReadByte();
 

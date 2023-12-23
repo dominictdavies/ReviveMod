@@ -2,7 +2,6 @@
 using ReviveMod.Source.Common.Players;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ReviveMod.Source.Common.Commands
@@ -10,7 +9,7 @@ namespace ReviveMod.Source.Common.Commands
     public class KillCommand : ModCommand
     {
         public override CommandType Type
-            => CommandType.World;
+            => CommandType.Chat;
 
         public override string Command
             => "kill";
@@ -24,10 +23,6 @@ namespace ReviveMod.Source.Common.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            if (Main.netMode == NetmodeID.Server && !NetMessage.DoesPlayerSlotCountAsAHost(caller.Player.whoAmI)) {
-                throw new UsageException("Only a host may use this command.");
-            }
-
             IEnumerable<Player> playersToKill;
 
             if (args.Length > 0) {

@@ -22,22 +22,6 @@ namespace ReviveMod.Source.Common.Players
         public bool oldGhost = false;
         public bool respawnTimerPaused = false;
 
-        public void Kill()
-        {
-            PlayerDeathReason playerWasKilled = PlayerDeathReason.ByCustomReason($"{Player.name} was killed.");
-            int playerLife = Player.statLife;
-            int noDirection = 0;
-            bool noPvp = false;
-
-            // Kill the player
-            Player.KillMe(playerWasKilled, playerLife, noDirection, noPvp);
-
-            // Server syncs up clients through NetMessage
-            if (Main.netMode == NetmodeID.Server) {
-                NetMessage.SendPlayerDeath(Player.whoAmI, playerWasKilled, playerLife, noDirection, noPvp);
-            }
-        }
-
         public void SaveHardcorePlayer()
         {
             if (ReviveModDisabled() || Player.difficulty != PlayerDifficultyID.Hardcore) {
@@ -58,23 +42,33 @@ namespace ReviveMod.Source.Common.Players
             usuallyHardcore = false;
         }
 
-        public bool Revive(bool verbose = true, bool broadcast = true)
+        public void Kill()
+        {
+            PlayerDeathReason damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} was killed.");
+            int damage = Player.statLifeMax2;
+            int hitDirection = 0;
+            bool pvp = false;
+
+            Player.KillMe(damageSource, damage, hitDirection, pvp);
+
+            // KillMe designed for clients to call, so if called by server a net message must be manually sent
+            if (Main.netMode == NetmodeID.Server) {
+                NetMessage.SendPlayerDeath(Player.whoAmI, damageSource, damage, hitDirection, pvp);
+            }
+        }
+
+        public bool Revive(bool verbose = true)
         {
             // Revive failed
             if (!Player.dead || revived == true) {
                 return false;
             }
 
-            // Player will respawn next tick
-            Player.respawnTimer = 0;
             SaveHardcorePlayer();
+            Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
 
             // Makes player teleport to death location
             revived = true;
-
-            if (broadcast && Main.netMode != NetmodeID.SinglePlayer) {
-                SendRevivePlayer();
-            }
 
             // Revive succeeded
             if (verbose) {
@@ -189,14 +183,6 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            /* Done this way as aura despawning does not call OnKill */
-            if (Main.myPlayer == Player.whoAmI && !auraActive && oldAuraActive) {
-                Revive();
-            }
-
-            oldAuraActive = auraActive;
-            auraActive = false;
-
             if ((respawnTimerPaused || CommonUtils.ActiveBossAlivePlayer() || HardcoreAndNotAllDeadForGood()) && AvoidMaxTimerAndWholeSecond()) {
                 Player.respawnTimer++; // Undoes regular respawnTimer tick down
             }
@@ -219,6 +205,14 @@ namespace ReviveMod.Source.Common.Players
             if (ReviveModDisabled()) {
                 return;
             }
+
+            /* Done this way as aura despawning does not call OnKill */
+            if (Main.myPlayer == Player.whoAmI && !auraActive && oldAuraActive) {
+                Revive();
+            }
+
+            oldAuraActive = auraActive;
+            auraActive = false;
 
             // Teleport revived player to death location
             if (revived && !Player.dead && Player.position != Player.lastDeathPostion) {
