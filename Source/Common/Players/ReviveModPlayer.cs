@@ -40,7 +40,7 @@ namespace ReviveMod.Source.Common.Players
 
         public void SaveHardcorePlayer()
         {
-            if (Player.difficulty != PlayerDifficultyID.Hardcore) {
+            if (ReviveModDisabled() || Player.difficulty != PlayerDifficultyID.Hardcore) {
                 return;
             }
 
@@ -50,7 +50,7 @@ namespace ReviveMod.Source.Common.Players
 
         public void ResetHardcorePlayer()
         {
-            if (!usuallyHardcore) {
+            if (ReviveModDisabled() || !usuallyHardcore) {
                 return;
             }
 
