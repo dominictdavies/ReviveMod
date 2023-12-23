@@ -37,6 +37,26 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
+        public void SaveHardcorePlayer()
+        {
+            if (Player.difficulty != PlayerDifficultyID.Hardcore) {
+                return;
+            }
+
+            Player.difficulty = PlayerDifficultyID.SoftCore;
+            usuallyHardcore = true;
+        }
+
+        public void ResetHardcorePlayer()
+        {
+            if (!usuallyHardcore) {
+                return;
+            }
+
+            Player.difficulty = PlayerDifficultyID.Hardcore;
+            usuallyHardcore = false;
+        }
+
         public bool Revive(bool verbose = true, bool broadcast = true)
         {
             // Revive failed
@@ -46,11 +66,7 @@ namespace ReviveMod.Source.Common.Players
 
             // Player will respawn next tick
             Player.respawnTimer = 0;
-            if (Player.difficulty == PlayerDifficultyID.Hardcore) {
-                // Will get reset upon respawn
-                Player.difficulty = PlayerDifficultyID.SoftCore;
-                usuallyHardcore = true;
-            }
+            SaveHardcorePlayer();
 
             // Makes player teleport to death location
             revived = true;
@@ -104,16 +120,30 @@ namespace ReviveMod.Source.Common.Players
             packet.Send(toClient, ignoreClient);
         }
 
+        public static bool ReviveModDisabled()
+            => !ModContent.GetInstance<ReviveModConfig>().Enabled || Main.netMode == NetmodeID.SinglePlayer;
+
         /* Called on client only, so use for UI */
         public override void OnEnterWorld()
-            => timeSpentDead = 0; 
+            => timeSpentDead = 0;
+
+        public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genDust, ref PlayerDeathReason damageSource)
+        {
+            if (ReviveModDisabled()) {
+                return true;
+            }
+
+            SaveHardcorePlayer();
+            return true;
+        }
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            if (!ModContent.GetInstance<ReviveModConfig>().Enabled || Main.netMode == NetmodeID.SinglePlayer) {
+            if (ReviveModDisabled()) {
                 return;
             }
 
+            ResetHardcorePlayer();
             if (Main.myPlayer == Player.whoAmI) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
@@ -154,7 +184,7 @@ namespace ReviveMod.Source.Common.Players
 
         public override void UpdateDead()
         {
-            if (!ModContent.GetInstance<ReviveModConfig>().Enabled || Main.netMode == NetmodeID.SinglePlayer) {
+            if (ReviveModDisabled()) {
                 return;
             }
 
@@ -176,10 +206,7 @@ namespace ReviveMod.Source.Common.Players
         public override void OnRespawn()
         {
             timeSpentDead = 0;
-
-            if (usuallyHardcore) {
-                Player.difficulty = PlayerDifficultyID.Hardcore;
-            }
+            ResetHardcorePlayer();
         }
 
         public override void PreUpdate()
