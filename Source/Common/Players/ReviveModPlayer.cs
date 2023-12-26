@@ -1,7 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using ReviveMod.Common.Configs;
 using ReviveMod.Source.Common.Systems;
 using ReviveMod.Source.Content.Projectiles;
 using System;
@@ -18,7 +16,7 @@ namespace ReviveMod.Source.Common.Players
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
-        public bool usuallyHardcore = false;
+        private bool usuallyHardcore = false;
         public bool auraActive = false;
         public bool oldAuraActive = false;
         public bool oldGhost = false;
@@ -26,20 +24,12 @@ namespace ReviveMod.Source.Common.Players
 
         public void SaveHardcorePlayer()
         {
-            if (!ReviveMod.Enabled || Player.difficulty != PlayerDifficultyID.Hardcore) {
-                return;
-            }
-
             Player.difficulty = PlayerDifficultyID.SoftCore;
             usuallyHardcore = true;
         }
 
         public void ResetHardcorePlayer()
         {
-            if (!ReviveMod.Enabled || !usuallyHardcore) {
-                return;
-            }
-
             Player.difficulty = PlayerDifficultyID.Hardcore;
             usuallyHardcore = false;
         }
@@ -69,13 +59,18 @@ namespace ReviveMod.Source.Common.Players
                 return false;
             }
 
-            // For moving respawn location and creating dust
+            // For moving respawn location
             revived = true;
+            if (Player.difficulty == PlayerDifficultyID.Hardcore) {
+                SaveHardcorePlayer();
+            }
 
-            SaveHardcorePlayer();
             Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
+            if (usuallyHardcore) {
+                ResetHardcorePlayer();
+            }
 
-            // Revive succeeded
+            CreateReviveDust();
             if (verbose) {
                 string playerRevived = Language.GetTextValue("Mods.ReviveMod.Chat.PlayerRevived");
                 Main.NewText(string.Format(playerRevived, Player.name), ReviveMod.lifeGreen);
@@ -87,6 +82,10 @@ namespace ReviveMod.Source.Common.Players
         /* Called on client only, so use for UI */
         public override void OnEnterWorld()
         {
+            if (!ReviveMod.Enabled) {
+                return;
+            }
+
             timeSpentDead = 0;
         }
 
@@ -96,7 +95,10 @@ namespace ReviveMod.Source.Common.Players
                 return true;
             }
 
-            SaveHardcorePlayer();
+            if (Player.difficulty == PlayerDifficultyID.Hardcore) {
+                SaveHardcorePlayer();
+            }
+
             return true;
         }
 
@@ -106,7 +108,10 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            ResetHardcorePlayer();
+            if (usuallyHardcore) {
+                ResetHardcorePlayer();
+            }
+
             if (Main.myPlayer == Player.whoAmI) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
@@ -143,10 +148,8 @@ namespace ReviveMod.Source.Common.Players
             }
 
             if (revived) {
-                ResetHardcorePlayer();
-                SetSpawnReviveLocation();
-                CreateReviveDust();
                 revived = false;
+                SetSpawnReviveLocation();
             }
 
             timeSpentDead = 0;
@@ -154,10 +157,6 @@ namespace ReviveMod.Source.Common.Players
 
         private void SetSpawnReviveLocation()
         {
-            if (Main.myPlayer != Player.whoAmI) {
-                return;
-            }
-
             Player.SpawnX = (int)(LastDeathCenter.X / 16);
             Player.SpawnY = (int)((Player.lastDeathPostion.Y + Player.height) / 16);
         }
@@ -173,7 +172,7 @@ namespace ReviveMod.Source.Common.Players
                     speedY *= -1;
                 }
 
-                Dust.NewDust(LastDeathCenter, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
+                Dust.NewDust(Player.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
             }
         }
 
@@ -184,7 +183,7 @@ namespace ReviveMod.Source.Common.Players
             }
 
             /* Done this way as aura despawning does not call OnKill */
-            if (Main.myPlayer == Player.whoAmI && !auraActive && oldAuraActive) {
+            if (!auraActive && oldAuraActive) {
                 Revive();
             }
 
@@ -192,7 +191,7 @@ namespace ReviveMod.Source.Common.Players
             auraActive = false;
 
             if (Main.myPlayer == Player.whoAmI && Player.difficulty == PlayerDifficultyID.Hardcore && Player.ghost && !oldGhost) {
-                Player.KillMeForGood();
+                Player.KillMeForGood(); // Deletes player file
             }
 
             oldGhost = Player.ghost;
