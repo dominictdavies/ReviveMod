@@ -79,6 +79,21 @@ namespace ReviveMod.Source.Common.Players
             return true;
         }
 
+        private void CreateReviveDust()
+        {
+            for (int i = 0; i < 50; i++) {
+                double speed = 2d;
+                double speedX = Main.rand.NextDouble() * speed * 2 - speed;
+                double speedY = Math.Sqrt(speed * speed - speedX * speedX);
+
+                if (Main.rand.NextBool()) {
+                    speedY *= -1;
+                }
+
+                Dust.NewDust(Player.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
+            }
+        }
+
         /* Called on client only, so use for UI */
         public override void OnEnterWorld()
         {
@@ -159,21 +174,6 @@ namespace ReviveMod.Source.Common.Players
         {
             Player.SpawnX = (int)(LastDeathCenter.X / 16);
             Player.SpawnY = (int)((Player.lastDeathPostion.Y + Player.height) / 16);
-        }
-
-        private void CreateReviveDust()
-        {
-            for (int i = 0; i < 50; i++) {
-                double speed = 2d;
-                double speedX = Main.rand.NextDouble() * speed * 2 - speed;
-                double speedY = Math.Sqrt(speed * speed - speedX * speedX);
-
-                if (Main.rand.NextBool()) {
-                    speedY *= -1;
-                }
-
-                Dust.NewDust(Player.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
-            }
         }
 
         public override void PreUpdate()
