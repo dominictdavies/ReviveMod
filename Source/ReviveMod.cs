@@ -12,7 +12,8 @@ namespace ReviveMod.Source
     {
         public static readonly Color lifeGreen = new(52, 235, 73);
 
-        public static bool Enabled => ModContent.GetInstance<ReviveModConfig>().Enabled && Main.netMode != NetmodeID.SinglePlayer;
+        public static bool Enabled
+            => ModContent.GetInstance<ReviveModConfig>().Enabled && Main.netMode != NetmodeID.SinglePlayer;
 
         internal enum MessageType : byte
         {

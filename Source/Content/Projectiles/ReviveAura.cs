@@ -17,8 +17,11 @@ namespace ReviveMod.Source.Content.Projectiles
         private int _progressTextTimer;
         private int _nameTextTimer;
 
-        private ref Player Owner => ref Main.player[Projectile.owner];
-        private ref float ReviveTimer => ref Projectile.ai[0];
+        private Player Owner
+            => Main.player[Projectile.owner];
+
+        private ref float ReviveTimer
+            => ref Projectile.ai[0];
 
         private Vector3 GetAuraColor()
         {

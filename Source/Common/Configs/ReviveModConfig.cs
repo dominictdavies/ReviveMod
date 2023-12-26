@@ -7,7 +7,8 @@ namespace ReviveMod.Common.Configs
 {
     public class ReviveModConfig : ModConfig
     {
-        public override ConfigScope Mode => ConfigScope.ServerSide;
+        public override ConfigScope Mode
+            => ConfigScope.ServerSide;
 
         [Header("Reviving")]
 

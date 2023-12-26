@@ -23,7 +23,8 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
-        private bool AvoidMaxTimerAndWholeSecond => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
+        private bool AvoidMaxTimerAndWholeSecond
+            => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
 
         private bool HardcoreAndNotAllDeadForGood
         {
