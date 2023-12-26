@@ -14,10 +14,10 @@ using Terraria.ModLoader;
 
 namespace ReviveMod.Source.Common.Players
 {
-    public class ReviveModPlayer : ModPlayer
+    public partial class ReviveModPlayer : ModPlayer
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
-        public Vector2 reviveLocation = Vector2.Zero;
+        public bool revived = false;
         public bool usuallyHardcore = false;
         public bool auraActive = false;
         public bool oldAuraActive = false;
@@ -26,7 +26,7 @@ namespace ReviveMod.Source.Common.Players
 
         public void SaveHardcorePlayer()
         {
-            if (ReviveModDisabled() || Player.difficulty != PlayerDifficultyID.Hardcore) {
+            if (!ReviveMod.Enabled || Player.difficulty != PlayerDifficultyID.Hardcore) {
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace ReviveMod.Source.Common.Players
 
         public void ResetHardcorePlayer()
         {
-            if (ReviveModDisabled() || !usuallyHardcore) {
+            if (!ReviveMod.Enabled || !usuallyHardcore) {
                 return;
             }
 
@@ -69,7 +69,9 @@ namespace ReviveMod.Source.Common.Players
                 return false;
             }
 
-            reviveLocation = Player.position;
+            // For moving respawn location and creating dust
+            revived = true;
+
             SaveHardcorePlayer();
             Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
 
@@ -82,44 +84,15 @@ namespace ReviveMod.Source.Common.Players
             return true;
         }
 
-        public static bool ReviveModDisabled()
-            => !ModContent.GetInstance<ReviveModConfig>().Enabled || Main.netMode == NetmodeID.SinglePlayer;
-
-        public override void Load()
-            => IL_Player.Spawn += HookSpawn;
-
-        private static void HookSpawn(ILContext il)
-        {
-            ILCursor c = new(il);
-
-            try {
-                c.GotoNext(MoveType.Before, i => i.MatchStsfld("Terraria.Main", "maxQ"));
-                c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate(SpawnAtReviveLocation);
-            } catch (Exception exception) {
-                ReviveMod reviveMod = ModContent.GetInstance<ReviveMod>();
-                MonoModHooks.DumpIL(reviveMod, il);
-                throw new ILPatchFailureException(reviveMod, il, exception);
-            }
-        }
-
-        private static void SpawnAtReviveLocation(Player player)
-        {
-            ref Vector2 reviveLocation = ref player.GetModPlayer<ReviveModPlayer>().reviveLocation;
-            if (reviveLocation != Vector2.Zero) {
-                player.SpawnX = (int)Math.Round(reviveLocation.X / 16);
-                player.SpawnY = (int)Math.Round(reviveLocation.Y / 16) + 3; // Accounting for player height
-                reviveLocation = Vector2.Zero;
-            }
-        }
-
         /* Called on client only, so use for UI */
         public override void OnEnterWorld()
-            => timeSpentDead = 0;
+        {
+            timeSpentDead = 0;
+        }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genDust, ref PlayerDeathReason damageSource)
         {
-            if (ReviveModDisabled()) {
+            if (!ReviveMod.Enabled) {
                 return true;
             }
 
@@ -129,7 +102,7 @@ namespace ReviveMod.Source.Common.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            if (ReviveModDisabled()) {
+            if (!ReviveMod.Enabled) {
                 return;
             }
 
@@ -150,35 +123,13 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
-        private bool HardcoreAndNotAllDeadForGood()
-        {
-            if (Player.difficulty != PlayerDifficultyID.Hardcore) {
-                return false;
-            }
-
-            foreach (Player player in Main.player) {
-                if (!player.active) {
-                    continue;
-                }
-
-                if (player.difficulty == PlayerDifficultyID.Hardcore && !player.dead) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool AvoidMaxTimerAndWholeSecond()
-            => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
-
         public override void UpdateDead()
         {
-            if (ReviveModDisabled()) {
+            if (!ReviveMod.Enabled) {
                 return;
             }
 
-            if ((respawnTimerPaused || CommonUtils.ActiveBossAlivePlayer() || HardcoreAndNotAllDeadForGood()) && AvoidMaxTimerAndWholeSecond()) {
+            if ((respawnTimerPaused || CommonUtils.ActiveBossAlivePlayer || HardcoreAndNotAllDeadForGood) && AvoidMaxTimerAndWholeSecond) {
                 Player.respawnTimer++; // Undoes regular respawnTimer tick down
             }
 
@@ -187,16 +138,31 @@ namespace ReviveMod.Source.Common.Players
 
         public override void OnRespawn()
         {
-            if (ReviveModDisabled()) {
+            if (!ReviveMod.Enabled) {
                 return;
             }
 
+            if (revived) {
+                ResetHardcorePlayer();
+                SetSpawnReviveLocation();
+                CreateReviveDust();
+                revived = false;
+            }
+
             timeSpentDead = 0;
-            ResetHardcorePlayer();
-            CreateReviveEffect();
         }
 
-        private void CreateReviveEffect()
+        private void SetSpawnReviveLocation()
+        {
+            if (Main.myPlayer != Player.whoAmI) {
+                return;
+            }
+
+            Player.SpawnX = (int)Math.Round(Player.lastDeathPostion.X / 16);
+            Player.SpawnY = (int)Math.Round(Player.lastDeathPostion.Y / 16) + 3; // Accounting for player height
+        }
+
+        private void CreateReviveDust()
         {
             for (int i = 0; i < 50; i++) {
                 double speed = 2d;
@@ -207,13 +173,13 @@ namespace ReviveMod.Source.Common.Players
                     speedY *= -1;
                 }
 
-                Dust.NewDust(Player.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
+                Dust.NewDust(LastDeathCenter, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
             }
         }
 
         public override void PreUpdate()
         {
-            if (ReviveModDisabled()) {
+            if (!ReviveMod.Enabled) {
                 return;
             }
 

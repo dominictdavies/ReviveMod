@@ -83,7 +83,7 @@ namespace ReviveMod.Source.Content.Projectiles
             }
 
             Owner.Center = Projectile.Center;
-            Owner.lastDeathPostion = Projectile.Center;
+            Owner.GetModPlayer<ReviveModPlayer>().LastDeathCenter = Projectile.Center;
         }
 
         private void ShowProgress(Player player)
@@ -101,7 +101,7 @@ namespace ReviveMod.Source.Content.Projectiles
             int reviveTimeSeconds = config.ReviveTime * 60;
             float noBossMultiplier = config.NoBossMultiplier;
 
-            _reviveTimerMax = CommonUtils.ActiveBossAlivePlayer() ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
+            _reviveTimerMax = CommonUtils.ActiveBossAlivePlayer ? reviveTimeSeconds : (int)(reviveTimeSeconds * noBossMultiplier);
             if (_reviveTimerMax <= 0) { // Players will not be instantly revived when _reviveTimerMax is 0
                 _reviveTimerMax = 1;
             }

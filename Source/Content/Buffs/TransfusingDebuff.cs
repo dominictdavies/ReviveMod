@@ -42,7 +42,7 @@ namespace ReviveMod.Source.Content.Buffs
                 // Life regen is measured in 1/2 life per second so this effect causes 1/4 max life to be lost over 10 seconds
                 var config = ModContent.GetInstance<ReviveModConfig>();
                 int lifeDecay = Player.statLifeMax2 * config.DrainPercentage / (config.ReviveTime * 50);
-                if (!CommonUtils.ActiveBossAlivePlayer() && config.NoBossMultiplier > 0) {
+                if (!CommonUtils.ActiveBossAlivePlayer && config.NoBossMultiplier > 0) {
                     lifeDecay = (int)(lifeDecay * (1f / config.NoBossMultiplier));
                 }
 
