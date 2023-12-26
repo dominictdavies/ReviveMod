@@ -193,6 +193,22 @@ namespace ReviveMod.Source.Common.Players
 
             timeSpentDead = 0;
             ResetHardcorePlayer();
+            CreateReviveEffect();
+        }
+
+        private void CreateReviveEffect()
+        {
+            for (int i = 0; i < 50; i++) {
+                double speed = 2d;
+                double speedX = Main.rand.NextDouble() * speed * 2 - speed;
+                double speedY = Math.Sqrt(speed * speed - speedX * speedX);
+
+                if (Main.rand.NextBool()) {
+                    speedY *= -1;
+                }
+
+                Dust.NewDust(Player.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
+            }
         }
 
         public override void PreUpdate()
