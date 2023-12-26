@@ -1,11 +1,7 @@
-﻿using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using ReviveMod.Source.Common.Systems;
-using ReviveMod.Source.Content.Projectiles;
+﻿using ReviveMod.Source.Content.Projectiles;
 using System;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -69,6 +65,7 @@ namespace ReviveMod.Source.Common.Players
             if (usuallyHardcore) {
                 ResetHardcorePlayer();
             }
+            revived = false;
 
             CreateReviveDust();
             if (verbose) {
@@ -90,7 +87,7 @@ namespace ReviveMod.Source.Common.Players
                     speedY *= -1;
                 }
 
-                Dust.NewDust(Player.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
+                Dust.NewDust(LastDeathCenter, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
             }
         }
 
@@ -151,18 +148,7 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            if (revived) {
-                revived = false;
-                SetSpawnReviveLocation();
-            }
-
             timeSpentDead = 0;
-        }
-
-        private void SetSpawnReviveLocation()
-        {
-            Player.SpawnX = (int)(LastDeathCenter.X / 16);
-            Player.SpawnY = (int)((Player.lastDeathPostion.Y + Player.height) / 16);
         }
 
         public override void PreUpdate()
