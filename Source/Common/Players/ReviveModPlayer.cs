@@ -132,17 +132,6 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
-        public override void ProcessTriggers(TriggersSet triggersSet)
-        {
-            if (KeybindSystem.PauseRespawnTimer.JustPressed) {
-                respawnTimerPaused = !respawnTimerPaused;
-                string respawnTimerText = respawnTimerPaused ?
-                                          Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerPaused") :
-                                          Language.GetTextValue("Mods.ReviveMod.Chat.RespawnTimerUnpaused");
-                Main.NewText(respawnTimerText, ReviveMod.lifeGreen);
-            }
-        }
-
         public override void UpdateDead()
         {
             if (!ReviveMod.Enabled) {
