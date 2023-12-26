@@ -158,8 +158,8 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            Player.SpawnX = (int)Math.Round(Player.lastDeathPostion.X / 16);
-            Player.SpawnY = (int)Math.Round(Player.lastDeathPostion.Y / 16) + 3; // Accounting for player height
+            Player.SpawnX = (int)(LastDeathCenter.X / 16);
+            Player.SpawnY = (int)((Player.lastDeathPostion.Y + Player.height) / 16);
         }
 
         private void CreateReviveDust()
