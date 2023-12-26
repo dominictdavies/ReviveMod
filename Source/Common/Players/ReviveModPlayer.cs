@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using ReviveMod.Common.Configs;
 using ReviveMod.Source.Common.Systems;
 using ReviveMod.Source.Content.Projectiles;
@@ -15,7 +17,7 @@ namespace ReviveMod.Source.Common.Players
     public class ReviveModPlayer : ModPlayer
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
-        public bool revived = false;
+        public Vector2 reviveLocation = Vector2.Zero;
         public bool usuallyHardcore = false;
         public bool auraActive = false;
         public bool oldAuraActive = false;
@@ -42,33 +44,34 @@ namespace ReviveMod.Source.Common.Players
             usuallyHardcore = false;
         }
 
-        public void Kill()
+        public bool Kill()
         {
-            PlayerDeathReason damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} was killed.");
-            int damage = Player.statLifeMax2;
-            int hitDirection = 0;
-            bool pvp = false;
-
-            Player.KillMe(damageSource, damage, hitDirection, pvp);
-
-            // KillMe designed for clients to call, so if called by server a net message must be manually sent
-            if (Main.netMode == NetmodeID.Server) {
-                NetMessage.SendPlayerDeath(Player.whoAmI, damageSource, damage, hitDirection, pvp);
+            // Kill failed
+            if (Player.dead) {
+                return false;
             }
+
+            // TODO fix killing non clients
+            PlayerDeathReason reason = PlayerDeathReason.ByCustomReason($"{Player.name} was killed.");
+            Player.KillMe(reason, Player.statLifeMax2, 0);
+
+            if (Main.netMode == NetmodeID.Server) {
+                NetMessage.SendPlayerDeath(Player.whoAmI, reason, Player.statLifeMax2, 0, false);
+            }
+
+            return true;
         }
 
         public bool Revive(bool verbose = true)
         {
             // Revive failed
-            if (!Player.dead || revived == true) {
+            if (!Player.dead) {
                 return false;
             }
 
+            reviveLocation = Player.position;
             SaveHardcorePlayer();
             Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
-
-            // Makes player teleport to death location
-            revived = true;
 
             // Revive succeeded
             if (verbose) {
@@ -79,44 +82,36 @@ namespace ReviveMod.Source.Common.Players
             return true;
         }
 
-        public void LocalTeleport()
-        {
-            // Move player to death position
-            Player.Teleport(Player.lastDeathPostion - new Vector2(Player.width / 2, Player.height / 2), TeleportationStyleID.DebugTeleport);
-            for (int i = 0; i < 50; i++) {
-                double speed = 2d;
-                double speedX = Main.rand.NextDouble() * speed * 2 - speed;
-                double speedY = Math.Sqrt(speed * speed - speedX * speedX);
-
-                if (Main.rand.NextBool()) {
-                    speedY *= -1;
-                }
-
-                Dust.NewDust(Player.Center, 0, 0, DustID.Firework_Green, (float)speedX, (float)speedY);
-            }
-
-            // Reset flag
-            revived = false;
-        }
-
-        public void SendRevivePlayer(int toClient = -1, int ignoreClient = -1)
-        {
-            ModPacket packet = Mod.GetPacket();
-            packet.Write((byte)ReviveMod.MessageType.RevivePlayer);
-            packet.Write((byte)Player.whoAmI);
-            packet.Send(toClient, ignoreClient);
-        }
-
-        public void SendReviveTeleport(int toClient = -1, int ignoreClient = -1)
-        {
-            ModPacket packet = Mod.GetPacket();
-            packet.Write((byte)ReviveMod.MessageType.ReviveTeleport);
-            packet.Write((byte)Player.whoAmI);
-            packet.Send(toClient, ignoreClient);
-        }
-
         public static bool ReviveModDisabled()
             => !ModContent.GetInstance<ReviveModConfig>().Enabled || Main.netMode == NetmodeID.SinglePlayer;
+
+        public override void Load()
+            => IL_Player.Spawn += HookSpawn;
+
+        private static void HookSpawn(ILContext il)
+        {
+            ILCursor c = new(il);
+
+            try {
+                c.GotoNext(MoveType.Before, i => i.MatchStsfld("Terraria.Main", "maxQ"));
+                c.Emit(OpCodes.Ldarg_0);
+                c.EmitDelegate(SpawnAtReviveLocation);
+            } catch (Exception exception) {
+                ReviveMod reviveMod = ModContent.GetInstance<ReviveMod>();
+                MonoModHooks.DumpIL(reviveMod, il);
+                throw new ILPatchFailureException(reviveMod, il, exception);
+            }
+        }
+
+        private static void SpawnAtReviveLocation(Player player)
+        {
+            ref Vector2 reviveLocation = ref player.GetModPlayer<ReviveModPlayer>().reviveLocation;
+            if (reviveLocation != Vector2.Zero) {
+                player.SpawnX = (int)Math.Round(reviveLocation.X / 16);
+                player.SpawnY = (int)Math.Round(reviveLocation.Y / 16) + 3; // Accounting for player height
+                reviveLocation = Vector2.Zero;
+            }
+        }
 
         /* Called on client only, so use for UI */
         public override void OnEnterWorld()
@@ -213,16 +208,6 @@ namespace ReviveMod.Source.Common.Players
 
             oldAuraActive = auraActive;
             auraActive = false;
-
-            // Teleport revived player to death location
-            if (revived && !Player.dead && Player.position != Player.lastDeathPostion) {
-                LocalTeleport();
-
-                // Client declares teleport
-                if (Main.netMode == NetmodeID.MultiplayerClient) {
-                    SendReviveTeleport();
-                }
-            }
 
             if (Main.myPlayer == Player.whoAmI && Player.difficulty == PlayerDifficultyID.Hardcore && Player.ghost && !oldGhost) {
                 Player.KillMeForGood();
