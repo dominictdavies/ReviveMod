@@ -11,7 +11,6 @@ namespace ReviveMod.Source.Common.Players
     public partial class ReviveModPlayer : ModPlayer
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
-        public bool revived = false;
         public bool auraActive = false;
         public bool oldAuraActive = false;
         public bool oldGhost = false;
@@ -42,9 +41,7 @@ namespace ReviveMod.Source.Common.Players
                 return false;
             }
 
-            revived = true;
             Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
-            revived = false;
             CreateReviveDust();
 
             if (verbose) {

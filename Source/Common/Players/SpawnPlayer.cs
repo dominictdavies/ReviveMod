@@ -29,7 +29,7 @@ namespace ReviveMod.Source.Common.Players
         private static void SpawnAtReviveLocation(Player player)
         {
             ReviveModPlayer reviveModPlayer = player.GetModPlayer<ReviveModPlayer>();
-            if (reviveModPlayer.revived) {
+            if (reviveModPlayer.AuraJustDisappeared) {
                 player.SpawnX = (int)(reviveModPlayer.LastDeathCenter.X / 16);
                 player.SpawnY = (int)((player.lastDeathPostion.Y + player.height) / 16);
             }
