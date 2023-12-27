@@ -12,8 +12,6 @@ namespace ReviveMod.Source.Common.Players
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool auraActive = false;
-        public bool oldAuraActive = false;
-        public bool oldGhost = false;
         public bool respawnTimerPaused = false;
 
         public bool Kill()
@@ -116,25 +114,15 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            if (AuraJustDisappeared) {
+            if (IsTimeToRevive) {
                 Revive();
             }
-
-            if (Main.myPlayer == Player.whoAmI && Player.difficulty == PlayerDifficultyID.Hardcore && JustBecameGhost) {
-                Player.KillMeForGood(); // Deletes player file
-            }
-
-            oldAuraActive = auraActive;
-            oldGhost = Player.ghost;
 
             auraActive = false;
         }
 
-        public bool JustBecameGhost
-            => Player.ghost && !oldGhost;
-
         /* Done this way as opposed to aura OnKill to catch aura despawning */
-        public bool AuraJustDisappeared
-            => !auraActive && oldAuraActive;
+        public bool IsTimeToRevive
+            => Player.dead && !Player.ghost && !auraActive;
     }
 }
