@@ -12,23 +12,10 @@ namespace ReviveMod.Source.Common.Players
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
         public bool revived = false;
-        private bool usuallyHardcore = false;
         public bool auraActive = false;
         public bool oldAuraActive = false;
         public bool oldGhost = false;
         public bool respawnTimerPaused = false;
-
-        public void SaveHardcorePlayer()
-        {
-            Player.difficulty = PlayerDifficultyID.SoftCore;
-            usuallyHardcore = true;
-        }
-
-        public void ResetHardcorePlayer()
-        {
-            Player.difficulty = PlayerDifficultyID.Hardcore;
-            usuallyHardcore = false;
-        }
 
         public bool Kill()
         {
@@ -55,19 +42,11 @@ namespace ReviveMod.Source.Common.Players
                 return false;
             }
 
-            // For moving respawn location
             revived = true;
-            if (Player.difficulty == PlayerDifficultyID.Hardcore) {
-                SaveHardcorePlayer();
-            }
-
             Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
-            if (usuallyHardcore) {
-                ResetHardcorePlayer();
-            }
             revived = false;
-
             CreateReviveDust();
+
             if (verbose) {
                 string playerRevived = Language.GetTextValue("Mods.ReviveMod.Chat.PlayerRevived");
                 Main.NewText(string.Format(playerRevived, Player.name), ReviveMod.lifeGreen);
@@ -101,27 +80,10 @@ namespace ReviveMod.Source.Common.Players
             timeSpentDead = 0;
         }
 
-        public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genDust, ref PlayerDeathReason damageSource)
-        {
-            if (!ReviveMod.Enabled) {
-                return true;
-            }
-
-            if (Player.difficulty == PlayerDifficultyID.Hardcore) {
-                SaveHardcorePlayer();
-            }
-
-            return true;
-        }
-
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
             if (!ReviveMod.Enabled) {
                 return;
-            }
-
-            if (usuallyHardcore) {
-                ResetHardcorePlayer();
             }
 
             if (Main.myPlayer == Player.whoAmI) {
@@ -157,19 +119,25 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            /* Done this way as aura despawning does not call OnKill */
-            if (!auraActive && oldAuraActive) {
+            if (AuraJustDisappeared) {
                 Revive();
             }
 
-            oldAuraActive = auraActive;
-            auraActive = false;
-
-            if (Main.myPlayer == Player.whoAmI && Player.difficulty == PlayerDifficultyID.Hardcore && Player.ghost && !oldGhost) {
+            if (Main.myPlayer == Player.whoAmI && Player.difficulty == PlayerDifficultyID.Hardcore && JustBecameGhost) {
                 Player.KillMeForGood(); // Deletes player file
             }
 
+            oldAuraActive = auraActive;
             oldGhost = Player.ghost;
+
+            auraActive = false;
         }
+
+        public bool JustBecameGhost
+            => Player.ghost && !oldGhost;
+
+        /* Done this way as opposed to aura OnKill to catch aura despawning */
+        public bool AuraJustDisappeared
+            => !auraActive && oldAuraActive;
     }
 }
