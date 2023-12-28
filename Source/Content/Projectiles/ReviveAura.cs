@@ -5,7 +5,6 @@ using ReviveMod.Source.Common;
 using ReviveMod.Source.Common.Players;
 using ReviveMod.Source.Content.Buffs;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -119,9 +118,6 @@ namespace ReviveMod.Source.Content.Projectiles
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
-
-        public override void OnSpawn(IEntitySource source)
-            => Owner.GetModPlayer<ReviveModPlayer>().auraActive = true;
 
         public override void PostDraw(Color lightColor)
         {

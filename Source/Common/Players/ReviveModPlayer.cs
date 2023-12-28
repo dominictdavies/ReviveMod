@@ -21,9 +21,11 @@ namespace ReviveMod.Source.Common.Players
                 return false;
             }
 
-            // TODO fix killing non clients
             PlayerDeathReason reason = PlayerDeathReason.ByCustomReason($"{Player.name} was killed.");
-            Player.KillMe(reason, Player.statLifeMax2, 0);
+
+            if (Main.myPlayer == Player.whoAmI) {
+                Player.KillMe(reason, Player.statLifeMax2, 0);
+            }
 
             if (Main.netMode == NetmodeID.Server) {
                 NetMessage.SendPlayerDeath(Player.whoAmI, reason, Player.statLifeMax2, 0, false);
@@ -39,7 +41,10 @@ namespace ReviveMod.Source.Common.Players
                 return false;
             }
 
-            Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
+            if (Main.myPlayer == Player.whoAmI) {
+                Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
+            }
+
             CreateReviveDust();
 
             if (verbose) {
@@ -84,6 +89,7 @@ namespace ReviveMod.Source.Common.Players
             if (Main.myPlayer == Player.whoAmI) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
+            auraActive = true;
         }
 
         public override void UpdateDead()
