@@ -14,45 +14,15 @@ namespace ReviveMod.Source.Common.Players
         public bool auraActive = false;
         public bool respawnTimerPaused = false;
 
-        public bool Kill()
+        public void ReviveMe()
         {
-            // Kill failed
-            if (Player.dead) {
-                return false;
-            }
-
-            PlayerDeathReason reason = PlayerDeathReason.ByCustomReason($"{Player.name} was killed.");
-
-            if (Main.myPlayer == Player.whoAmI) {
-                Player.KillMe(reason, Player.statLifeMax2, 0);
-            }
-
-            if (Main.netMode == NetmodeID.Server) {
-                NetMessage.SendPlayerDeath(Player.whoAmI, reason, Player.statLifeMax2, 0, false);
-            }
-
-            return true;
-        }
-
-        public bool Revive(bool verbose = true)
-        {
-            // Revive failed
-            if (!Player.dead) {
-                return false;
-            }
-
             if (Main.myPlayer == Player.whoAmI) {
                 Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
             }
 
             CreateReviveDust();
-
-            if (verbose) {
-                string playerRevived = Language.GetTextValue("Mods.ReviveMod.Chat.PlayerRevived");
-                Main.NewText(string.Format(playerRevived, Player.name), ReviveMod.lifeGreen);
-            }
-
-            return true;
+            string playerRevived = Language.GetTextValue("Mods.ReviveMod.Chat.PlayerRevived");
+            Main.NewText(string.Format(playerRevived, Player.name), ReviveMod.lifeGreen);
         }
 
         private void CreateReviveDust()
@@ -121,7 +91,7 @@ namespace ReviveMod.Source.Common.Players
             }
 
             if (IsTimeToRevive) {
-                Revive();
+                ReviveMe();
             }
 
             auraActive = false;

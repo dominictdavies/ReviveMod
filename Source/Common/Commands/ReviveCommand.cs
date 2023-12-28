@@ -9,7 +9,7 @@ namespace ReviveMod.Source.Common.Commands
     public class ReviveCommand : ModCommand
     {
         public override CommandType Type
-            => CommandType.Chat;
+            => CommandType.Server;
 
         public override string Command
             => "revive";
@@ -38,7 +38,11 @@ namespace ReviveMod.Source.Common.Commands
 
             foreach (Player player in playersToRevive) {
                 if (player.dead) {
-                    player.GetModPlayer<ReviveModPlayer>().Revive();
+                    player.GetModPlayer<ReviveModPlayer>().ReviveMe();
+                    ModPacket reviveMePacket = Mod.GetPacket();
+                    reviveMePacket.Write((byte)ReviveMod.MessageType.ReviveMe);
+                    reviveMePacket.Write((byte)player.whoAmI);
+                    reviveMePacket.Send();
                 } else {
                     alreadyAlivePlayerNames.Add(player.name);
                 }

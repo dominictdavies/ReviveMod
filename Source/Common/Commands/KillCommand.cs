@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using ReviveMod.Source.Common.Players;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -9,7 +8,7 @@ namespace ReviveMod.Source.Common.Commands
     public class KillCommand : ModCommand
     {
         public override CommandType Type
-            => CommandType.Chat;
+            => CommandType.Server;
 
         public override string Command
             => "kill";
@@ -38,7 +37,9 @@ namespace ReviveMod.Source.Common.Commands
 
             foreach (Player player in playersToKill) {
                 if (!player.dead) {
-                    player.GetModPlayer<ReviveModPlayer>().Kill();
+                    ModPacket killMePacket = Mod.GetPacket();
+                    killMePacket.Write((byte)ReviveMod.MessageType.KillMe);
+                    killMePacket.Send(toClient: player.whoAmI);
                 } else {
                     alreadyDeadPlayerNames.Add(player.name);
                 }

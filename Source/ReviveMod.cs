@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
 using ReviveMod.Common.Configs;
+using ReviveMod.Source.Common.Players;
 using ReviveMod.Source.Common.Systems;
 using System.IO;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -17,7 +19,9 @@ namespace ReviveMod.Source
 
         internal enum MessageType : byte
         {
-            AlivePlayerCheck
+            AlivePlayerCheck,
+            KillMe,
+            ReviveMe
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -29,7 +33,21 @@ namespace ReviveMod.Source
                     bool anyAlivePlayer = reader.ReadBoolean();
 
                     ModContent.GetInstance<ReviveModSystem>().anyAlivePlayer = anyAlivePlayer;
+                    break;
 
+                case MessageType.KillMe:
+                    Player myPlayer = Main.player[Main.myPlayer];
+                    myPlayer.KillMe(
+                        PlayerDeathReason.ByCustomReason($"{myPlayer.name} was killed."),
+                        myPlayer.statLifeMax2,
+                        0
+                    );
+                    break;
+
+                case MessageType.ReviveMe:
+                    byte reviveWhoAmI = reader.ReadByte();
+
+                    Main.player[reviveWhoAmI].GetModPlayer<ReviveModPlayer>().ReviveMe();
                     break;
 
                 default:
