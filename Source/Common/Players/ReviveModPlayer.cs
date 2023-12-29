@@ -11,12 +11,15 @@ namespace ReviveMod.Source.Common.Players
     public partial class ReviveModPlayer : ModPlayer
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
-        public bool auraActive = false;
         public bool respawnTimerPaused = false;
+        public bool auraActive;
+        public bool oldAuraActive;
+        public bool spawnAtDeathLocation;
 
         public void ReviveMe()
         {
             if (Main.myPlayer == Player.whoAmI) {
+                spawnAtDeathLocation = true;
                 Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
             }
 
@@ -59,7 +62,6 @@ namespace ReviveMod.Source.Common.Players
             if (Main.myPlayer == Player.whoAmI) {
                 Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
-            auraActive = true;
         }
 
         public override void UpdateDead()
@@ -94,11 +96,12 @@ namespace ReviveMod.Source.Common.Players
                 ReviveMe();
             }
 
+            oldAuraActive = auraActive;
             auraActive = false;
         }
 
         /* Done this way as opposed to aura OnKill to catch aura despawning */
         public bool IsTimeToRevive
-            => Player.dead && !Player.ghost && !auraActive;
+            => Player.dead && !Player.ghost && !auraActive && oldAuraActive;
     }
 }
