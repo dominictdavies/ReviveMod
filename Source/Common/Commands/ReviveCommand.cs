@@ -43,7 +43,7 @@ namespace ReviveMod.Source.Common.Commands
 
             foreach (Player player in playersToRevive) {
                 if (player.dead) {
-                    player.GetModPlayer<ReviveModPlayer>().Revive();
+                    player.GetModPlayer<ReviveModPlayer>().ReviveMe();
                 } else {
                     alreadyAlivePlayerNames.Add(player.name);
                 }

@@ -6,7 +6,7 @@ namespace ReviveMod.Source.Common
 {
     public class CommonUtils
     {
-        public static bool ActiveBossAlivePlayer()
+        public static bool ActiveBossAlivePlayer
             => Main.CurrentFrameFlags.AnyActiveBossNPC
             && ModContent.GetInstance<ReviveModSystem>().anyAlivePlayer;
     }

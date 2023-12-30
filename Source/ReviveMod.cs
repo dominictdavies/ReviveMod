@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using ReviveMod.Common.Configs;
 using ReviveMod.Source.Common.Players;
 using ReviveMod.Source.Common.Systems;
 using System.IO;
@@ -12,11 +13,14 @@ namespace ReviveMod.Source
     {
         public static readonly Color lifeGreen = new(52, 235, 73);
 
+        public static bool Enabled
+            => ModContent.GetInstance<ReviveModConfig>().Enabled && Main.netMode != NetmodeID.SinglePlayer;
+
         internal enum MessageType : byte
         {
             AlivePlayerCheck,
-            RevivePlayer,
-            ReviveTeleport
+            Kill,
+            Revive
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -28,31 +32,22 @@ namespace ReviveMod.Source
                     bool anyAlivePlayer = reader.ReadBoolean();
 
                     ModContent.GetInstance<ReviveModSystem>().anyAlivePlayer = anyAlivePlayer;
-
                     break;
 
-                case MessageType.RevivePlayer:
-                    byte revivedWhoAmI = reader.ReadByte();
-
-                    ReviveModPlayer revivedModPlayer = Main.player[revivedWhoAmI].GetModPlayer<ReviveModPlayer>();
-                    revivedModPlayer.Revive(broadcast: false);
-
-                    if (Main.netMode == NetmodeID.Server) {
-                        revivedModPlayer.SendRevivePlayer(ignoreClient: whoAmI);
+                case MessageType.Kill:
+                    if (Main.netMode == NetmodeID.MultiplayerClient) {
+                        whoAmI = reader.ReadByte();
                     }
 
+                    Main.player[whoAmI].GetModPlayer<ReviveModPlayer>().KillMe(broadcast: false);
                     break;
 
-                case MessageType.ReviveTeleport:
-                    byte teleportingWhoAmI = reader.ReadByte();
-
-                    ReviveModPlayer teleportingModPlayer = Main.player[teleportingWhoAmI].GetModPlayer<ReviveModPlayer>();
-                    teleportingModPlayer.LocalTeleport();
-
-                    if (Main.netMode == NetmodeID.Server) {
-                        teleportingModPlayer.SendReviveTeleport(ignoreClient: whoAmI);
+                case MessageType.Revive:
+                    if (Main.netMode == NetmodeID.MultiplayerClient) {
+                        whoAmI = reader.ReadByte();
                     }
 
+                    Main.player[whoAmI].GetModPlayer<ReviveModPlayer>().ReviveMe(broadcast: false);
                     break;
 
                 default:
