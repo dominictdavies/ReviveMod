@@ -46,5 +46,29 @@ namespace ReviveMod.Source.Common.Players
                 return false;
             }
         }
+
+        private void SendKillPacket(int toClient = -1, int ignoreClient = -1)
+        {
+            ModPacket killPacket = Mod.GetPacket();
+            killPacket.Write((byte)ReviveMod.MessageType.Kill);
+
+            if (Main.netMode == NetmodeID.Server) {
+                killPacket.Write((byte)Player.whoAmI);
+            }
+
+            killPacket.Send(toClient, ignoreClient);
+        }
+
+        private void SendRevivePacket(int toClient = -1, int ignoreClient = -1)
+        {
+            ModPacket revivePacket = Mod.GetPacket();
+            revivePacket.Write((byte)ReviveMod.MessageType.Revive);
+
+            if (Main.netMode == NetmodeID.Server) {
+                revivePacket.Write((byte)Player.whoAmI);
+            }
+
+            revivePacket.Send(toClient, ignoreClient);
+        }
     }
 }

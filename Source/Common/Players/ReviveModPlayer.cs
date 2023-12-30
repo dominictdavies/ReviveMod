@@ -16,7 +16,22 @@ namespace ReviveMod.Source.Common.Players
         public bool oldAuraActive;
         public bool spawnAtDeathLocation;
 
-        public void ReviveMe()
+        public void KillMe(bool broadcast = true)
+        {
+            if (Main.myPlayer == Player.whoAmI) {
+                Player.KillMe(PlayerDeathReason.ByCustomReason($"{Player.name} was killed."), Player.statLifeMax2, 0);
+            }
+
+            // Any desired custom effects can go here
+
+            if (Main.netMode == NetmodeID.Server && !broadcast) {
+                SendKillPacket(ignoreClient: Player.whoAmI);
+            } else if (Main.netMode != NetmodeID.SinglePlayer && broadcast) {
+                SendKillPacket();
+            }
+        }
+
+        public void ReviveMe(bool broadcast = true)
         {
             if (Main.myPlayer == Player.whoAmI) {
                 spawnAtDeathLocation = true;
@@ -26,6 +41,12 @@ namespace ReviveMod.Source.Common.Players
             CreateReviveDust();
             string playerRevived = Language.GetTextValue("Mods.ReviveMod.Chat.PlayerRevived");
             Main.NewText(string.Format(playerRevived, Player.name), ReviveMod.lifeGreen);
+
+            if (Main.netMode == NetmodeID.Server && !broadcast) {
+                SendRevivePacket(ignoreClient: Player.whoAmI);
+            } else if (Main.netMode != NetmodeID.SinglePlayer && broadcast) {
+                SendRevivePacket();
+            }
         }
 
         private void CreateReviveDust()
@@ -92,7 +113,7 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            if (IsTimeToRevive) {
+            if (Main.myPlayer == Player.whoAmI && IsTimeToRevive) {
                 ReviveMe();
             }
 
