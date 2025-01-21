@@ -91,7 +91,7 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            if ((respawnTimerPaused || CommonUtils.ActiveBossAlivePlayer || HardcoreAndNotAllDeadForGood) && AvoidMaxTimerAndWholeSecond) {
+            if ((RespawnTimerLegallyPaused || CommonUtils.ActiveBossAlivePlayer || HardcoreAndNotAllDeadForGood) && AvoidMaxTimerAndWholeSecond) {
                 Player.respawnTimer++; // Undoes regular respawnTimer tick down
             }
 

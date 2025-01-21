@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using ReviveMod.Common.Configs;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -22,6 +23,8 @@ namespace ReviveMod.Source.Common.Players
                 );
             }
         }
+
+        private bool RespawnTimerLegallyPaused => ModContent.GetInstance<ReviveModConfig>().AllowTimerPausing && respawnTimerPaused;
 
         private bool AvoidMaxTimerAndWholeSecond
             => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
