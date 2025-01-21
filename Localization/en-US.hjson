@@ -7,6 +7,7 @@ Mods: {
 			PlayerRevived: "{0} was revived!"
 			RespawnTimerPaused: Respawn timer is now paused.
 			RespawnTimerUnpaused: Respawn timer is now unpaused.
+			RespawnTimerPausingDisabled: Respawn timer pausing is currently disabled in the mod config!
 		}
 	}
 }
