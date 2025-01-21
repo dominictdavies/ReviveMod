@@ -10,7 +10,12 @@ Once all hardcore players are dead, players will respawn as ghosts and their sav
 Use the "Pause Respawn Timer" keybind (P by default) to give others more time to revive you.
 Config options allow you to alter the balancing of this mod, such as how long it takes to revive others and the speed at which auras may move.
 
+I'm a uni student and make mods in my spare time, if you'd like to support my work, you can do so at: ko-fi.com/doomimic
+
 -=- Recent Changes -=-
+
+v0.3.2:
+- Added 'Allow Timer Pausing' config option
 
 v0.3.1:
 - Fixed hardcore players still being deleted even after a revive
@@ -20,9 +25,3 @@ v0.3.0:
     - Known bug where revive timers will occasionally not visually count down in order
 - Hardcore revival added
 - Mod is now disabled in singleplayer
-
-v0.2.0:
-- Added new balancing options available in config:
-- Drain life added as an option
-- Slow players added as an option
-- Reduce output damage added as an option
