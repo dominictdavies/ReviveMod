@@ -24,7 +24,7 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
-        private bool RespawnTimerLegallyPaused => ModContent.GetInstance<ReviveModConfig>().AllowTimerPausing && respawnTimerPaused;
+        private bool RespawnTimerLegallyPaused => ModContent.GetInstance<ReviveModConfig>().ManualTimerPausing && respawnTimerPaused;
 
         private bool AvoidMaxTimerAndWholeSecond
             => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;

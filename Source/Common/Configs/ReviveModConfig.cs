@@ -25,7 +25,7 @@ namespace ReviveMod.Common.Configs
         public float NoBossMultiplier;
 
         [DefaultValue(true)]
-        public bool AllowTimerPausing;
+        public bool ManualTimerPausing;
 
         [Header("Balancing")]
 

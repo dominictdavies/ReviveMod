@@ -22,9 +22,9 @@ ReviveModConfig: {
 		Tooltip: What revive time is scaled by when no bosses are active
 	}
 
-	AllowTimerPausing: {
-		Label: Allow Timer Pausing
-		Tooltip: If players are allowed to pause their respawn timers
+	ManualTimerPausing: {
+		Label: Manual Timer Pausing
+		Tooltip: If players can manually pause their respawn timers
 	}
 
 	ProduceLight: {
