@@ -1,4 +1,5 @@
-﻿using ReviveMod.Source.Content.Projectiles;
+﻿using Microsoft.Xna.Framework;
+using ReviveMod.Source.Content.Projectiles;
 using System;
 using Terraria;
 using Terraria.DataStructures;
@@ -81,7 +82,7 @@ namespace ReviveMod.Source.Common.Players
             }
 
             if (Main.myPlayer == Player.whoAmI) {
-                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new Vector2(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
 
