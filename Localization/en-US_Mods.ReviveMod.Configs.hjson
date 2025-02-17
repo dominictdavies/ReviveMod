@@ -27,7 +27,7 @@ ReviveModConfig: {
 		Tooltip: If players are allowed to pause their respawn timers
 	}
 
-	BosssesPauseTimers: {
+	BossesPauseTimers: {
 		Label: Bosses Pause Timers
 		Tooltip: If bosses pause the respawn timers of all players
 	}
