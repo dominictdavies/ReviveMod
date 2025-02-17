@@ -30,6 +30,9 @@ namespace ReviveMod.Common.Configs
         public bool ManualTimerPausing;
 
         [DefaultValue(true)]
+        public bool BossesPauseTimers;
+
+        [DefaultValue(true)]
         public bool HardcoreTimersWait;
 
         [DefaultValue(false)]
