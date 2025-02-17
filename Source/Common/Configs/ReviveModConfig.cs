@@ -24,13 +24,13 @@ namespace ReviveMod.Common.Configs
         [DefaultValue(0.5f)]
         public float NoBossMultiplier;
 
+        [Header("Balancing")]
+
         [DefaultValue(true)]
         public bool AllowTimerPausing;
 
         [DefaultValue(true)]
         public bool HardcoreTimersWait;
-
-        [Header("Balancing")]
 
         [DefaultValue(false)]
         public bool DrainLife;
