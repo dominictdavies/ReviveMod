@@ -34,7 +34,7 @@ ReviveModConfig: {
 
 	HardcoreTimersWait: {
 		Label: Hardcore Timers Wait
-		Tooltip: If hardcore respawn timers should wait until all hardcore players are dead before counting down.
+		Tooltip: If hardcore respawn timers should wait until all hardcore players are dead before counting down
 	}
 
 	ProduceLight: {
