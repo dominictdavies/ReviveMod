@@ -11,7 +11,7 @@ namespace ReviveMod.Source.Common.Players
     public partial class ReviveModPlayer : ModPlayer
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
-        public bool respawnTimerPaused = false;
+        public bool respawnTimerPausedManually = false;
         public bool auraActive;
         public bool oldAuraActive;
         public bool spawnAtDeathLocation;
