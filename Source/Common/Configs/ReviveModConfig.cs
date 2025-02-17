@@ -27,7 +27,7 @@ namespace ReviveMod.Common.Configs
         [Header("Balancing")]
 
         [DefaultValue(true)]
-        public bool AllowTimerPausing;
+        public bool ManualTimerPausing;
 
         [DefaultValue(true)]
         public bool HardcoreTimersWait;
