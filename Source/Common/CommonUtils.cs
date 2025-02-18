@@ -9,7 +9,7 @@ namespace ReviveMod.Source.Common
 {
     public class CommonUtils
     {
-        private static readonly HashSet<short> manualBosses = [NPCID.EaterofWorldsHead];
+        private static readonly HashSet<int> manualBosses = [NPCID.EaterofWorldsHead];
 
         public static bool ActiveBossAlivePlayer
         {
