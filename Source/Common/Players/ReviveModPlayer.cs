@@ -1,4 +1,5 @@
-﻿using ReviveMod.Source.Content.Projectiles;
+﻿using Microsoft.Xna.Framework;
+using ReviveMod.Source.Content.Projectiles;
 using System;
 using Terraria;
 using Terraria.DataStructures;
@@ -11,10 +12,11 @@ namespace ReviveMod.Source.Common.Players
     public partial class ReviveModPlayer : ModPlayer
     {
         public int timeSpentDead = 0; // Needed to fix a visual issue
-        public bool respawnTimerPaused = false;
+        public bool respawnTimerPausedManually = false;
         public bool auraActive;
         public bool oldAuraActive;
         public bool spawnAtDeathLocation;
+        public bool beingRevived;
 
         public void KillMe(bool broadcast = true)
         {
@@ -71,6 +73,7 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
+            beingRevived = false;
             timeSpentDead = 0;
         }
 
@@ -81,7 +84,7 @@ namespace ReviveMod.Source.Common.Players
             }
 
             if (Main.myPlayer == Player.whoAmI) {
-                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
+                Projectile.NewProjectile(Player.GetSource_Death(), Player.Center, new Vector2(0, 0), ModContent.ProjectileType<ReviveAura>(), 0, 0, Main.myPlayer);
             }
         }
 
@@ -91,10 +94,11 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
-            if ((RespawnTimerLegallyPaused || CommonUtils.ActiveBossAlivePlayer || HardcoreAndNotAllDeadForGood) && AvoidMaxTimerAndWholeSecond) {
+            if (IsRespawnTimerPaused) {
                 Player.respawnTimer++; // Undoes regular respawnTimer tick down
             }
 
+            beingRevived = false;
             timeSpentDead++;
         }
 

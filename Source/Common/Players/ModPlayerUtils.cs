@@ -24,9 +24,11 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
-        private bool RespawnTimerLegallyPaused => ModContent.GetInstance<ReviveModConfig>().AllowTimerPausing && respawnTimerPaused;
-
-        private bool AvoidMaxTimerAndWholeSecond
+        /* Respawn timers show a number 1 larger than what you would expect them to for 1 frame
+         * The Calamity Mod plays a ticking sound on the whole frame of the final three seconds before respawn
+         * Hence, the need for this function which avoids the maxed out respawn timer, and the repeating tick sound from the Calamity Mod
+         */
+        private bool NotMaxRespawnTimerOrWholeSecond
             => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
 
         private bool HardcoreAndNotAllDeadForGood
@@ -47,6 +49,18 @@ namespace ReviveMod.Source.Common.Players
                 }
 
                 return false;
+            }
+        }
+
+        private bool IsRespawnTimerPaused
+        {
+            get {
+                var config = ModContent.GetInstance<ReviveModConfig>();
+
+                return NotMaxRespawnTimerOrWholeSecond && (beingRevived
+                    || (respawnTimerPausedManually && config.ManualRespawnTimerPausing)
+                    || (HardcoreAndNotAllDeadForGood && config.HardcoreRespawnTimersWait)
+                    || (CommonUtils.ActiveBossAlivePlayer && config.BossesPauseRespawnTimers));
             }
         }
 
