@@ -24,6 +24,10 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
+        /* Max respawn timer shows a number larger than what you would expect it to be (i.e. a 10 second respawn shows 11 for 1st frame of being dead)
+         * The Calamity Mod plays a ticking sound on the whole frame of the final three seconds before respawn
+         * Hence the need for this function which avoids the maxed out respawn timer, and the repeating tick sound from the Calamity Mod
+         */
         private bool AvoidMaxRespawnTimerAndWholeSecond
             => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
 
