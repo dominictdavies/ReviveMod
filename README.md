@@ -12,14 +12,13 @@ Config options allow you to alter the balancing of this mod, such as how long it
 
 ## Recent Changes
 
+v0.3.3:
+- Added 'Hardcore Respawn Timers Wait' config option
+- Added 'Bosses Pause Respawn Timers' config option
+- Fixed a bug where Eater of Worlds was not considered as a boss
+
 v0.3.2:
 - Added 'Allow Timer Pausing' config option
 
 v0.3.1:
 - Fixed hardcore players still being deleted even after a revive
-
-v0.3.0:
-- Improved revive netcode
-    - Known bug where revive timers will occasionally not visually count down in order
-- Hardcore revival added
-- Mod is now disabled in singleplayer
