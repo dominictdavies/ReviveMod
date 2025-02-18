@@ -159,6 +159,7 @@ namespace ReviveMod.Source.Content.Projectiles
 
                 ReviveTimer--;
                 ApplyDebuffs(config, player);
+                Owner.GetModPlayer<ReviveModPlayer>().beingRevived = true;
 
                 if (_progressTextTimer-- == 0) {
                     ShowProgress(player);

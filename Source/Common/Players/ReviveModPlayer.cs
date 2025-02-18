@@ -16,6 +16,7 @@ namespace ReviveMod.Source.Common.Players
         public bool auraActive;
         public bool oldAuraActive;
         public bool spawnAtDeathLocation;
+        public bool beingRevived;
 
         public void KillMe(bool broadcast = true)
         {
@@ -72,6 +73,7 @@ namespace ReviveMod.Source.Common.Players
                 return;
             }
 
+            beingRevived = false;
             timeSpentDead = 0;
         }
 
@@ -96,6 +98,7 @@ namespace ReviveMod.Source.Common.Players
                 Player.respawnTimer++; // Undoes regular respawnTimer tick down
             }
 
+            beingRevived = false;
             timeSpentDead++;
         }
 

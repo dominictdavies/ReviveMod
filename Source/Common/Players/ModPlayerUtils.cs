@@ -28,7 +28,7 @@ namespace ReviveMod.Source.Common.Players
          * The Calamity Mod plays a ticking sound on the whole frame of the final three seconds before respawn
          * Hence the need for this function which avoids the maxed out respawn timer, and the repeating tick sound from the Calamity Mod
          */
-        private bool AvoidMaxRespawnTimerAndWholeSecond
+        private bool NotMaxRespawnTimerOrWholeSecond
             => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
 
         private bool HardcoreAndNotAllDeadForGood
@@ -57,10 +57,10 @@ namespace ReviveMod.Source.Common.Players
             get {
                 var config = ModContent.GetInstance<ReviveModConfig>();
 
-                return ((respawnTimerPausedManually && config.ManualRespawnTimerPausing)
+                return NotMaxRespawnTimerOrWholeSecond && (beingRevived
+                    || (respawnTimerPausedManually && config.ManualRespawnTimerPausing)
                     || (HardcoreAndNotAllDeadForGood && config.HardcoreRespawnTimersWait)
-                    || (CommonUtils.ActiveBossAlivePlayer && config.BossesPauseRespawnTimers))
-                    && AvoidMaxRespawnTimerAndWholeSecond;
+                    || (CommonUtils.ActiveBossAlivePlayer && config.BossesPauseRespawnTimers));
             }
         }
 
