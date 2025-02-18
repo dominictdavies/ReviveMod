@@ -1,17 +1,18 @@
 ---
-name: Update version template
-about: Reminders to alter all workshop text files before reuploading
+name: Update Version
+about: What needs to be done before reuploading the mod
 title: Update to vX.X.X
 labels: workshop
-assignees: dominictdavies
-
 ---
 
-[ ] Update build.txt to vX.X.X
-[ ] Update changelog.txt to the noteworthy changes made since last update
+- [ ] Update build.txt to vX.X.X
 
-- Update description.txt:
-[ ] Alter to fit what changes have been made
-[ ] Add the changelog contents as the most recent change and remove the oldest
+- [ ] Update changelog.txt with any changes that were made since last update
 
-[ ] Reupload the mod
+- Update description.txt and README.md:
+
+- [ ] Alter to fit any major changes that have been made
+
+- [ ] Add the changelog contents as the most recent change and remove the oldest
+
+- Reupload the mod
