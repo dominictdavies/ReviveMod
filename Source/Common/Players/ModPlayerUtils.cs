@@ -24,8 +24,6 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
-        private bool RespawnTimerLegallyPaused => ModContent.GetInstance<ReviveModConfig>().ManualTimerPausing && respawnTimerPaused;
-
         private bool AvoidMaxTimerAndWholeSecond
             => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
 
@@ -47,6 +45,18 @@ namespace ReviveMod.Source.Common.Players
                 }
 
                 return false;
+            }
+        }
+
+        private bool IsRespawnTimerPaused
+        {
+            get {
+                var config = ModContent.GetInstance<ReviveModConfig>();
+
+                return ((respawnTimerPausedManually && config.ManualTimerPausing)
+                    || (HardcoreAndNotAllDeadForGood && config.HardcoreTimersWait)
+                    || (CommonUtils.ActiveBossAlivePlayer && config.BossesPauseTimers))
+                    && AvoidMaxTimerAndWholeSecond;
             }
         }
 
