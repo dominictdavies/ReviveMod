@@ -27,6 +27,16 @@ ReviveModConfig: {
 		Tooltip: If players can manually pause their respawn timers
 	}
 
+	BossesPauseTimers: {
+		Label: Bosses Pause Timers
+		Tooltip: If bosses pause the respawn timers of all players
+	}
+
+	HardcoreTimersWait: {
+		Label: Hardcore Timers Wait
+		Tooltip: If hardcore respawn timers should wait until all hardcore players are dead before counting down
+	}
+
 	ProduceLight: {
 		Label: Produce Light
 		Tooltip: If auras produce light

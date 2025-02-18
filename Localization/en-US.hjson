@@ -5,9 +5,9 @@ Mods: {
 
 		Chat: {
 			PlayerRevived: "{0} was revived!"
-			RespawnTimerPaused: Respawn timer is now paused.
-			RespawnTimerUnpaused: Respawn timer is now unpaused.
-			ManualTimerPausingDisabled: Manual timer pausing is currently disabled in the mod config!
+			ManualRespawnTimerPause: Respawn timer is now paused.
+			ManualRespawnTimerUnpause: Respawn timer is now unpaused.
+			ManualRespawnTimerPausingDisabled: Respawn timer pausing is currently disabled in the mod config!
 		}
 	}
 }
