@@ -1,5 +1,7 @@
 [h1] Revive Mod [/h1]
 
+[quote]If you have any feature requests, or want to report a bug that you have run into with this mod, please create an issue describing it [url=github.com/dominictdavies/ReviveMod/issues]here[/url]![/quote]
+
 This is a multiplayer mod that makes it possible to revive other players in servers.
 Upon death, players will leave an aura where they died that others can enter in order to revive the player.
 As a way to balance respawn chaining when fighting bosses, this mod disables regular respawning during boss fights, forcing remaining players to revive others.
