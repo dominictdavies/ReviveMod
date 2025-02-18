@@ -1,2 +1,4 @@
-v0.3.2:
-- Added 'Allow Timer Pausing' config option
+v0.3.3:
+- Added 'Hardcore Respawn Timers Wait' config option
+- Added 'Bosses Pause Respawn Timers' config option
+- Fixed a bug where Eater of Worlds was not considered as a boss
