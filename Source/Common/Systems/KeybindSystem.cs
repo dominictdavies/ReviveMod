@@ -33,8 +33,8 @@ namespace ReviveMod.Source.Common.Systems
                 ref bool respawnTimerPausedManually = ref Player.GetModPlayer<ReviveModPlayer>().respawnTimerPausedManually;
                 respawnTimerPausedManually = !respawnTimerPausedManually;
                 string respawnTimerText = respawnTimerPausedManually ?
-                                          Language.GetTextValue("Mods.ReviveMod.Chat.ManualRespawnTimerPause") :
-                                          Language.GetTextValue("Mods.ReviveMod.Chat.ManualRespawnTimerUnpause");
+                                          Language.GetTextValue("Mods.ReviveMod.Chat.ManualRespawnTimerPaused") :
+                                          Language.GetTextValue("Mods.ReviveMod.Chat.ManualRespawnTimerUnpaused");
                 Main.NewText(respawnTimerText, ReviveMod.lifeGreen);
             }
         }
