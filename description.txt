@@ -10,6 +10,8 @@ Once all hardcore players are dead, players will respawn as ghosts and their sav
 Use the "Pause Respawn Timer" keybind (P by default) to give others more time to revive you.
 Config options allow you to alter the balancing of this mod, such as how long it takes to revive others and the speed at which auras may move.
 
+If you have any feature requests, or want to report a bug that you have run into with this mod, please create an issue describing it at: github.com/dominictdavies/ReviveMod/issues
+
 I'm a uni student and make mods in my spare time, if you'd like to support my work, you can do so at: ko-fi.com/doomimic
 
 -=- Recent Changes -=-
