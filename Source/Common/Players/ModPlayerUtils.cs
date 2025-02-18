@@ -24,7 +24,7 @@ namespace ReviveMod.Source.Common.Players
             }
         }
 
-        private bool AvoidMaxTimerAndWholeSecond
+        private bool AvoidMaxRespawnTimerAndWholeSecond
             => timeSpentDead > 0 && Player.respawnTimer % 60 != 0;
 
         private bool HardcoreAndNotAllDeadForGood
@@ -53,10 +53,10 @@ namespace ReviveMod.Source.Common.Players
             get {
                 var config = ModContent.GetInstance<ReviveModConfig>();
 
-                return ((respawnTimerPausedManually && config.ManualTimerPausing)
-                    || (HardcoreAndNotAllDeadForGood && config.HardcoreTimersWait)
-                    || (CommonUtils.ActiveBossAlivePlayer && config.BossesPauseTimers))
-                    && AvoidMaxTimerAndWholeSecond;
+                return ((respawnTimerPausedManually && config.ManualRespawnTimerPausing)
+                    || (HardcoreAndNotAllDeadForGood && config.HardcoreRespawnTimersWait)
+                    || (CommonUtils.ActiveBossAlivePlayer && config.BossesPauseRespawnTimers))
+                    && AvoidMaxRespawnTimerAndWholeSecond;
             }
         }
 

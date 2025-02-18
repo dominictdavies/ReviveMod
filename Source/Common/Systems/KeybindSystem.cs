@@ -24,7 +24,7 @@ namespace ReviveMod.Source.Common.Systems
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
             if (KeybindSystem.PauseRespawnTimer.JustPressed) {
-                if (!ModContent.GetInstance<ReviveModConfig>().ManualTimerPausing) {
+                if (!ModContent.GetInstance<ReviveModConfig>().ManualRespawnTimerPausing) {
                     string manualRespawnTimerPausingDisabled = Language.GetTextValue("Mods.ReviveMod.Chat.ManualRespawnTimerPausingDisabled");
                     Main.NewText(manualRespawnTimerPausingDisabled, Color.Red);
                     return;

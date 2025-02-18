@@ -22,18 +22,18 @@ ReviveModConfig: {
 		Tooltip: What revive time is scaled by when no bosses are active
 	}
 
-	ManualTimerPausing: {
-		Label: Manual Timer Pausing
+	ManualRespawnTimerPausing: {
+		Label: Manual Respawn Timer Pausing
 		Tooltip: If players can manually pause their respawn timers
 	}
 
-	BossesPauseTimers: {
-		Label: Bosses Pause Timers
+	BossesPauseRespawnTimers: {
+		Label: Bosses Pause Respawn Timers
 		Tooltip: If bosses pause the respawn timers of all players
 	}
 
-	HardcoreTimersWait: {
-		Label: Hardcore Timers Wait
+	HardcoreRespawnTimersWait: {
+		Label: Hardcore Respawn Timers Wait
 		Tooltip: If hardcore respawn timers should wait until all hardcore players are dead before counting down
 	}
 
