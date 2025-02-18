@@ -6,6 +6,6 @@ labels: feature
 
 Description of the suggested feature.
 
-List of required steps to implement the feature:
+List of required steps to implement the feature (optional):
 - [ ] Details
 - [ ] Some other details
