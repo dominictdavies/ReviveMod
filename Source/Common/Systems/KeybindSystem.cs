@@ -25,7 +25,7 @@ namespace ReviveMod.Source.Common.Systems
         {
             if (KeybindSystem.PauseRespawnTimer.JustPressed) {
                 if (!ModContent.GetInstance<ReviveModConfig>().ManualRespawnTimerPausing) {
-                    string respawnTimerPausingDisabled = Language.GetTextValue("Mods.ReviveMod.Chat.ManualRespawnTimerPausingDisabled");
+                    string respawnTimerPausingDisabled = Language.GetTextValue("Mods.ReviveMod.Chat.respawnTimerPausingDisabled");
                     Main.NewText(respawnTimerPausingDisabled, Color.Red);
                     return;
                 }
